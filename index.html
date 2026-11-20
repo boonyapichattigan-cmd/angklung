@@ -509,6 +509,10 @@ body.phone.land .prac{--laneh:44px}
 .rRow .rBtn{flex:1;font-size:1rem;padding:11px 8px}
 .rRow .rBtn.g{background:linear-gradient(145deg,#2f9e44,#1f7a33)}
 .rRow .rBtn.x{background:#f3e4d2;color:#5a3a20}
+.bInd{display:inline-block;min-width:1.2em;color:#8a3b14}
+.bInd.ching{color:#c0602a}.bInd.chap{color:#7b4bc4}
+.lane.tk{animation:tk .22s}
+@keyframes tk{0%{background:#ffe6c9}100%{background:linear-gradient(#fff,#fdf6ec)}}
 </style>
 </head>
 <body>
@@ -655,7 +659,9 @@ body.phone.land .prac{--laneh:44px}
         <div class="legend"><span><i class="lg ting"></i>ติง</span><span><i class="lg tam"></i>ทั่ม</span><span><i class="lg jo"></i>โจ๊ะ</span><span><i class="lg ja"></i>จ๊ะ</span><span class="lgc">ฉิ่ง ● · ฉับ ✕</span></div>
         <div class="bar" style="margin-top:10px">
           <button class="btn" id="drumPlay">▶ <span class="th">เริ่ม</span><span class="en i">Start</span></button>
+          <button class="btn alt" id="drumRitBtn">🐢 <span class="th">ทอดจบ</span><span class="en i">Slow down &amp; end</span></button>
           <button class="btn alt" id="drumStopBtn">■ <span class="th">หยุด</span><span class="en i">Stop</span></button>
+          <label class="sl"><select class="ritSel"><option value="0">ไม่ทอด · No slow-down</option><option value="1">ทอด 1 ห้อง · 1 bar</option><option value="2">ทอด 2 ห้อง · 2 bars</option><option value="4">ทอด 4 ห้อง · 4 bars</option></select></label>
           <label class="sl"><span class="th">ความเร็ว</span><span class="en i">Tempo</span> <input type="range" id="drumTempo" min="60" max="320" step="10" value="160"> <span id="drumTempoV">160</span></label>
         </div>
         <div class="bar" style="margin-top:6px">
@@ -727,6 +733,7 @@ body.phone.land .prac{--laneh:44px}
     <div class="pOpts">
       <label class="sl"><input type="checkbox" id="pShow" checked><span class="th">แสดงตัวโน้ต (ตัวช่วยจำ)</span><span class="en i">Show notes (memory aid)</span></label>
       <label class="sl"><input type="checkbox" id="pLight" checked><span class="th">ไฟนำบนปุ่มกด</span><span class="en i">Guide lights on keys</span></label>
+      <label class="sl">🐢 <span class="th">ตอนจบเพลง</span><span class="en i">Song ending</span> <select class="ritSel"><option value="0">ไม่ทอด · No slow-down</option><option value="1">ทอด 1 ห้อง · 1 bar</option><option value="2">ทอด 2 ห้อง · 2 bars</option><option value="4">ทอด 4 ห้อง · 4 bars</option></select></label>
       <label class="sl"><input type="checkbox" id="pDrum" checked><span class="th">กลองแขก–ฉิ่งประกอบ</span><span class="en i">Drums &amp; ching</span></label>
       <label class="sl bandOnly"><input type="checkbox" id="pBand" checked><span class="th">แอปบรรเลงเสียงอื่นของวงให้</span><span class="en i">App plays the other band notes</span></label>
     </div>
@@ -1423,21 +1430,44 @@ drumTempo.value=store.get('drumTempo',160); drumTempoV.textContent=drumTempo.val
 drumTempo.oninput=()=>{ drumTempoV.textContent=drumTempo.value; store.set('drumTempo',+drumTempo.value); };
 drumVol.value=store.get('drumVol',0.7);
 drumVol.oninput=()=>{ store.set('drumVol',+drumVol.value); if(drumGain) drumGain.gain.value=+drumVol.value; };
-function drumStart(rate,at){
+// ทอดจังหวะ: ช่องท้าย ๆ ยืดยาวขึ้นเรื่อย ๆ จนช้าลงเกือบครึ่ง แล้วจบด้วยฉับ + ทั่ม
+const RIT_MAX=1.9, ritF=p=>1+(RIT_MAX-1)*Math.pow(Math.max(0,Math.min(1,p)),1.4);
+let ritBoxes=+store.get('ritBoxes',2);
+function slotTimes(N,T0,slotSec,boxes){ const L=Math.min(N,(boxes||0)*4), t=[T0];
+  for(let i=0;i<N;i++){ let d=slotSec; if(L && i>=N-L) d=slotSec*ritF((i-(N-L)+1)/L); t.push(t[i]+d); } return t; }
+function drumStart(rate,at,opt){
+  opt=opt||{};
   drumOut(); if(ctx.state!=='running') ctx.resume(); drumStop();
-  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[]};
+  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[], times:opt.times||null, onHit:opt.onHit||null, onEnd:opt.onEnd||null, rit:null, done:false};
   r.timer=setInterval(()=>{
-    const slotSec=60/(r.rate||+drumTempo.value), ahead=ctx.currentTime+0.15;
-    while(r.next<ahead){
+    const base=60/(r.rate||+drumTempo.value), ahead=ctx.currentTime+0.15;
+    while(!r.done && r.next<ahead){
       const n=drumPat.slots.length, si=r.si%n, k=drumPat.slots[si], t=r.next;
+      const last = r.times ? r.si>=r.times.length-2 : (r.rit && r.si>=r.rit.end);
+      if(last){   // จบเพลง: ฉับ + ทั่ม พร้อมกัน
+        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t);
+        if(r.onHit) r.onHit('chap',t);
+        r.done=true; const ms=Math.max(0,(t-ctx.currentTime)*1000);
+        r.uiT.push(setTimeout(()=>{ if(r.onEnd) r.onEnd(); if(drumRun===r) drumStop(); },ms+1200)); break;
+      }
       if(k!=='-' && useKlong.checked) drumHit(k,t);
       const c=chingAt(si); if(c && useChing.checked) chingHit(c==='ching',t);
+      if(c && r.onHit) r.onHit(c,t);
       if(si%4===0){ const bi=si/4, ms=Math.max(0,(t-ctx.currentTime)*1000);
         r.uiT.push(setTimeout(()=>{ drumBoxEls.forEach(x=>x.classList.remove('now')); drumBoxEls[bi]&&drumBoxEls[bi].classList.add('now'); },ms)); }
-      r.si++; r.next+=slotSec;
+      r.si++;
+      if(r.times) r.next=r.times[r.si];
+      else { let d=base; if(r.rit && r.si-1>=r.rit.start) d=base*ritF((r.si-r.rit.start)/(r.rit.end-r.rit.start+1)); r.next+=d; }
     }
   },25);
   drumRun=r; drumPlay.classList.add('on');
+}
+// สั่งทอดจังหวะระหว่างตีต่อเนื่อง: เริ่มห้องถัดไป ยาวตามจำนวนห้องที่ตั้งไว้ จบตรงจังหวะฉับ
+function drumRitard(boxes){
+  const r=drumRun; if(!r || r.times || r.rit || r.done) return false;
+  const b=Math.max(1,boxes||ritBoxes||2), n=drumPat.slots.length, start=Math.ceil((r.si+1)/4)*4;
+  let end=start+b*4-1, guard=0; while(chingAt(end%n)!=='chap' && guard++<64) end++;
+  r.rit={start,end}; return true;
 }
 function drumStop(){
   if(!drumRun) return;
@@ -1446,6 +1476,11 @@ function drumStop(){
 }
 drumPlay.onclick=()=>drumStart();
 drumStopBtn.onclick=drumStop;
+drumRitBtn.onclick=()=>{ if(!drumRun){ return; } if(drumRitard()) drumRitBtn.classList.add('on'); };
+function syncRitSel(){ document.querySelectorAll('.ritSel').forEach(x=>x.value=String(ritBoxes)); }
+document.addEventListener('change',e=>{ if(e.target.classList&&e.target.classList.contains('ritSel')){ ritBoxes=+e.target.value; store.set('ritBoxes',ritBoxes); syncRitSel(); } });
+setInterval(()=>{ if(!drumRun||!drumRun.rit) drumRitBtn.classList.remove('on'); },500);
+syncRitSel();
 
 // ---------- บรรเลงตามโน้ต (โน้ตไทยแบบห้อง ห้องละ 4 ตัว) ----------
 // shift: เลื่อนช่วงเสียงของเพลงให้อยู่ในอังกะลุง 14 เสียง (-7 = เสียงกลางของโน้ตเพลง → ชุดใหญ่)
@@ -1656,7 +1691,7 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
   playScore.addEventListener('click',()=>setTimeout(closePop,120));
   drumPlay.addEventListener('click',()=>setTimeout(closePop,120));
   // ปุ่มหยุดลอย: ขึ้นเมื่อกลองหรือเพลงกำลังเล่น
-  stopFab.onclick=()=>{ stopSong(); drumStop(); if(window.pracStop) pracStop(); };
+  stopFab.onclick=()=>{ if(window.ROOM&&ROOM.role==='host'){ roomStopAll(); return; } stopSong(); drumStop(); if(window.pracStop) pracStop(); };
   setInterval(()=>{ stopFab.hidden=!(drumRun || timers.length || (window.P&&P.run)); },300);
   // ปุ่มเลื่อนหน้าจอ: แตะ = ขึ้นบนสุด/ลงล่าง · กดค้างแล้วลากขึ้น–ลง = เลื่อนตามนิ้ว
   let sy=null, moved=0, lastY=0;
@@ -1747,7 +1782,7 @@ function pracStop(keepBar){
 // เริ่มฝึกซ้อมจากหน้าต่างตั้งค่า (เครื่องเดียว)
 function pracStart(){
   initAudio(); ctx.resume(); closePop();
-  pracRun({song:pracSong(), tempo:+pTempo.value, light:pLight.checked, drum:pDrum.checked, countSound:true,
+  pracRun({song:pracSong(), tempo:+pTempo.value, light:pLight.checked, drum:pDrum.checked, countSound:true, rit:ritBoxes,
     autoFn:a=>playMode==='band' && pBand.checked});
 }
 // ตัวเล่นกลาง: ใช้ทั้งฝึกเดี่ยวและห้องวง
@@ -1771,14 +1806,15 @@ function pracRun(opt){
   const laneW=pLane.clientWidth, cw=Math.max(34,Math.min(72,laneW/9)); pLane.style.setProperty('--cw',cw+'px');
   const headX=Math.round(laneW*0.28); pLane.style.setProperty('--headx',headX+'px');
   const COUNT=4, T0=opt.T0 || ctx.currentTime+0.3+COUNT*slotSec;
-  Object.assign(P,{run:true,ev,cells,slotSec,T0,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],
-    win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:T0+cells.length*slotSec,onFinish:opt.onFinish,drumOn:!!opt.drum});
+  const times=slotTimes(cells.length,T0,slotSec,opt.rit||0);
+  Object.assign(P,{run:true,ev,cells,slotSec,T0,times,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],
+    win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:times[cells.length],onFinish:opt.onFinish,drumOn:!!opt.drum});
   pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
   if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
-  if(opt.drum) drumStart(tempoV,T0);
+  if(opt.drum) drumStart(tempoV,T0,{times});
   const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
   ev.forEach(e=>{
-    const ts=T0+e.i*slotSec, te=ts+e.len*slotSec*0.9; e.t=ts;
+    const ts=times[e.i], te=ts+(times[Math.min(e.i+e.len,cells.length)]-ts)*0.9; e.t=ts;
     if(!e.mine){ if(opt.autoFn && opt.autoFn(e.a) && ts>ctx.currentTime) songNote(e.a,ts,te,playMode==='solo'?[soloEls[e.a.idx]]:(rackEls[e.a.idx]||[])); return; }
     if(opt.light){ const els=keyElsFor(e.a);
       P.timers.push(setTimeout(()=>{ if(pLight.checked||ROOM.role==='member') els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
@@ -1787,7 +1823,9 @@ function pracRun(opt){
   P.voices=songVoices.splice(0);
   const loop=()=>{
     if(!P.run) return;
-    const t=ctx.currentTime, pos=(t-P.T0)/P.slotSec;
+    const t=ctx.currentTime; let pos;
+    if(t<P.T0) pos=(t-P.T0)/P.slotSec;
+    else { const T=P.times; let lo=0,hi=T.length-1; while(hi-lo>1){ const m=(lo+hi)>>1; if(T[m]<=t) lo=m; else hi=m; } pos=lo+Math.min(1,(t-T[lo])/((T[lo+1]-T[lo])||1)); }
     pStrip.style.transform=`translateX(${P.headX-pos*P.cw}px)`;
     if(pos<0){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); }
     else if(t<P.end) pCnt.classList.remove('on');
@@ -1814,7 +1852,7 @@ function pracFinish(){
 }
 pStart.onclick=pracStart;
 pAgain.onclick=()=>{ if(ROOM.role) return; pracStart(); };
-pStop.onclick=()=>{ if(ROOM.role==='member'){ roomLeave(); return; } pracStop(); };
+pStop.onclick=()=>{ if(ROOM.role==='member'){ roomLeave(); return; } if(ROOM.role==='host'){ roomStopAll(); return; } pracStop(); };
 
 // ---------- ปุ่มติดตั้งแอป (เฉพาะเว็บแอปที่วางบนเว็บไซต์เอง) ----------
 let instPrompt=null;
@@ -1886,27 +1924,53 @@ function roomRender(){
   const opts=sel=>AK.map(a=>`<option value="${a.idx}"${a.idx===sel?' selected':''}>${noteName(a.idx)}</option>`).join('');
   const link=WEBAPP_URL+'?room='+ROOM.code;
   roomBody.innerHTML=`<div class="rCode"><div class="qr" id="rQR"></div><div><div class="hint" style="margin:0">${L('รหัสห้อง','Room code')}</div><div class="num">${ROOM.code}</div><div class="lnk">${esc(link)}</div></div></div>
-    <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ (เครื่องครูเล่นแทน)','Uncovered notes (teacher device plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ 14 เสียง','all 14 notes covered')}</div>
+    <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${ROOM.mode==='beat'?'':missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ (เครื่องครูเล่นแทน)','Uncovered notes (teacher device plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ 14 เสียง','all 14 notes covered')}</div>
     <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.name)}<small style="font-weight:400;color:#8a6a50"> ${esc(x.info||'')}</small></b>
       <select data-k="0">${opts(x.notes[0])}</select><select data-k="1">${opts(x.notes[1])}</select>
       <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มีนักเรียนเข้าห้อง','No students yet')}</p>`}</div>
+    <div class="seg rModeSeg" id="rModeSeg" style="margin:4px 0 8px">
+      <button type="button" data-v="song" class="${ROOM.mode==='beat'?'':'on'}">🎵 ${L('เพลงในแอป','App song')}</button>
+      <button type="button" data-v="beat" class="${ROOM.mode==='beat'?'on':''}">🥁 ${L('เฉพาะจังหวะ (เพลงอื่น)','Rhythm only (any song)')}</button></div>
+    ${ROOM.mode==='beat'?`
+    <p class="hint" style="margin:0 0 6px">${L('เครื่องครูตีกลองแขก–ฉิ่งให้ทั้งวง นักเรียนบรรเลงเพลงอะไรก็ได้ตามโน้ตของตนเอง จอนักเรียนแสดงจังหวะฉิ่ง–ฉับให้เห็นพร้อมกัน','The teacher device plays drums & ching for everyone; students play any song from their own sheets while their screens flash the ching beat.')}</p>
+    <div class="songPick"><label>${L('หน้าทับ','Pattern')}</label><select id="rPat">${[...drumSel.options].map(o=>`<option value="${o.value}"${o.value===drumSel.value?' selected':''}>${o.textContent}</option>`).join('')}</select></div>
+    <div class="bar" style="margin-top:8px"><label class="sl">${L('ความเร็ว','Tempo')} <input type="range" id="rDTempo" min="60" max="320" step="10" value="${drumTempo.value}"> <span id="rDTempoV">${drumTempo.value}</span></label></div>
+    <div class="pOpts"><label class="sl"><input type="checkbox" id="rKlong"${useKlong.checked?' checked':''}> ${L('กลองแขก','Klong Khaek')}</label>
+      <label class="sl"><input type="checkbox" id="rChing"${useChing.checked?' checked':''}> ${L('ฉิ่ง','Ching')}</label>
+      <label class="sl">🐢 ${L('ทอดจบ','Slow-down ending')} <select class="ritSel"><option value="0">ไม่ทอด · No slow-down</option><option value="1">ทอด 1 ห้อง · 1 bar</option><option value="2">ทอด 2 ห้อง · 2 bars</option><option value="4">ทอด 4 ห้อง · 4 bars</option></select></label></div>
+    <div class="rRow">
+      <button type="button" class="rBtn g" id="rBeatGo">▶ ${L('เริ่มตีจังหวะ','Start rhythm')}</button>
+      <button type="button" class="rBtn" id="rRit">🐢 ${L('ทอดจบ','Slow down & end')}</button>
+      <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>`:`
     <div class="songPick"><label>${L('เพลง','Song')}</label><select id="rSong">${[...pSong.options].map(o=>`<option value="${o.value}"${o.value===pSong.value?' selected':''}>${o.textContent}</option>`).join('')}</select></div>
     <div class="bar" style="margin-top:8px"><label class="sl">${L('ความเร็ว','Tempo')} <input type="range" id="rTempo" min="40" max="240" step="5" value="${pTempo.value}"> <span id="rTempoV">${pTempo.value}</span></label></div>
     <div class="pOpts"><label class="sl"><input type="checkbox" id="rShow"${pShow.checked?' checked':''}> ${L('นักเรียนเห็นตัวโน้ต','Students see notes')}</label>
       <label class="sl"><input type="checkbox" id="rDrum"${pDrum.checked?' checked':''}> ${L('กลองแขก–ฉิ่ง (เครื่องครู)','Drums & ching (teacher device)')}</label>
-      <label class="sl"><input type="checkbox" id="rFill" checked> ${L('เครื่องครูเล่นเสียงที่ไม่มีคนถือ','Teacher device plays uncovered notes')}</label></div>
+      <label class="sl"><input type="checkbox" id="rFill" checked> ${L('เครื่องครูเล่นเสียงที่ไม่มีคนถือ','Teacher device plays uncovered notes')}</label>
+      <label class="sl">🐢 ${L('ตอนจบเพลง','Song ending')} <select class="ritSel"><option value="0">ไม่ทอด · No slow-down</option><option value="1">ทอด 1 ห้อง · 1 bar</option><option value="2">ทอด 2 ห้อง · 2 bars</option><option value="4">ทอด 4 ห้อง · 4 bars</option></select></label></div>
     <div class="rRow">
       <button type="button" class="rBtn g" id="rStart">▶ ${L('เริ่มบรรเลงพร้อมกัน','Start together')}</button>
-      <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>
+      <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>`}
     <div class="rRow"><button type="button" class="rBtn x" id="rDeal">🔀 ${L('แจกเสียงใหม่','Re-deal notes')}</button>
       <button type="button" class="rBtn x" id="rClose">🚪 ${L('ปิดห้อง','Close room')}</button></div>`;
   needQR().then(()=>{ const q=document.getElementById('rQR'); if(q&&!q.firstChild) new QRCode(q,{text:link,width:240,height:240,correctLevel:QRCode.CorrectLevel.M}); }).catch(()=>{});
-  rSong.onchange=()=>{ pSong.value=rSong.value; pSong.onchange(); };
-  rTempo.oninput=()=>{ rTempoV.textContent=rTempo.value; pTempo.value=rTempo.value; pTempo.oninput(); };
-  rShow.onchange=()=>{ pShow.checked=rShow.checked; pShow.onchange(); };
-  rDrum.onchange=()=>{ pDrum.checked=rDrum.checked; pDrum.onchange(); };
+  syncRitSel();
+  rModeSeg.onclick=e=>{ const b=e.target.closest('button'); if(!b||ROOM.mode===b.dataset.v) return; roomStopAll(); ROOM.mode=b.dataset.v; roomRender(); };
+  if(ROOM.mode==='beat'){
+    rPat.onchange=()=>{ drumSel.value=rPat.value; drumSel.onchange(); };
+    rDTempo.oninput=()=>{ rDTempoV.textContent=rDTempo.value; drumTempo.value=rDTempo.value; drumTempo.oninput&&drumTempo.oninput(); };
+    rKlong.onchange=()=>{ useKlong.checked=rKlong.checked; };
+    rChing.onchange=()=>{ useChing.checked=rChing.checked; };
+    rBeatGo.onclick=roomBeatStart; rRit.onclick=()=>{ if(drumRitard()) ROOM.members.forEach(x=>roomSend(x,{t:'rit'})); };
+  } else {
+    rSong.onchange=()=>{ pSong.value=rSong.value; pSong.onchange(); };
+    rTempo.oninput=()=>{ rTempoV.textContent=rTempo.value; pTempo.value=rTempo.value; pTempo.oninput(); };
+    rShow.onchange=()=>{ pShow.checked=rShow.checked; pShow.onchange(); };
+    rDrum.onchange=()=>{ pDrum.checked=rDrum.checked; pDrum.onchange(); };
+    rStart.onclick=roomStart;
+  }
   roomBody.querySelectorAll('.rM select').forEach(se=>se.onchange=()=>{ const x=ROOM.members.get(se.closest('.rM').dataset.id); if(!x) return; x.notes[+se.dataset.k]=+se.value; roomSend(x,{t:'assign',notes:x.notes}); roomRender(); });
-  rStart.onclick=roomStart; rStopB.onclick=roomStopAll; rDeal.onclick=()=>{ autoAssign(true); roomRender(); }; rClose.onclick=roomClose;
+  rStopB.onclick=roomStopAll; rDeal.onclick=()=>{ autoAssign(true); roomRender(); }; rClose.onclick=roomClose;
 }
 function roomSend(m,d){ try{ m.conn.open && m.conn.send(d); }catch(e){} }
 function roomStatus(msg,err){ const el=document.getElementById('rMsg'); if(el) el.innerHTML=`<div class="rStat ${err?'err':''}">${msg}</div>`; }
@@ -1950,15 +2014,34 @@ function roomStart(){
   const lead=1.6, COUNT=4;
   const T0=ctx.currentTime+lead+COUNT*slotSec, startPerf=performance.now()+(T0-ctx.currentTime)*1000;
   const covered=new Set(); [...ROOM.members.values()].forEach(x=>{ x.score=null; x.notes.forEach(i=>covered.add(i)); });
-  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf};
+  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf,rit:ritBoxes};
   ROOM.members.forEach(x=>roomSend(x,msg));
   ROOM.playing=true; roomRender();
   const fill=document.getElementById('rFill'); const doFill=!fill||fill.checked;
-  pracRun({song,tempo,T0,light:false,drum:pDrum.checked,countSound:true,mineFn:()=>false,autoFn:a=>doFill&&!covered.has(a.idx),
+  pracRun({song,tempo,T0,rit:ritBoxes,light:false,drum:pDrum.checked,countSound:true,mineFn:()=>false,autoFn:a=>doFill&&!covered.has(a.idx),
     title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(song.name),onFinish:()=>{ ROOM.playing=false; roomRender(); }});
 }
-function roomStopAll(){ if(ROOM.role!=='host') return; ROOM.members.forEach(x=>roomSend(x,{t:'stop'})); ROOM.playing=false; pracStop(); roomRender(); }
-function roomClose(){ if(ROOM.role==='host'){ ROOM.members.forEach(x=>roomSend(x,{t:'closed'})); pracStop(); try{ ROOM.peer.destroy(); }catch(e){} }
+function roomStopAll(){ if(ROOM.role!=='host') return; ROOM.members.forEach(x=>roomSend(x,{t:'stop'})); ROOM.playing=false; pracStop(); drumStop(); roomRender(); }
+// เฉพาะจังหวะ: ครูตีกลอง–ฉิ่ง ส่งจังหวะฉิ่งให้จอนักเรียนกะพริบตาม
+function roomBeatStart(){
+  initAudio(); ctx.resume(); pracStop(); stopSong();
+  const tempo=+drumTempo.value, slotSec=60/tempo, COUNT=4, T0=ctx.currentTime+1.2+COUNT*slotSec;
+  const toPerf=t=>performance.now()+(t-ctx.currentTime)*1000;
+  for(let k=0;k<COUNT;k++) chingHit(k===0,T0-(COUNT-k)*slotSec);
+  const nm=drumSel.options[drumSel.selectedIndex].textContent.replace('🥁 ','');
+  ROOM.members.forEach(x=>roomSend(x,{t:'beat',name:nm,tempo,at:toPerf(T0),count:COUNT}));
+  drumStart(tempo,T0,{onHit:(c,t)=>{ const m={t:'tick',k:c,at:toPerf(t)}; ROOM.members.forEach(x=>roomSend(x,m)); },
+    onEnd:()=>{ ROOM.members.forEach(x=>roomSend(x,{t:'end'})); ROOM.playing=false; roomRender(); }});
+  ROOM.playing=true; roomRender(); closePop();
+  // แถบควบคุมด้านบนของเครื่องครู
+  prac.hidden=false; document.body.classList.add('practicing'); pAgain.hidden=true; pStrip.innerHTML=''; pScore.textContent='';
+  pTitle.textContent='🥁 '+L('ห้อง','Room')+' '+ROOM.code+' · '+nm+' · '+tempo;
+  pCnt.innerHTML=`<div><button type="button" class="pMini" id="pRitNow" style="font-size:1.05rem;padding:8px 16px">🐢 ${L('ทอดจบ','Slow down & end')}</button></div>`; pCnt.classList.add('on');
+  document.getElementById('pRitNow').onclick=()=>{ if(drumRitard()){ ROOM.members.forEach(x=>roomSend(x,{t:'rit'})); pCnt.innerHTML=`<div>🐢<small>${L('กำลังทอดจังหวะ…','Slowing down…')}</small></div>`; } };
+  setTimeout(fitKeys,50);
+}
+function roomCloseHelper(){}
+function roomClose(){ pAgain.hidden=false; if(ROOM.role==='host'){ ROOM.members.forEach(x=>roomSend(x,{t:'closed'})); pracStop(); try{ ROOM.peer.destroy(); }catch(e){} }
   for(const k in ROOM) delete ROOM[k]; ROOM.role=null; roomRender(); }
 function roomLogScore(x){ /* คะแนนแต่ละคนส่งจากเครื่องนักเรียนเอง (ดู memberFinish) */ }
 
@@ -1993,10 +2076,14 @@ function memberData(d){
     pShow.checked=!!d.show; syncEye();
     const localPerf=d.at-ROOM.offset, T0=ctx.currentTime+(localPerf-performance.now())/1000;
     const held=new Set(ROOM.notes||[]);
-    pracRun({song:d.song,tempo:+d.tempo,T0,light:true,drum:false,countSound:false,mineFn:a=>held.has(a.idx),autoFn:()=>false,
+    pracRun({song:d.song,tempo:+d.tempo,T0,rit:+d.rit||0,light:true,drum:false,countSound:false,mineFn:a=>held.has(a.idx),autoFn:()=>false,
       title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(d.song.name),
       onFinish:(hit,total)=>{ try{ ROOM.conn.send({t:'score',hit,total}); }catch(e){} }});
     return; }
+  if(d.t==='beat'){ memberBeat(d); return; }
+  if(d.t==='tick'){ const ms=d.at-ROOM.offset-performance.now(); setTimeout(()=>memberTick(d.k),Math.max(0,ms)); return; }
+  if(d.t==='rit'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('🐢 ครูกำลังทอดจังหวะ เตรียมจบเพลง','🐢 Slowing down — get ready to end'); return; }
+  if(d.t==='end'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('จบเพลง 👏','The end 👏'); const i=document.getElementById('bInd'); if(i) i.textContent='🎶'; return; }
   if(d.t==='stop'){ pracStop(true); memberWait(); return; }
   if(d.t==='closed'){ pracStop(); ROOM.err=L('ครูปิดห้องแล้ว','The teacher closed the room'); ROOM.connected=false; memberWait(); roomRender(); }
 }
@@ -2008,6 +2095,15 @@ function memberWait(){
   pScore.textContent=''; pStrip.innerHTML=''; pCnt.innerHTML=`<div>⏳<small>${ROOM.err?esc(ROOM.err):L('รอครูเริ่มเพลง…','Waiting for the teacher to start…')}</small></div>`; pCnt.classList.add('on');
   setTimeout(fitKeys,50);
 }
+function memberBeat(d){
+  pracStop(true); prac.hidden=false; document.body.classList.add('practicing'); pAgain.hidden=true;
+  pTitle.textContent='🥁 '+d.name+' · '+d.tempo; pScore.textContent=''; pStrip.innerHTML='';
+  pCnt.innerHTML=`<div><span id="bInd" class="bInd">${d.count}</span><small id="bSub">${L('บรรเลงเพลงของคุณตามจังหวะฉิ่ง','Play your song with the ching beat')}</small></div>`; pCnt.classList.add('on');
+  const T=d.at-ROOM.offset, spb=60000/d.tempo;
+  for(let k=0;k<d.count;k++) setTimeout(()=>{ const i=document.getElementById('bInd'); if(i) i.textContent=String(d.count-k); }, Math.max(0,T-(d.count-k)*spb-performance.now()));
+  setTimeout(fitKeys,50);
+}
+function memberTick(k){ const i=document.getElementById('bInd'); if(!i) return; i.textContent=k==='ching'?'●':'✕'; i.className='bInd '+k; pLane.classList.remove('tk'); void pLane.offsetWidth; pLane.classList.add('tk'); }
 function roomLeave(){ pAgain.hidden=false; try{ ROOM.peer&&ROOM.peer.destroy(); }catch(e){} pracStop(); for(const k in ROOM) delete ROOM[k]; ROOM.role=null; roomRender(); }
 
 // เปิดเมนูห้องวงแล้ววาดหน้าปัจจุบัน
