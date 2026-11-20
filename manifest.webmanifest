@@ -1,0 +1,17 @@
+{
+  "name": "อังกะลุงดิจิทัล · Digital Angklung",
+  "short_name": "อังกะลุง",
+  "description": "อังกะลุงดิจิทัล แอปพลิเคชั่นเพื่อการศึกษา พัฒนาโดย นายเจษฎา บุญญาภิชาติกาล",
+  "lang": "th",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf3e8",
+  "theme_color": "#b0521f",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
