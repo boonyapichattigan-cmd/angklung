@@ -483,6 +483,32 @@ body.phone.land .prac{--laneh:44px}
 #instHelp{z-index:80}
 #instBody ol{padding-left:1.3em;margin:.4em 0}
 #instBody .k{display:inline-block;border:1px solid #e6c9a8;background:#fff;border-radius:8px;padding:0 .4em;font-weight:700}
+
+/* ---------- ห้องวง ---------- */
+.rBig{display:grid;gap:10px}
+.rChoice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rChoice button,.rBtn{border:0;border-radius:16px;padding:14px 10px;font:inherit;font-weight:700;font-size:1.05rem;color:#fff;cursor:pointer;background:linear-gradient(145deg,#c0602a,#8a3b14)}
+.rChoice button.alt{background:linear-gradient(145deg,#2f9e44,#1f7a33)}
+.rChoice small{display:block;font-weight:400;font-size:.8rem;opacity:.9;margin-top:4px}
+.rJoin{display:flex;gap:8px;margin-top:6px}
+.rJoin input{flex:1;font-size:1.6rem;text-align:center;letter-spacing:.3em;padding:8px;border-radius:12px;border:1.5px solid #e6c9a8;min-width:0}
+.rCode{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid #ecd9c2;border-radius:16px;padding:10px 14px}
+.rCode .num{font-family:'Prompt',sans-serif;font-size:2.6rem;font-weight:800;letter-spacing:.12em;color:#8a3b14;line-height:1}
+.rCode .qr{width:120px;height:120px;flex:none}
+.rCode .qr img,.rCode .qr canvas{width:120px !important;height:120px !important}
+.rCode .lnk{font-size:.8rem;color:#8a6a50;word-break:break-all}
+.rList{display:grid;gap:6px;margin:10px 0}
+.rM{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f0e2d0;border-radius:12px;padding:6px 10px;flex-wrap:wrap}
+.rM b{flex:1;min-width:120px}
+.rM select{font-size:1rem;padding:3px 6px;border-radius:8px;width:auto !important;flex:none}
+.rM .sc{font-weight:700;color:#2f9e44;min-width:62px;text-align:right}
+.rMiss{font-size:.85rem;color:#8a6a50}
+.rStat{padding:8px 12px;border-radius:12px;background:#fff3e2;margin:8px 0;font-size:.95rem}
+.rStat.err{background:#fde8e8;color:#a11}
+.rRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.rRow .rBtn{flex:1;font-size:1rem;padding:11px 8px}
+.rRow .rBtn.g{background:linear-gradient(145deg,#2f9e44,#1f7a33)}
+.rRow .rBtn.x{background:#f3e4d2;color:#5a3a20}
 </style>
 </head>
 <body>
@@ -674,6 +700,7 @@ body.phone.land .prac{--laneh:44px}
     <button type="button" data-pop="set">⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></button>
     <button type="button" data-pop="drum">🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm</span></button>
     <button type="button" data-pop="prac">🎯 <span class="th">ฝึกซ้อม (ตามจังหวะ)</span><span class="en">Practice (play along)</span></button>
+    <button type="button" data-pop="room">👥 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></button>
     <button type="button" data-pop="song">🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></button>
     <button type="button" data-act="install" id="instMenu" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
     <button type="button" data-act="rate">⭐ <span class="th">ประเมินความพึงพอใจ</span><span class="en">Rate this app</span></button>
@@ -690,6 +717,7 @@ body.phone.land .prac{--laneh:44px}
   <div class="popBody" id="instBody" style="font-size:1.05rem;line-height:1.7"></div>
 </div></div>
 <div id="popStore" hidden>
+  <div class="card" id="roomCard"><div id="roomBody"></div></div>
   <div class="card" id="pracCard">
     <p class="hint" style="margin-top:0"><span class="th">เลือกเพลงและความเร็ว แอปจะนับ 1–2–3–4 แล้วตัวโน้ตจะเลื่อนผ่านเส้นจังหวะเหนือปุ่มกด ให้กดอังกะลุงตรงตัวโน้ตตอนที่ถึงเส้น</span><span class="en">Pick a song and tempo. After a 1–2–3–4 count-in, notes scroll across the line above the keys — press each angklung as its note reaches the line.</span></p>
     <div class="songPick"><label for="pSong"><span class="th">เพลง</span><span class="en i">Song</span></label><select id="pSong"></select></div>
@@ -1610,9 +1638,9 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
 // ---------- เมนูลอย + ป็อบอัพฟังก์ชัน ----------
 (function(){
   const setCard=tuneSeg.closest('.card'), drumCard=document.querySelector('.drumCard'), songCard=scoreBox.closest('.card');
-  [setCard,drumCard,songCard].forEach(c=>popStore.appendChild(c)); popStore.appendChild(pracCard);
+  [setCard,drumCard,songCard].forEach(c=>popStore.appendChild(c)); popStore.appendChild(pracCard); popStore.appendChild(roomCard);
   scoreBox.open=true;
-  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']}};
+  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']},room:{c:roomCard,t:['👥 ห้องวง · เล่นพร้อมกัน','👥 Band room · play together']}};
   let cur=null;
   window.openPop=k=>{ closePop(); const p=POPS[k]; cur=p; popTitle.textContent=L(p.t[0],p.t[1]); popBody.appendChild(p.c); pop.hidden=false; fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); };
   window.closePop=()=>{ if(cur){ popStore.appendChild(cur.c); cur=null; } pop.hidden=true; };
@@ -1708,23 +1736,31 @@ pEye.onclick=()=>{ pShow.checked=!pShow.checked; pShow.onchange(); };
 
 function keyElsFor(a){ return playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s]); }
 function pracSong(){ return pSong.value==='own' ? {name:L('โน้ตที่พิมพ์เอง','My notation'),shift:-7,text:ownText} : SONGS[+pSong.value]; }
-function pracStop(){
-  if(P.raf) cancelAnimationFrame(P.raf); (P.timers||[]).forEach(clearTimeout); (P.voices||[]).forEach(v=>{ try{ v.g.gain.setTargetAtTime(0,ctx.currentTime,0.03); v.src.stop(ctx.currentTime+0.2);}catch(e){} });
-  if(P.run && drumRun && drumRun.rate) drumStop();
+function pracStop(keepBar){
+  if(P.raf) cancelAnimationFrame(P.raf); (P.timers||[]).forEach(clearTimeout); P.timers=[];
+  (P.voices||[]).forEach(v=>{ try{ v.g.gain.setTargetAtTime(0,ctx.currentTime,0.03); v.src.stop(ctx.currentTime+0.2);}catch(e){} }); P.voices=[];
+  if(P.drumOn && drumRun && drumRun.rate) drumStop();
   document.querySelectorAll('.ak.cue').forEach(e=>e.classList.remove('cue'));
-  P.run=false; prac.hidden=true; document.body.classList.remove('practicing'); setTimeout(fitKeys,50);
+  P.run=false;
+  if(!keepBar){ prac.hidden=true; document.body.classList.remove('practicing'); setTimeout(fitKeys,50); }
 }
+// เริ่มฝึกซ้อมจากหน้าต่างตั้งค่า (เครื่องเดียว)
 function pracStart(){
-  initAudio(); ctx.resume(); loadAngklung(); stopSong(); pracStop(); closePop();
-  const song=pracSong(), boxes=parseSheet(song.text), order=playOrder(boxes);
-  const tempoV=+pTempo.value, slotSec=60/tempoV;
-  // ทุกช่องจังหวะเรียงตามลำดับเล่นจริง
+  initAudio(); ctx.resume(); closePop();
+  pracRun({song:pracSong(), tempo:+pTempo.value, light:pLight.checked, drum:pDrum.checked, countSound:true,
+    autoFn:a=>playMode==='band' && pBand.checked});
+}
+// ตัวเล่นกลาง: ใช้ทั้งฝึกเดี่ยวและห้องวง
+// opt: song, tempo, light, drum, countSound, T0 (เวลาเสียงของจังหวะแรก), mineFn(a), autoFn(a), title, onFinish(hit,total)
+function pracRun(opt){
+  initAudio(); ctx.resume(); loadAngklung(); stopSong(); pracStop(true);
+  const song=opt.song, boxes=parseSheet(song.text), order=playOrder(boxes);
+  const tempoV=opt.tempo, slotSec=60/tempoV;
   const cells=[]; order.forEach(bi=>{ const b=boxes[bi]; for(let k=0;k<4;k++) cells.push({st:k<b.slots.length?b.slots[k]:null, bs:k===0}); });
-  // ความยาวโน้ต = จนถึงโน้ตถัดไป (สูงสุด 2 ช่อง)
   const ev=[]; cells.forEach((c,i)=>{ if(c.st===null) return; const a=AK[fitStep(c.st+song.shift)+7]; ev.push({i,a}); });
   ev.forEach((e,k)=>{ const nx=k+1<ev.length?ev[k+1].i:cells.length; e.len=Math.min(nx-e.i,2); });
-  const mineOf=a=> playMode==='solo' || [0,1].some(s=>akOf(s).idx===a.idx);
-  pTitle.textContent='🎯 '+pair(song.name)+' · '+tempoV;
+  const mineOf=opt.mineFn || (a=> playMode==='solo' || [0,1].some(s=>akOf(s).idx===a.idx));
+  pTitle.textContent=opt.title || ('🎯 '+pair(song.name)+' · '+tempoV);
   pStrip.innerHTML=cells.map((c,i)=>{
     if(c.st===null) return `<div class="c rest${c.bs?' bs':''}">·</div>`;
     const e=ev.find(x=>x.i===i), m=mineOf(e.a);
@@ -1734,26 +1770,26 @@ function pracStart(){
   prac.hidden=false; document.body.classList.add('practicing'); fitKeys();
   const laneW=pLane.clientWidth, cw=Math.max(34,Math.min(72,laneW/9)); pLane.style.setProperty('--cw',cw+'px');
   const headX=Math.round(laneW*0.28); pLane.style.setProperty('--headx',headX+'px');
-  const COUNT=4, T0=ctx.currentTime+0.3+COUNT*slotSec;
-  Object.assign(P,{run:true,ev,cells,slotSec,T0,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:T0+cells.length*slotSec});
-  pScore.textContent=`0/${P.total}`; pCnt.classList.remove('on');
-  // นับ 1-2-3-4 ด้วยเสียงฉิ่ง
-  for(let k=0;k<COUNT;k++) chingHit(k===0, T0-(COUNT-k)*slotSec);
-  if(pDrum.checked) drumStart(tempoV,T0);
+  const COUNT=4, T0=opt.T0 || ctx.currentTime+0.3+COUNT*slotSec;
+  Object.assign(P,{run:true,ev,cells,slotSec,T0,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],
+    win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:T0+cells.length*slotSec,onFinish:opt.onFinish,drumOn:!!opt.drum});
+  pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
+  if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
+  if(opt.drum) drumStart(tempoV,T0);
   const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
   ev.forEach(e=>{
     const ts=T0+e.i*slotSec, te=ts+e.len*slotSec*0.9; e.t=ts;
-    if(!e.mine){ if(playMode==='band' && pBand.checked) songNote(e.a,ts,te,rackEls[e.a.idx]||[]); return; }
-    if(pLight.checked){ const els=keyElsFor(e.a);
-      P.timers.push(setTimeout(()=>{ if(pLight.checked) els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
+    if(!e.mine){ if(opt.autoFn && opt.autoFn(e.a) && ts>ctx.currentTime) songNote(e.a,ts,te,playMode==='solo'?[soloEls[e.a.idx]]:(rackEls[e.a.idx]||[])); return; }
+    if(opt.light){ const els=keyElsFor(e.a);
+      P.timers.push(setTimeout(()=>{ if(pLight.checked||ROOM.role==='member') els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
       P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); }
   });
-  P.voices=songVoices.splice(0);   // เสียงที่แอปบรรเลงแทน (ไว้หยุดเมื่อปิด)
+  P.voices=songVoices.splice(0);
   const loop=()=>{
     if(!P.run) return;
     const t=ctx.currentTime, pos=(t-P.T0)/P.slotSec;
     pStrip.style.transform=`translateX(${P.headX-pos*P.cw}px)`;
-    if(pos<0){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.min(COUNT,Math.ceil(-pos))); }
+    if(pos<0){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); }
     else if(t<P.end) pCnt.classList.remove('on');
     P.ev.forEach(e=>{ if(e.mine && e.state===null && t>e.t+P.win){ e.state='miss'; e.el.classList.add('miss'); } });
     if(t>P.end+0.4){ pracFinish(); return; }
@@ -1769,14 +1805,16 @@ function pracPress(a){
   else if(t>P.T0-0.1){ pLane.classList.remove('oops'); void pLane.offsetWidth; pLane.classList.add('oops'); }
 }
 function pracFinish(){
-  P.run=false; if(drumRun && drumRun.rate) drumStop();
+  P.run=false; if(P.drumOn && drumRun && drumRun.rate) drumStop();
+  if(P.onFinish) try{ P.onFinish(P.hit,P.total); }catch(e){}
+  if(!P.total){ pCnt.innerHTML=`<div>🎶<small>${L('จบเพลง','End of song')}</small></div>`; pCnt.classList.add('on'); return; }
   const pct=P.total?Math.round(P.hit*100/P.total):0, stars=pct>=90?5:pct>=75?4:pct>=60?3:pct>=40?2:1;
   pCnt.innerHTML=`<div>${'⭐'.repeat(stars)}<small>${L('กดถูกจังหวะ','On time')} ${P.hit}/${P.total} · ${pct}%<br>${pct>=90?L('ยอดเยี่ยม!','Excellent!'):pct>=60?L('ดีมาก ฝึกต่ออีกนิด','Great — keep practising'):L('ลองลดความเร็วแล้วฝึกใหม่','Try a slower tempo')}</small></div>`;
   pCnt.classList.add('on');
 }
 pStart.onclick=pracStart;
-pAgain.onclick=pracStart;
-pStop.onclick=pracStop;
+pAgain.onclick=()=>{ if(ROOM.role) return; pracStart(); };
+pStop.onclick=()=>{ if(ROOM.role==='member'){ roomLeave(); return; } pracStop(); };
 
 // ---------- ปุ่มติดตั้งแอป (เฉพาะเว็บแอปที่วางบนเว็บไซต์เอง) ----------
 let instPrompt=null;
@@ -1802,6 +1840,183 @@ function doInstall(){
 instBtn.onclick=doInstall; instX.onclick=()=>instHelp.hidden=true;
 instHelp.addEventListener('pointerdown',e=>{ if(e.target===instHelp) instHelp.hidden=true; });
 updInst();
+
+// ---------- ห้องวง: เล่นพร้อมกันหลายเครื่อง (เชื่อมเครื่องต่อเครื่องด้วย PeerJS / WebRTC) ----------
+const ROOM={role:null};
+const PEER_PREFIX='bodin-angklung-';
+const WEBAPP_URL='https://boonyapichattigan-cmd.github.io/angklung/';
+const pendingRoom=(()=>{ try{ return new URLSearchParams(location.search).get('room'); }catch(e){ return null; } })();
+function loadScript(srcs){ return new Promise((res,rej)=>{ const go=i=>{ if(i>=srcs.length) return rej(new Error('load')); const el=document.createElement('script'); el.src=srcs[i]; el.onload=res; el.onerror=()=>{ el.remove(); go(i+1); }; document.head.appendChild(el); }; go(0); }); }
+async function needPeer(){ if(!window.Peer) await loadScript(['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js']); }
+async function needQR(){ if(!window.QRCode) await loadScript(['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js']); }
+function peerOpts(){ let q; try{ q=new URLSearchParams(location.search); }catch(e){ return {debug:0}; } const h=q.get('peerhost');
+  return h?{host:h,port:+(q.get('peerport')||9000),path:'/',secure:false,debug:0,config:{iceServers:[]}}:{debug:0}; }
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const noteName=i=>AK[i].n+(AK[i].oct===-1?L(' ต่ำ',' low'):'');
+
+function roomRender(){
+  if(!STANDALONE){
+    roomBody.innerHTML=`<p>${L('การเล่นพร้อมกันหลายเครื่องใช้ได้ในเว็บแอปเท่านั้น','Playing together works in the web app only')}</p>
+      <p><a class="btn" href="${WEBAPP_URL}" target="_blank" rel="noopener">🌐 ${L('เปิดเว็บแอปอังกะลุงดิจิทัล','Open the Digital Angklung web app')}</a></p>`; return;
+  }
+  if(!ROOM.role){
+    roomBody.innerHTML=`<div class="rBig">
+      <p class="hint" style="margin:0">${L('ครูสร้างห้อง แล้วให้นักเรียนสแกน QR หรือกรอกรหัส 4 หลัก ทุกเครื่องจะบรรเลงเพลงเดียวกันพร้อมกัน แต่ละคนถืออังกะลุง 2 เสียง','The teacher creates a room; students scan the QR or enter the 4-digit code. Every device plays the same song together, each student holding 2 notes.')}</p>
+      <div class="rChoice">
+        <button type="button" id="rHost">🧑‍🏫 ${L('สร้างห้อง','Create room')}<small>${L('สำหรับครู / ผู้นำวง','for the teacher')}</small></button>
+        <button type="button" class="alt" id="rJoinBtn">🙋 ${L('เข้าร่วมห้อง','Join a room')}<small>${L('สำหรับนักเรียน','for students')}</small></button>
+      </div>
+      <div class="rJoin"><input id="rCodeIn" inputmode="numeric" maxlength="4" placeholder="0000" value="${esc(pendingRoom||'')}"></div>
+      <div id="rMsg"></div></div>`;
+    rHost.onclick=roomCreate;
+    rJoinBtn.onclick=()=>{ const c=(rCodeIn.value||'').replace(/\D/g,''); if(c.length!==4){ rMsg.innerHTML=`<div class="rStat err">${L('กรุณากรอกรหัสห้อง 4 หลัก','Please enter the 4-digit room code')}</div>`; return; } roomJoin(c); };
+    return;
+  }
+  if(ROOM.role==='member'){
+    const m=ROOM.notes;
+    roomBody.innerHTML=`<div class="rStat ${ROOM.err?'err':''}">${ROOM.err?esc(ROOM.err):(ROOM.connected?`✅ ${L('อยู่ในห้อง','In room')} <b>${ROOM.code}</b> · ${m?L('คุณถือ','You hold')+' <b>'+noteName(m[0])+' + '+noteName(m[1])+'</b>':L('รอครูแจกเสียง…','Waiting for notes…')}`:L('กำลังเชื่อมต่อห้อง…','Connecting…'))}</div>
+      <p class="hint">${L('รอครูกดเริ่ม แถบโน้ตจะนับ 4–3–2–1 แล้วเริ่มพร้อมกันทุกเครื่อง','Wait for the teacher to start — everyone counts in 4–3–2–1 together.')}</p>
+      <div class="rRow"><button type="button" class="rBtn x" id="rLeave">🚪 ${L('ออกจากห้อง','Leave room')}</button></div>`;
+    rLeave.onclick=roomLeave; return;
+  }
+  // ครู
+  const mem=[...ROOM.members.values()];
+  const covered=new Set(); mem.forEach(x=>x.notes.forEach(i=>covered.add(i)));
+  const missing=AK.filter(a=>!covered.has(a.idx)).map(a=>noteName(a.idx)).join(', ');
+  const opts=sel=>AK.map(a=>`<option value="${a.idx}"${a.idx===sel?' selected':''}>${noteName(a.idx)}</option>`).join('');
+  const link=WEBAPP_URL+'?room='+ROOM.code;
+  roomBody.innerHTML=`<div class="rCode"><div class="qr" id="rQR"></div><div><div class="hint" style="margin:0">${L('รหัสห้อง','Room code')}</div><div class="num">${ROOM.code}</div><div class="lnk">${esc(link)}</div></div></div>
+    <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ (เครื่องครูเล่นแทน)','Uncovered notes (teacher device plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ 14 เสียง','all 14 notes covered')}</div>
+    <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.name)}<small style="font-weight:400;color:#8a6a50"> ${esc(x.info||'')}</small></b>
+      <select data-k="0">${opts(x.notes[0])}</select><select data-k="1">${opts(x.notes[1])}</select>
+      <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มีนักเรียนเข้าห้อง','No students yet')}</p>`}</div>
+    <div class="songPick"><label>${L('เพลง','Song')}</label><select id="rSong">${[...pSong.options].map(o=>`<option value="${o.value}"${o.value===pSong.value?' selected':''}>${o.textContent}</option>`).join('')}</select></div>
+    <div class="bar" style="margin-top:8px"><label class="sl">${L('ความเร็ว','Tempo')} <input type="range" id="rTempo" min="40" max="240" step="5" value="${pTempo.value}"> <span id="rTempoV">${pTempo.value}</span></label></div>
+    <div class="pOpts"><label class="sl"><input type="checkbox" id="rShow"${pShow.checked?' checked':''}> ${L('นักเรียนเห็นตัวโน้ต','Students see notes')}</label>
+      <label class="sl"><input type="checkbox" id="rDrum"${pDrum.checked?' checked':''}> ${L('กลองแขก–ฉิ่ง (เครื่องครู)','Drums & ching (teacher device)')}</label>
+      <label class="sl"><input type="checkbox" id="rFill" checked> ${L('เครื่องครูเล่นเสียงที่ไม่มีคนถือ','Teacher device plays uncovered notes')}</label></div>
+    <div class="rRow">
+      <button type="button" class="rBtn g" id="rStart">▶ ${L('เริ่มบรรเลงพร้อมกัน','Start together')}</button>
+      <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>
+    <div class="rRow"><button type="button" class="rBtn x" id="rDeal">🔀 ${L('แจกเสียงใหม่','Re-deal notes')}</button>
+      <button type="button" class="rBtn x" id="rClose">🚪 ${L('ปิดห้อง','Close room')}</button></div>`;
+  needQR().then(()=>{ const q=document.getElementById('rQR'); if(q&&!q.firstChild) new QRCode(q,{text:link,width:240,height:240,correctLevel:QRCode.CorrectLevel.M}); }).catch(()=>{});
+  rSong.onchange=()=>{ pSong.value=rSong.value; pSong.onchange(); };
+  rTempo.oninput=()=>{ rTempoV.textContent=rTempo.value; pTempo.value=rTempo.value; pTempo.oninput(); };
+  rShow.onchange=()=>{ pShow.checked=rShow.checked; pShow.onchange(); };
+  rDrum.onchange=()=>{ pDrum.checked=rDrum.checked; pDrum.onchange(); };
+  roomBody.querySelectorAll('.rM select').forEach(se=>se.onchange=()=>{ const x=ROOM.members.get(se.closest('.rM').dataset.id); if(!x) return; x.notes[+se.dataset.k]=+se.value; roomSend(x,{t:'assign',notes:x.notes}); roomRender(); });
+  rStart.onclick=roomStart; rStopB.onclick=roomStopAll; rDeal.onclick=()=>{ autoAssign(true); roomRender(); }; rClose.onclick=roomClose;
+}
+function roomSend(m,d){ try{ m.conn.open && m.conn.send(d); }catch(e){} }
+function roomStatus(msg,err){ const el=document.getElementById('rMsg'); if(el) el.innerHTML=`<div class="rStat ${err?'err':''}">${msg}</div>`; }
+
+// ===== ครู =====
+async function roomCreate(){
+  roomStatus(L('กำลังสร้างห้อง…','Creating room…'));
+  try{ await needPeer(); }catch(e){ roomStatus(L('โหลดระบบเชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ต','Could not load the connection library — check the internet'),true); return; }
+  initAudio(); ctx.resume(); loadAngklung(); loadSamples();
+  let peer=null, code=null;
+  for(let k=0;k<6 && !peer;k++){
+    code=String(1000+Math.floor(Math.random()*9000));
+    peer=await new Promise(res=>{ const p=new Peer(PEER_PREFIX+code,peerOpts()); const to=setTimeout(()=>{ try{p.destroy();}catch(e){} res(null); },12000);
+      p.on('open',()=>{ clearTimeout(to); res(p); }); p.on('error',e=>{ clearTimeout(to); try{p.destroy();}catch(_){} res(e&&e.type==='unavailable-id'?null:(ROOM.lastErr=e,null)); }); });
+  }
+  if(!peer){ roomStatus(L('สร้างห้องไม่สำเร็จ ลองใหม่อีกครั้ง หรือเปลี่ยนเครือข่าย','Could not create the room — try again or use another network'),true); return; }
+  Object.assign(ROOM,{role:'host',code,peer,members:new Map(),playing:false});
+  peer.on('connection',conn=>{
+    conn.on('data',d=>hostData(conn,d));
+    conn.on('close',()=>{ ROOM.members.delete(conn.peer); if(ROOM.role==='host') roomRender(); });
+  });
+  peer.on('disconnected',()=>{ try{ peer.reconnect(); }catch(e){} });
+  roomRender();
+}
+function hostData(conn,d){
+  if(!d||ROOM.role!=='host') return;
+  if(d.t==='ping'){ conn.send({t:'pong',c:d.c,h:performance.now()}); return; }
+  if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),notes:[0,7],score:null};
+    ROOM.members.set(conn.peer,x); autoAssignOne(x); roomRender(); return; }
+  if(d.t==='score'){ const x=ROOM.members.get(conn.peer); if(x){ const hit=+d.hit||0,total=+d.total||0; x.score={hit,total,pct:total?Math.round(hit*100/total):0}; roomRender(); roomLogScore(x); } }
+}
+// แจกเสียง: คนที่ k ได้เสียง k และ k+7 (ชื่อเดียวกัน ต่ำ–กลาง) เติมเสียงที่ยังไม่มีคนถือก่อน
+function autoAssignOne(x){
+  const used=new Map(); [...ROOM.members.values()].forEach(m=>{ if(m!==x) used.set(m.notes[0]%7,(used.get(m.notes[0]%7)||0)+1); });
+  let best=0,bn=1e9; for(let p=0;p<7;p++){ const n=used.get(p)||0; if(n<bn){ bn=n; best=p; } }
+  x.notes=[best,best+7]; roomSend(x,{t:'assign',notes:x.notes});
+}
+function autoAssign(){ [...ROOM.members.values()].forEach((x,k)=>{ const p=k%7; x.notes=[p,p+7]; roomSend(x,{t:'assign',notes:x.notes}); }); }
+function roomStart(){
+  const song=pracSong(), tempo=+pTempo.value, slotSec=60/tempo;
+  const lead=1.6, COUNT=4;
+  const T0=ctx.currentTime+lead+COUNT*slotSec, startPerf=performance.now()+(T0-ctx.currentTime)*1000;
+  const covered=new Set(); [...ROOM.members.values()].forEach(x=>{ x.score=null; x.notes.forEach(i=>covered.add(i)); });
+  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf};
+  ROOM.members.forEach(x=>roomSend(x,msg));
+  ROOM.playing=true; roomRender();
+  const fill=document.getElementById('rFill'); const doFill=!fill||fill.checked;
+  pracRun({song,tempo,T0,light:false,drum:pDrum.checked,countSound:true,mineFn:()=>false,autoFn:a=>doFill&&!covered.has(a.idx),
+    title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(song.name),onFinish:()=>{ ROOM.playing=false; roomRender(); }});
+}
+function roomStopAll(){ if(ROOM.role!=='host') return; ROOM.members.forEach(x=>roomSend(x,{t:'stop'})); ROOM.playing=false; pracStop(); roomRender(); }
+function roomClose(){ if(ROOM.role==='host'){ ROOM.members.forEach(x=>roomSend(x,{t:'closed'})); pracStop(); try{ ROOM.peer.destroy(); }catch(e){} }
+  for(const k in ROOM) delete ROOM[k]; ROOM.role=null; roomRender(); }
+function roomLogScore(x){ /* คะแนนแต่ละคนส่งจากเครื่องนักเรียนเอง (ดู memberFinish) */ }
+
+// ===== นักเรียน =====
+async function roomJoin(code){
+  roomStatus(L('กำลังเข้าห้อง…','Joining…'));
+  try{ await needPeer(); }catch(e){ roomStatus(L('โหลดระบบเชื่อมต่อไม่ได้ ตรวจสอบอินเทอร์เน็ต','Could not load the connection library — check the internet'),true); return; }
+  initAudio(); ctx.resume(); loadAngklung();
+  Object.assign(ROOM,{role:'member',code,connected:false,err:null,notes:null,offset:0,bestRtt:1e9});
+  roomRender();
+  const peer=new Peer(undefined,peerOpts()); ROOM.peer=peer;
+  const fail=msg=>{ if(ROOM.role!=='member') return; ROOM.err=msg; roomRender(); };
+  const to=setTimeout(()=>{ if(!ROOM.connected) fail(L('ไม่พบห้อง '+code+' หรือเชื่อมต่อไม่ได้ (ลองใช้ Wi-Fi เดียวกับครู)','Room '+code+' not found or unreachable (try the same Wi-Fi as the teacher)')); },15000);
+  peer.on('error',e=>{ if(e&&e.type==='peer-unavailable') fail(L('ไม่พบห้อง '+code+' ตรวจสอบรหัสอีกครั้ง','Room '+code+' not found — check the code')); else if(!ROOM.connected) fail(L('เชื่อมต่อไม่ได้','Connection failed')+' ('+(e&&e.type||'')+')'); });
+  peer.on('open',()=>{
+    const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn;
+    conn.on('open',()=>{ clearTimeout(to); ROOM.connected=true; ROOM.err=null;
+      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),info:u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:(u.school||'')});
+      clockSync(); roomRender(); });
+    conn.on('data',memberData);
+    conn.on('close',()=>{ if(ROOM.role==='member'){ ROOM.connected=false; ROOM.err=L('หลุดจากห้อง','Disconnected from the room'); pracStop(true); memberWait(); roomRender(); } });
+  });
+}
+function clockSync(){ let n=0; const tick=()=>{ if(ROOM.role!=='member'||!ROOM.conn||!ROOM.conn.open) return; ROOM.conn.send({t:'ping',c:performance.now()}); if(++n<10) setTimeout(tick,120); }; tick(); }
+function memberData(d){
+  if(!d||ROOM.role!=='member') return;
+  if(d.t==='pong'){ const now=performance.now(), rtt=now-d.c; if(rtt<ROOM.bestRtt){ ROOM.bestRtt=rtt; ROOM.offset=d.h-(d.c+rtt/2); } return; }
+  if(d.t==='assign'){ const [x,y]=d.notes; ROOM.notes=[x,y];
+    slots=[x*2, y*2+(x===y?1:0)]; store.set('slots28v2',slots); syncPickers(); renderSlot(0); renderSlot(1); updateSummary();
+    setPlayMode('band','play'); closePop(); memberWait(); roomRender(); return; }
+  if(d.t==='start'){
+    pShow.checked=!!d.show; syncEye();
+    const localPerf=d.at-ROOM.offset, T0=ctx.currentTime+(localPerf-performance.now())/1000;
+    const held=new Set(ROOM.notes||[]);
+    pracRun({song:d.song,tempo:+d.tempo,T0,light:true,drum:false,countSound:false,mineFn:a=>held.has(a.idx),autoFn:()=>false,
+      title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(d.song.name),
+      onFinish:(hit,total)=>{ try{ ROOM.conn.send({t:'score',hit,total}); }catch(e){} }});
+    return; }
+  if(d.t==='stop'){ pracStop(true); memberWait(); return; }
+  if(d.t==='closed'){ pracStop(); ROOM.err=L('ครูปิดห้องแล้ว','The teacher closed the room'); ROOM.connected=false; memberWait(); roomRender(); }
+}
+function memberWait(){
+  if(ROOM.role!=='member') return;
+  pAgain.hidden=true;
+  prac.hidden=false; document.body.classList.add('practicing');
+  pTitle.textContent='👥 '+L('ห้อง','Room')+' '+ROOM.code+(ROOM.notes?' · '+L('ถือ','holding')+' '+noteName(ROOM.notes[0])+' + '+noteName(ROOM.notes[1]):'');
+  pScore.textContent=''; pStrip.innerHTML=''; pCnt.innerHTML=`<div>⏳<small>${ROOM.err?esc(ROOM.err):L('รอครูเริ่มเพลง…','Waiting for the teacher to start…')}</small></div>`; pCnt.classList.add('on');
+  setTimeout(fitKeys,50);
+}
+function roomLeave(){ pAgain.hidden=false; try{ ROOM.peer&&ROOM.peer.destroy(); }catch(e){} pracStop(); for(const k in ROOM) delete ROOM[k]; ROOM.role=null; roomRender(); }
+
+// เปิดเมนูห้องวงแล้ววาดหน้าปัจจุบัน
+document.querySelector('.fabMenu [data-pop="room"]').addEventListener('click',roomRender,true);
+roomRender();
+// เปิดจากลิงก์/QR ของห้อง: เข้าห้องอัตโนมัติหลังเลือกโหมด
+if(pendingRoom && STANDALONE){
+  document.querySelectorAll('.wbtn[data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{ if(!ROOM.role){ openPop('room'); roomJoin(pendingRoom); } },500)));
+}
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
