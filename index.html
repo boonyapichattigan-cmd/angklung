@@ -400,7 +400,7 @@ body.landing .fab,body.band-pick .fab .scrollF{}
 .scrollF.drag{background:#fff3e2;box-shadow:0 0 0 4px #c0602a55,0 6px 18px #0004}
 .stopF{background:linear-gradient(145deg,#d33,#911);font-size:1.1rem;animation:pulseF 1.2s infinite}
 @keyframes pulseF{50%{box-shadow:0 0 0 8px #d3333322,0 6px 18px #0004}}
-.fabMenu{background:rgba(255,252,247,.97);border:1px solid #ecd9c2;border-radius:18px;box-shadow:0 14px 40px #0003;padding:8px;display:flex;flex-direction:column;min-width:230px;backdrop-filter:blur(10px)}
+.fabMenu{max-height:calc(100vh - 90px);max-height:calc(100dvh - 90px);overflow-y:auto;overscroll-behavior:contain;background:rgba(255,252,247,.97);border:1px solid #ecd9c2;border-radius:18px;box-shadow:0 14px 40px #0003;padding:8px;display:flex;flex-direction:column;min-width:230px;backdrop-filter:blur(10px)}
 .fab[hidden],.fabMenu[hidden],.pop[hidden],.fabBtn[hidden]{display:none !important}
 .fabMenu button{border:0;background:none;text-align:left;font:inherit;font-size:1rem;padding:11px 12px;border-radius:12px;cursor:pointer;color:#3b2414}
 .fabMenu button:hover,.fabMenu button:active{background:#f6e7d4}
@@ -522,6 +522,7 @@ body.phone.land .prac{--laneh:44px}
 .impItem .rBtn{white-space:nowrap}
 .impItem textarea{width:100%;min-height:90px;font-size:1.1rem;font-family:'Sarabun',sans-serif;margin-top:8px;border-radius:10px;border:1px solid #e6c9a8;padding:8px}
 .impPrev{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.impPrev[hidden],.gHost[hidden]{display:none !important}
 .impPrev .b{border:1px solid #e9d6bf;border-radius:6px;padding:2px 6px;font-size:.9rem;background:#fffaf3;white-space:nowrap}
 .impPrev .b.bad{background:#fde8e8;border-color:#f0b4b4}
 .impInfo{font-size:.85rem;color:#8a6a50;margin-top:4px}
@@ -535,6 +536,39 @@ body.phone.land .prac{--laneh:44px}
 .dbx.pair{display:flex;flex-direction:column;gap:2px}
 .dbx .drow{display:flex;align-items:center;gap:2px}
 .dbx .dlab{font-style:normal;font-size:.6rem;color:#8a6a50;min-width:1.8em}
+
+/* ---------- โน้ตแบบไทย: บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ ---------- */
+.mel8{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1.5px solid #8a7457;border-radius:10px;background:#fff}
+.mel8 .row{display:grid;grid-template-columns:repeat(8,minmax(62px,1fr));min-width:520px}
+.mel8 .row+.row{border-top:1px solid #cdb68f}
+.mel8 .sb{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;border-right:1px solid #cdb68f;padding:8px 2px 10px;min-height:44px;position:relative;transition:background .1s}
+.mel8 .sb:last-child{border-right:0}
+.mel8 .sb.ro{border-left:3px double #8a7457}.mel8 .sb.rc{border-right:3px double #8a7457}
+.mel8 .sb.empty{background:#fbf7f1}
+.mel8 .sb.now{background:linear-gradient(180deg,#ffe9a8,#ffd978)}
+.mel8 .s{text-align:center;font-family:'Prompt',sans-serif;font-weight:700;font-size:1.05rem;line-height:1;position:relative}
+.mel8 .s.r{color:#c4ad91;font-weight:400}
+.mel8 .s .nt{position:relative;display:inline-block}
+.mel8 .rlab{grid-column:1/-1;background:#f3e6cf;font-size:.8rem;padding:2px 8px;color:#6b4a30}
+/* ตัวแก้ไข */
+.g8{overflow-x:auto;border:1.5px solid #8a7457;border-radius:10px;background:#fff}
+.g8 .row{display:grid;grid-template-columns:28px repeat(8,minmax(62px,1fr));min-width:560px;border-bottom:1px solid #e5d3b8}
+.g8 .rn{display:grid;place-items:center;font-size:.75rem;color:#8a6a50;background:#f8efe2}
+.g8 input{border:0;border-right:1px solid #e5d3b8;padding:10px 2px;text-align:center;font-family:'Prompt',sans-serif;font-size:1.05rem;letter-spacing:.08em;min-width:0;background:transparent}
+.g8 input:focus{outline:2px solid #c0602a;outline-offset:-2px;background:#fff8ee}
+.g8 input.bad{background:#fde8e8}
+.g8 input.ok{background:#f2fbf3}
+.gPal{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.gPal button{min-width:42px;height:42px;border-radius:10px;border:1px solid #e6c9a8;background:#fff;font-family:'Prompt',sans-serif;font-size:1.15rem;font-weight:700;cursor:pointer}
+.gPal button.mk{background:#fff3e2}.gPal button.ac{background:#f3e4d2;font-size:.9rem;font-weight:600}
+.gBar{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.gInfo{font-size:.85rem;color:#8a6a50;margin-top:4px}.gInfo.err{color:#b02a2a}
+body.phone:not(.land) .mel8 .row{grid-template-columns:repeat(8,minmax(0,1fr));min-width:0}
+body.phone:not(.land) .mel8 .sb{padding:7px 0 9px;min-height:36px}
+body.phone:not(.land) .mel8 .s{font-size:.74rem}
+body.phone:not(.land) .g8 .row{grid-template-columns:18px repeat(8,minmax(0,1fr));min-width:0}
+body.phone:not(.land) .g8 input{font-size:.72rem;letter-spacing:0;padding:9px 0}
+body.phone:not(.land) .gPal button{min-width:38px;height:40px}
 </style>
 </head>
 <body>
@@ -709,8 +743,9 @@ body.phone.land .prac{--laneh:44px}
           </div>
           <details class="own" id="ownBox">
             <summary>✏️ <span class="th">พิมพ์โน้ตเพลงเอง</span><span class="en i">Write your own notation</span></summary>
-            <p class="hint">พิมพ์ทีละห้อง ห้องละ 4 ตัว คั่นห้องด้วย | และขึ้นบรรทัดใหม่ได้ · <b>-</b> = เว้นจังหวะ · เสียงสูงใส่ ํ เช่น ดํ รํ · เสียงต่ำใส่ ุ เช่น ลุ · วงเล็บ ( ) = เล่นซ้ำ<br>ตัวอย่าง: ---- | ---ล | --ซล | ดํรํ-ดํ</p>
-            <textarea id="score"></textarea>
+            <p class="hint"><span class="th">บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แตะช่องห้องแล้วกดปุ่มโน้ตด้านล่าง (หรือพิมพ์เอง) · <b>-</b> = เว้นจังหวะ · ดุ = เสียงต่ำ (แสดงเป็นจุดล่าง) · ดํ = เสียงสูง (จุดบน)</span><span class="en">8 bars per line, 4 beats per bar. Tap a bar, then use the note buttons (or type). - = rest.</span></p>
+            <div id="ownGrid"></div>
+            <textarea id="score" hidden></textarea>
             <button class="btn alt" id="useOwn" style="margin-top:6px"><span class="th">ใช้โน้ตนี้</span><span class="en i">Use</span></button>
           </details>
         </details>
@@ -1619,17 +1654,71 @@ function playOrder(boxes){
   return order;
 }
 function fitStep(st){ while(st<-7) st+=7; while(st>6) st-=7; return st; }
+
+// ---------- แสดงโน้ตเพลงไทย: บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ ----------
+function noteSpan(st){
+  const i=((st%7)+7)%7, oct=Math.floor(st/7), c=NOTES[i];
+  return `<span class="nt" style="color:${c.c}">${c.n}${oct>0?'<i class="dot hi"></i>':oct<0?'<i class="dot lo"></i>':''}</span>`;
+}
+function renderSheet8(boxes,el){
+  // รวมห้องตามบรรทัดเดิม แล้วตัดทุก 8 ห้อง
+  const rows=[]; let cur=null, lastLine=-1;
+  boxes.forEach((b,i)=>{ if(!cur||b.line!==lastLine||cur.length===8){ cur=[]; rows.push(cur); lastLine=b.line; } cur.push(i); });
+  const els=[];
+  el.className='mel8'; el.innerHTML=rows.map(r=>`<div class="row">${Array.from({length:8},(_,k)=>{
+    const i=r[k]; if(i===undefined) return `<div class="sb empty"></div>`;
+    const b=boxes[i], sl=b.slots.slice(0,4); while(sl.length<4) sl.unshift(null);
+    return `<div class="sb${b.open?' ro':''}${b.close?' rc':''}" data-i="${i}">${sl.map(st=>st===null?'<span class="s r">-</span>':`<span class="s">${noteSpan(st)}</span>`).join('')}</div>`; }).join('')}</div>`).join('');
+  el.querySelectorAll('.sb[data-i]').forEach(d=>els[+d.dataset.i]=d);
+  return els;
+}
+// ---------- ตัวแก้ไขโน้ตแบบตาราง 8 ห้อง ----------
+const OK_BOX=/^\(?([ดรมฟซลท][ํฺุ̣]?|-)*\)?$/;
+function boxSlots(t){ return (t.replace(/ล้อ/g,'--').replace(/[()]/g,'').match(/[ดรมฟซลท][ํฺุ̣]?|-/g)||[]).length; }
+function makeGrid(host,text,onChange){
+  let rows=[], lastIn=null;
+  host.innerHTML=`<div class="g8"></div>
+    <div class="gPal">${'ดรมฟซลท'.split('').map(n=>`<button type="button" data-k="${n}" style="color:${NOTES['ดรมฟซลท'.indexOf(n)].c}">${n}</button>`).join('')}
+      <button type="button" class="mk" data-k="ํ" title="เสียงสูง">◌ํ</button><button type="button" class="mk" data-k="ุ" title="เสียงต่ำ">◌ุ</button>
+      <button type="button" class="mk" data-k="-">–</button><button type="button" class="ac" data-k="(">(</button><button type="button" class="ac" data-k=")">)</button>
+      <button type="button" class="ac" data-k="⌫">⌫</button></div>
+    <div class="gBar"><button type="button" class="btn alt gAdd">➕ ${L('เพิ่มบรรทัด','Add line')}</button><button type="button" class="btn alt gDel">➖ ${L('ลบบรรทัดสุดท้าย','Remove last line')}</button></div>
+    <div class="gInfo"></div>`;
+  const tbl=host.querySelector('.g8'), info=host.querySelector('.gInfo');
+  const fromText=t=>{ const out=[]; String(t||'').split('\n').forEach(line=>{ const bx=line.split('|').map(x=>x.replace(/\s/g,'')).filter(x=>x!==''); for(let i=0;i<bx.length;i+=8) out.push(bx.slice(i,i+8)); }); if(!out.length) out.push([]); return out.map(r=>{ while(r.length<8) r.push(''); return r; }); };
+  const draw=()=>{ tbl.innerHTML=rows.map((r,ri)=>`<div class="row"><div class="rn">${ri+1}</div>${r.map((v,ci)=>`<input data-r="${ri}" data-c="${ci}" value="${String(v).replace(/[&<>"]/g,"")}" placeholder="----" autocomplete="off" autocapitalize="off" spellcheck="false">`).join('')}</div>`).join('');
+    tbl.querySelectorAll('input').forEach(inp=>{ inp.addEventListener('focus',()=>lastIn=inp); inp.addEventListener('input',()=>{ rows[+inp.dataset.r][+inp.dataset.c]=inp.value.replace(/\s/g,''); mark(inp); emit(); }); mark(inp); }); };
+  const mark=inp=>{ const v=inp.value.replace(/\s/g,'').replace(/ล้อ/g,'--'); inp.classList.toggle('bad',v!==''&&(!OK_BOX.test(v)||boxSlots(v)!==4)); inp.classList.toggle('ok',v!==''&&OK_BOX.test(v)&&boxSlots(v)===4); };
+  const toText=()=>rows.map(r=>{ let last=r.length-1; while(last>=0&&!r[last]) last--; return r.slice(0,last+1).map(v=>v||'----').join(' | '); }).filter(Boolean).join('\n');
+  const emit=()=>{ const bad=tbl.querySelectorAll('input.bad').length; info.className='gInfo'+(bad?' err':'');
+    info.textContent=bad?L(`มี ${bad} ห้องที่ยังไม่ครบ 4 จังหวะ (ใช้ - แทนจังหวะว่าง)`,`${bad} bar(s) don't have 4 beats (use - for rests)`):L('✓ ทุกห้องครบ 4 จังหวะ','✓ every bar has 4 beats');
+    if(onChange) onChange(toText(),bad); };
+  host.querySelector('.gPal').addEventListener('pointerdown',e=>e.preventDefault());   // ไม่ให้ช่องหลุดโฟกัส
+  host.querySelector('.gPal').onclick=e=>{ const b=e.target.closest('button'); if(!b) return;
+    let inp=lastIn&&tbl.contains(lastIn)?lastIn:tbl.querySelector('input'); const k=b.dataset.k;
+    const all=[...tbl.querySelectorAll('input')];
+    if(k==='⌫'){ if(!inp.value){ const pv=all[all.indexOf(inp)-1]; if(pv){ inp=pv; lastIn=pv; } } inp.value=inp.value.slice(0,-1); }
+    else if(k==='ํ'||k==='ุ'){
+      // ใส่เครื่องหมายเสียงสูง/ต่ำให้ตัวโน้ตล่าสุด (ถ้าช่องนี้ยังว่าง ใส่ให้ห้องก่อนหน้า)
+      if(!/[ดรมฟซลท]$/.test(inp.value)){ const pv=all[all.indexOf(inp)-1]; if(inp.value===''&&pv&&/[ดรมฟซลท]$/.test(pv.value)){ pv.value+=k; rows[+pv.dataset.r][+pv.dataset.c]=pv.value; mark(pv); } inp.focus(); emit(); return; }
+      inp.value+=k; }
+    else inp.value+=k;
+    rows[+inp.dataset.r][+inp.dataset.c]=inp.value; mark(inp);
+    // ครบ 4 จังหวะแล้วไปห้องถัดไปอัตโนมัติ
+    if(k!=='⌫' && k!=='(' && boxSlots(inp.value)>=4){ const nx=all[all.indexOf(inp)+1]; if(nx){ inp=nx; lastIn=nx; } }
+    inp.focus(); emit(); };
+  host.querySelector('.gAdd').onclick=()=>{ rows.push(Array(8).fill('')); draw(); emit(); };
+  host.querySelector('.gDel').onclick=()=>{ if(rows.length>1){ rows.pop(); draw(); emit(); } };
+  const api={ set(t){ rows=fromText(t); draw(); emit(); }, get:toText, focus(){ const i=tbl.querySelector('input'); i&&i.focus(); } };
+  api.set(text); return api;
+}
+
 let curSong=null, boxEls=[];
 function loadSong(song){
   curSong=song; stopSong();
   const boxes=parseSheet(song.text); song.boxes=boxes;
-  sheet.innerHTML=''; boxEls=[];
-  boxes.forEach((b,i)=>{
-    const d=document.createElement('div'); d.className='bx';
-    d.textContent=(b.open?'(':'')+b.shown+(b.close?')':'');
-    sheet.appendChild(d); boxEls[i]=d;
-  });
-  score.value=song.text;
+  boxEls=renderSheet8(boxes,sheet);
+  score.value=song.text; if(window.ownGrid) ownGrid.set(song.text);
 }
 SONGS.forEach((sg,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); songSel.appendChild(o); });
 const ownOpt=document.createElement('option'); ownOpt.value='own'; ownOpt.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); songSel.appendChild(ownOpt);
@@ -1639,6 +1728,8 @@ songSel.onchange=()=>{
   if(songSel.value==='own'){ ownBox.open=true; loadSong({name:'โน้ตที่พิมพ์เอง',shift:-7,text:ownText}); }
   else loadSong(SONGS[+songSel.value]);
 };
+const ownGrid=makeGrid(document.getElementById('ownGrid'),'',t=>{ score.value=t; });
+window.ownGrid=ownGrid; if(curSong) ownGrid.set(curSong.text);
 useOwn.onclick=()=>{ ownText=score.value; store.set('ownSong',ownText); songSel.value='own'; store.set('songSel','own'); loadSong({name:'โน้ตที่พิมพ์เอง',shift:-7,text:ownText}); };
 
 tempo.value=store.get('tempo2',150); tempoV.textContent=tempo.value;
@@ -2325,11 +2416,15 @@ function impEditor(it){
   d.innerHTML=`<div class="ih"><input class="nm" value="${esc(it.name)}">
     <select class="ty"><option value="song">🎵 ${L('โน้ตเพลง','Melody')}</option><option value="drum">🥁 ${L('หน้าทับ','Drum pattern')}</option></select>
     <select class="ch"><option value="2">${L('ชั้นเดียว','Chan Diao')}</option><option value="4">${L('2 ชั้น','Song Chan')}</option><option value="8">${L('3 ชั้น','Sam Chan')}</option></select></div>
+    <div class="gHost" style="margin-top:8px"></div>
     <textarea spellcheck="false">${esc(asText(it.boxes))}</textarea>
     <div class="impPrev"></div><div class="impInfo"></div>
     <div class="rRow"><button type="button" class="rBtn x tr">▶ ${L('ทดลองฟัง','Preview')}</button><button type="button" class="rBtn g sv">💾 ${L('บันทึก','Save')}</button><button type="button" class="rBtn x rm">🗑</button></div>`;
   const ty=d.querySelector('.ty'), ch=d.querySelector('.ch'), ta=d.querySelector('textarea'), pv=d.querySelector('.impPrev'), info=d.querySelector('.impInfo');
   ty.value=it.type; ch.value=String(it.ching||4);
+  const gHost=d.querySelector('.gHost'); let grid=null;
+  const mode=()=>{ const song=ty.value==='song'; ta.hidden=song; gHost.hidden=!song; pv.hidden=song;
+    if(song){ grid=makeGrid(gHost,ta.value,t=>{ ta.value=t; upd(); }); } else { gHost.innerHTML=''; grid=null; } };
   const upd=()=>{ ch.style.display=ty.value==='drum'?'':'none';
     const isD=ty.value==='drum', bx=ta.value.split(/[|\n]/).map(x=>x.trim()).filter(Boolean);
     const re=isD?/^(ติง|ทั่ม|ทั่ง|โจ๊ะ|จ๊ะ|ป๊ะ|-)+$/:/^([ดรมฟซลท][ํฺุ]?|-|ล้อ|\(|\))+$/;
@@ -2337,7 +2432,7 @@ function impEditor(it){
       const ok=re.test(c) && (isD? tk.length===4 : tk.length<=4 && tk.length>0); if(!ok) bad++; return `<span class="b${ok?'':' bad'}">${esc(c)}</span>`; }).join('');
     info.className='impInfo'+(bad?' err':''); info.textContent=`${bx.length} ${L('ห้อง','bars')}`+(bad?` · ${bad} ${L('ห้องต้องแก้ (ห้องละ 4 ช่อง ใช้ - แทนช่องว่าง)','bar(s) need fixing (4 slots per bar; use - for rests)')}`:' · ✓');
     return {bx,bad}; };
-  ty.onchange=upd; ta.oninput=upd; upd();
+  ty.onchange=()=>{ mode(); upd(); }; ta.oninput=upd; mode(); upd();
   d.querySelector('.rm').onclick=()=>d.remove();
   d.querySelector('.tr').onclick=()=>{ const {bx}=upd(); impPreview(ty.value,bx,+ch.value); };
   d.querySelector('.sv').onclick=()=>{ const {bx,bad}=upd(); if(!bx.length||bad){ info.className='impInfo err'; info.textContent=L('ยังมีห้องที่ต้องแก้ก่อนบันทึก','Fix the red bars before saving'); return; }
