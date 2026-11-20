@@ -315,7 +315,7 @@
   .stk{position:relative;font-size:.8rem;font-weight:700;border-radius:6px;padding:3px 0;text-align:center}
   .stk.rest{color:#c2b3a0;font-weight:400}
   .stk.ting{background:#e6f0ff;color:#1c5fb8} .stk.tam{background:#ffe7e0;color:#b33a1c}
-  .stk.jo{background:#e8f8ec;color:#227a3c} .stk.ja{background:#f3e8ff;color:#7140b3}
+  .stk.jo{background:#e8f8ec;color:#227a3c} .stk.ja{background:#f3e8ff;color:#7140b3} .stk.pa{background:#fff3c4;color:#8a6a00}
   .stk .cm{position:absolute;right:1px;top:-6px;font-style:normal;font-size:.62rem;color:var(--wood-d)}
   .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.82rem;color:var(--muted);margin-top:6px}
   .legend span{display:flex;align-items:center;gap:4px}
@@ -513,6 +513,25 @@ body.phone.land .prac{--laneh:44px}
 .bInd.ching{color:#c0602a}.bInd.chap{color:#7b4bc4}
 .lane.tk{animation:tk .22s}
 @keyframes tk{0%{background:#ffe6c9}100%{background:linear-gradient(#fff,#fdf6ec)}}
+
+/* ---------- นำเข้าโน้ต ---------- */
+.impItem{background:#fff;border:1px solid #ecd9c2;border-radius:14px;padding:10px;margin-top:10px}
+.impItem .ih{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.impItem input.nm{flex:1;min-width:160px;font-size:1rem;padding:6px 8px;border-radius:8px;border:1px solid #e6c9a8}
+.impItem select{font-size:.95rem;padding:4px;border-radius:8px;width:auto !important;flex:none}
+.impItem .rBtn{white-space:nowrap}
+.impItem textarea{width:100%;min-height:90px;font-size:1.1rem;font-family:'Sarabun',sans-serif;margin-top:8px;border-radius:10px;border:1px solid #e6c9a8;padding:8px}
+.impPrev{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.impPrev .b{border:1px solid #e9d6bf;border-radius:6px;padding:2px 6px;font-size:.9rem;background:#fffaf3;white-space:nowrap}
+.impPrev .b.bad{background:#fde8e8;border-color:#f0b4b4}
+.impInfo{font-size:.85rem;color:#8a6a50;margin-top:4px}
+.impInfo.err{color:#b02a2a}
+.impItem .rRow .rBtn{font-size:.95rem;padding:9px 6px}
+.impLib{margin-top:14px}
+.impLib .li{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #f0e2d0}
+.impLib .li span{flex:1}
+.impLib .li button{border:0;background:#f3e4d2;border-radius:8px;padding:4px 10px;cursor:pointer}
+.impBar{height:8px;background:#f0e2d0;border-radius:6px;overflow:hidden;margin-top:6px}.impBar i{display:block;height:100%;background:#2f9e44;width:0;transition:width .2s}
 </style>
 </head>
 <body>
@@ -707,6 +726,7 @@ body.phone.land .prac{--laneh:44px}
     <button type="button" data-pop="drum">🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm</span></button>
     <button type="button" data-pop="prac">🎯 <span class="th">ฝึกซ้อม (ตามจังหวะ)</span><span class="en">Practice (play along)</span></button>
     <button type="button" data-pop="room">👥 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></button>
+    <button type="button" data-pop="imp">📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></button>
     <button type="button" data-pop="song">🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></button>
     <button type="button" data-act="install" id="instMenu" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
     <button type="button" data-act="rate">⭐ <span class="th">ประเมินความพึงพอใจ</span><span class="en">Rate this app</span></button>
@@ -723,6 +743,22 @@ body.phone.land .prac{--laneh:44px}
   <div class="popBody" id="instBody" style="font-size:1.05rem;line-height:1.7"></div>
 </div></div>
 <div id="popStore" hidden>
+  <div class="card" id="impCard">
+    <div id="impNo" class="rStat" hidden></div>
+    <div id="impMain">
+      <p class="hint" style="margin-top:0"><span class="th">ถ่ายรูปหรือเลือกไฟล์โน้ต (รูปภาพ PDF Word Excel หรือข้อความ) แอปจะอ่านโน้ตให้ แล้วตรวจแก้ก่อนบันทึก · รูปควรถ่ายตรง ชัด แสงพอ</span><span class="en">Take a photo or choose a file (image, PDF, Word, Excel or text). The app reads the notation; check and fix it before saving.</span></p>
+      <div class="rChoice">
+        <button type="button" id="impCam">📷 <span class="th">ถ่ายรูปโน้ต</span><span class="en">Take photo</span></button>
+        <button type="button" class="alt" id="impFileBtn">📂 <span class="th">เลือกรูป / ไฟล์</span><span class="en">Choose file</span></button>
+      </div>
+      <input type="file" id="impCamIn" accept="image/*" capture="environment" hidden>
+      <input type="file" id="impFileIn" accept="image/*,.pdf,.docx,.txt,.csv,.xlsx,.xls" hidden>
+      <div class="rRow"><button type="button" class="rBtn x" id="impBlank">✏️ <span class="th">พิมพ์โน้ตเอง</span><span class="en">Type it myself</span></button></div>
+      <div id="impMsg"></div>
+      <div id="impItems"></div>
+      <div id="impLib"></div>
+    </div>
+  </div>
   <div class="card" id="roomCard"><div id="roomBody"></div></div>
   <div class="card" id="pracCard">
     <p class="hint" style="margin-top:0"><span class="th">เลือกเพลงและความเร็ว แอปจะนับ 1–2–3–4 แล้วตัวโน้ตจะเลื่อนผ่านเส้นจังหวะเหนือปุ่มกด ให้กดอังกะลุงตรงตัวโน้ตตอนที่ถึงเส้น</span><span class="en">Pick a song and tempo. After a 1–2–3–4 count-in, notes scroll across the line above the keys — press each angklung as its note reaches the line.</span></p>
@@ -1372,11 +1408,32 @@ const NATAB={
           boxes:['-ติง-จ๊ะ','-ติง-ติง','---ทั่ม','-ติง-ทั่ม','-ติง-จ๊ะ','-ติง-ติง','---ทั่ม','-ติง-ทั่ม']},
   song1: {name:'หน้าทับสองไม้ ชั้นเดียว', en:'Song Mai · Chan Diao', ching:2,
           boxes:['-โจ๊ะ-จ๊ะ','ติงติง-ทั่ม']},
+  // จากแบบฝึกของครู (หน้าทับประจำภาษา)
+  laoSM2:{name:'หน้าทับลาว 2 ชั้น (สองไม้ลาว)', en:'Lao · Song Chan (Song Mai Lao)', ching:4,
+          boxes:['-ติง-โจ๊ะ','-ติง-ติง','--ติงทั่ม','-ติง-ทั่ม']},
+  yuan2: {name:'หน้าทับญวน 2 ชั้น', en:'Yuan · Song Chan', ching:4,
+          boxes:['----','-ติง-ทั่ม','-ติง-ทั่ม','-ติง-ติง']},
+  mon2:  {name:'หน้าทับมอญ 2 ชั้น', en:'Mon · Song Chan', ching:4,
+          boxes:['----','-ติง-จ๊ะ','--ทั่มติง','--ทั่มติง']},
+  khmer3:{name:'หน้าทับเขมร 3 ชั้น', en:'Khmer · Sam Chan', ching:8,
+          boxes:['----','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','----','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-ติง-ทั่ม',
+                 '----','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-ติง-ทั่ม','-โจ๊ะ-จ๊ะ']},
+  khmer2:{name:'หน้าทับเขมร 2 ชั้น', en:'Khmer · Song Chan', ching:4,
+          boxes:['----','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-ติง-ทั่ม','-โจ๊ะ-จ๊ะ']},
+  khmer1:{name:'หน้าทับเขมร ชั้นเดียว', en:'Khmer · Chan Diao', ching:2,
+          boxes:['-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','-ติง-ทั่ม','-โจ๊ะ-จ๊ะ']},
+  khaek3:{name:'หน้าทับแขก 3 ชั้น', en:'Khaek · Sam Chan', ching:8,
+          boxes:['-ทั่ม-ติง','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','---ป๊ะ','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ',
+                 '---ติง','-ติง-ทั่ม','-ติง-ทั่ม','---ติง','---ติง','-ติง-ทั่ม','-ติง-ทั่ม','ติง-ทั่มติง']},
+  khaek2:{name:'หน้าทับแขก 2 ชั้น', en:'Khaek · Song Chan', ching:4,
+          boxes:['-ทั่ม-ติง','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','ติงทั่ม-ติง','-ติง-ทั่ม','ติง-ทั่มติง']},
+  khaek1:{name:'หน้าทับแขก ชั้นเดียว', en:'Khaek · Chan Diao', ching:2,
+          boxes:['--โจ๊ะจ๊ะ','-โจ๊ะ-จ๊ะ','-ติง-ทั่ม','ติง-ทั่มติง']},
 };
-const STROKE_RE=/ทั่ม|ทั่ง|ติง|โจ๊ะ|จ๊ะ|-/g;
-Object.values(NATAB).forEach(p=>{
-  p.slots=[]; p.boxes.forEach(b=>{ const tk=b.match(STROKE_RE); p.slots.push(...tk.map(x=>x==='ทั่ง'?'ทั่ม':x)); });
-});
+const STROKE_RE=/ทั่ม|ทั่ง|ติง|โจ๊ะ|จ๊ะ|ป๊ะ|-/g;
+function prepPat(p){ p.slots=[]; p.boxes.forEach(b=>{ const tk=b.match(STROKE_RE)||[]; while(tk.length<4) tk.unshift('-'); p.slots.push(...tk.slice(0,4).map(x=>x==='ทั่ง'?'ทั่ม':x)); }); return p; }
+(store.get('myPats',[])||[]).forEach(p=>{ if(p&&p.id&&p.boxes) NATAB['my_'+p.id]={name:'📥 '+p.name,en:'📥 '+p.name,ching:p.ching||4,boxes:p.boxes,custom:true}; });
+Object.values(NATAB).forEach(prepPat);
 let drumGain=null;
 function drumOut(){ initAudio(); loadSamples(); loadAngklung(); if(!drumGain){ drumGain=ctx.createGain(); drumGain.gain.value=+drumVol.value; drumGain.connect(master); } return drumGain; }
 function membrane(t,f0,f1,dec,amp,dest,type='sine'){
@@ -1392,6 +1449,10 @@ function slap(t,freq,q,dec,amp,dest,hp=false){
   s.connect(f); f.connect(g); g.connect(dest); s.start(t); s.stop(t+Math.min(0.05,dec+0.01));
 }
 function drumHit(k,t){
+  if(k==='ป๊ะ' && SAMPLES.ja && SAMPLES.ja.length){   // ป๊ะ: ตบหน้าเล็กแบบปิดเสียง สั้นและแหลมกว่าจ๊ะ
+    const b=SAMPLES.ja[Math.floor(Math.random()*SAMPLES.ja.length)], s=ctx.createBufferSource(); s.buffer=b; s.playbackRate.value=1.22;
+    const v=ctx.createGain(); v.gain.setValueAtTime(0.85,t); v.gain.setTargetAtTime(0.0001,t+0.05,0.03); s.connect(v); v.connect(drumOut()); s.start(t); s.stop(t+0.3); return; }
+  if(k==='ป๊ะ') k='จ๊ะ';
   if(playSample({'ติง':'ting','ทั่ม':'tum','โจ๊ะ':'jo','จ๊ะ':'ja'}[k],t)) return;
   const d=drumOut(), v=0.85+Math.random()*0.15;
   if(k==='ติง'){ membrane(t,360,300,0.28,0.55*v,d); membrane(t,720,640,0.12,0.12*v,d); slap(t,1800,2,0.02,0.18*v,d); }
@@ -1415,14 +1476,16 @@ function loadDrum(key){
   drumPat.boxes.forEach((b,i)=>{
     const d=document.createElement('div'); d.className='bx dbx';
     const tk=b.match(STROKE_RE);
-    d.innerHTML=tk.map((x,j)=>{ const si=i*4+j; const c=chingAt(si); const cls={'ติง':'ting','ทั่ม':'tam','ทั่ง':'tam','โจ๊ะ':'jo','จ๊ะ':'ja'}[x]||'rest';
+    d.innerHTML=tk.map((x,j)=>{ const si=i*4+j; const c=chingAt(si); const cls={'ติง':'ting','ทั่ม':'tam','ทั่ง':'tam','โจ๊ะ':'jo','จ๊ะ':'ja','ป๊ะ':'pa'}[x]||'rest';
       return `<span class="stk ${cls}">${x==='-'?'–':x}${c?`<i class="cm">${c==='ching'?'●':'✕'}</i>`:''}</span>`; }).join('');
     drumSheet.appendChild(d); drumBoxEls[i]=d;
   });
 }
 function chingAt(si){ const n=drumPat.ching; if((si+1)%n) return null; return (Math.floor(si/n)%2===0)?'ching':'chap'; }
-const NATAB_KEYS=Object.keys(NATAB);
-NATAB_KEYS.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent='🥁 '+L(NATAB[k].name,NATAB[k].en); drumSel.appendChild(o); });
+function rebuildPatOpts(){ const v=drumSel.value; drumSel.innerHTML='';
+  Object.keys(NATAB).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent='🥁 '+L(NATAB[k].name,NATAB[k].en); drumSel.appendChild(o); });
+  if(v && NATAB[v]) drumSel.value=v; }
+rebuildPatOpts();
 drumSel.value=store.get('drumSel','prob2'); if(!drumSel.value) drumSel.value='prob2';
 drumSel.onchange=()=>{ store.set('drumSel',drumSel.value); const was=!!drumRun; drumStop(); loadDrum(drumSel.value); if(was) drumStart(); };
 loadDrum(drumSel.value);
@@ -1506,6 +1569,7 @@ const SONGS=[
 ---- | -ฟ-ลุ | ---- | -ด-ร | -ฟฟฟ | -ซ-ฟ | -ม-ร | ดลดร
 ---- | -ฟ-ลุ | ---- | -ด-ร | -ฟฟฟ | -ซ-ฟ | -ม-ร | ดลดร`},
 ];
+(store.get('mySongs',[])||[]).forEach(x=>{ if(x&&x.id&&x.text) SONGS.push({name:'📥 '+x.name,shift:-7,text:x.text,custom:true,id:x.id}); });
 const NOTE_CH='ดรมฟซลท';
 // แยกเป็นห้อง: [{shown, slots:[step|null ×4], line}]
 function parseSheet(text){
@@ -1554,7 +1618,7 @@ function loadSong(song){
   });
   score.value=song.text;
 }
-SONGS.forEach((sg,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent='🎵 '+pair(sg.name); songSel.appendChild(o); });
+SONGS.forEach((sg,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); songSel.appendChild(o); });
 const ownOpt=document.createElement('option'); ownOpt.value='own'; ownOpt.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); songSel.appendChild(ownOpt);
 let ownText=store.get('ownSong','---- | ---ล | --ซล | ดํรํ-ดํ');
 songSel.onchange=()=>{
@@ -1673,9 +1737,9 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
 // ---------- เมนูลอย + ป็อบอัพฟังก์ชัน ----------
 (function(){
   const setCard=tuneSeg.closest('.card'), drumCard=document.querySelector('.drumCard'), songCard=scoreBox.closest('.card');
-  [setCard,drumCard,songCard].forEach(c=>popStore.appendChild(c)); popStore.appendChild(pracCard); popStore.appendChild(roomCard);
+  [setCard,drumCard,songCard].forEach(c=>popStore.appendChild(c)); popStore.appendChild(pracCard); popStore.appendChild(roomCard); popStore.appendChild(impCard);
   scoreBox.open=true;
-  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']},room:{c:roomCard,t:['👥 ห้องวง · เล่นพร้อมกัน','👥 Band room · play together']}};
+  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']},room:{c:roomCard,t:['👥 ห้องวง · เล่นพร้อมกัน','👥 Band room · play together']},imp:{c:impCard,t:['📥 นำเข้าโน้ต','📥 Import notation']}};
   let cur=null;
   window.openPop=k=>{ closePop(); const p=POPS[k]; cur=p; popTitle.textContent=L(p.t[0],p.t[1]); popBody.appendChild(p.c); pop.hidden=false; fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); };
   window.closePop=()=>{ if(cur){ popStore.appendChild(cur.c); cur=null; } pop.hidden=true; };
@@ -1754,7 +1818,7 @@ setTimeout(fitKeys,300);
 
 // ---------- ฝึกซ้อมตามจังหวะ: ตัวโน้ตเลื่อนผ่านเส้นจังหวะเหนือปุ่มกด แล้วตรวจว่ากดตรงหรือไม่ ----------
 const P={run:false};
-SONGS.forEach((sg,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent='🎵 '+pair(sg.name); pSong.appendChild(o); });
+SONGS.forEach((sg,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); pSong.appendChild(o); });
 { const o=document.createElement('option'); o.value='own'; o.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); pSong.appendChild(o); }
 pSong.value=store.get('pSong','0'); if(!pSong.value) pSong.value='0';
 pTempo.value=store.get('pTempo',100); pTempoV.textContent=pTempo.value;
@@ -2113,6 +2177,203 @@ roomRender();
 if(pendingRoom && STANDALONE){
   document.querySelectorAll('.wbtn[data-mode]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{ if(!ROOM.role){ openPop('room'); roomJoin(pendingRoom); } },500)));
 }
+
+// ---------- นำเข้าโน้ต: ถ่ายรูป / รูปภาพ / PDF / Word / Excel / ข้อความ → ตรวจแก้ → บันทึกในเครื่อง ----------
+const DRUM_WORDS=['ติง','ทั่ม','โจ๊ะ','จ๊ะ','ป๊ะ'];
+// แก้คำที่ระบบอ่านภาพมักอ่านผิด
+function fixDrumText(t){
+  return t.replace(/[​­]/g,'')
+    .replace(/[ดคศตฅฑ]?[คดศตฅ]ิ[งง]|ติ[งน]|ดิง|คิง|ศิง/g,'ติง')
+    .replace(/ท[ัั]?[้่๋]?[งม]|ทั้ง|ทั่ง|ทัง|ทั้ม|หั่ง|ทั่ม/g,'ทั่ม')
+    .replace(/[ไใ]จ[๊้]?ะ|โจ[๊้]?ะ|โจะ/g,'โจ๊ะ')
+    .replace(/(^|[^โไใ])จ[๊้]?ะ/g,'$1จ๊ะ')
+    .replace(/ป[๊้]?ะ/g,'ป๊ะ');
+}
+function normSep(t){ return t.replace(/[\[\]\{\}¦｜│┃]/g,'|').replace(/[–—−_=~“”"'.:;·•]/g,'-'); }
+const HEAD_RE=/หน้าทับ|ชั้น|เพลง|ท่อน|เที่ยว|เถา/;
+// แก้คำในหัวข้อที่ระบบอ่านภาพมักอ่านผิด
+function fixHead(t){ return t.replace(/หน้า[พหฟ]?[พท]ับ|หน้าหทับ/g,'หน้าทับ').replace(/[ชข][ัั]?[้่]?[นน](?=\s|$|เดียว)|ขั้น|ขึ้น|ชัน|ชั่น/g,'ชั้น').replace(/ถาว/g,'ลาว')
+  .replace(/[^ก-๙0-9a-zA-Z()\s.·-]/g,' ').replace(/\s{2,}/g,' ').replace(/\s+[ก-ฮ.]{1,2}\s*$/,'').trim(); }
+function drumScore(t){ return (fixDrumText(t).match(/ติง|ทั่ม|โจ๊ะ|จ๊ะ|ป๊ะ/g)||[]).length; }
+function noteScore(t){
+  // นับเฉพาะตัวโน้ตเดี่ยว ๆ ตัดคำที่มีสระ/วรรณยุกต์ (เช่น ติง ทั่ม หน้าทับ ชั้น) ออกก่อน
+  const x=fixDrumText(t).replace(/ติง|ทั่ม|โจ๊ะ|จ๊ะ|ป๊ะ/g,' ').replace(/[ก-ฮ]*[ะาิีึืูเแโใไ่้๊๋ั็์ำ][ก-ฮะาิีึืูเแโใไ่้๊๋ั็์ำ]*/g,' ');
+  return (x.match(/[ดรมฟซลท]/g)||[]).length; }
+// แยกข้อความเป็นหลายรายการ ตามบรรทัดหัวข้อ (เช่น "หน้าทับเขมร ๓ ชั้น")
+function parseImport(text,forceType){
+  const lines=String(text).replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean);
+  const isDrum=forceType? forceType==='drum' : drumScore(text)>noteScore(text);
+  const items=[]; let cur=null, lastHead='';
+  const thaiDigit=x=>x.replace(/[๐-๙]/g,d=>'๐๑๒๓๔๕๖๗๘๙'.indexOf(d));
+  lines.forEach(line=>{
+    const L2=normSep(isDrum?fixDrumText(line):line);
+    const boxes=lineBoxes(L2,isDrum);
+    const head=fixHead(thaiDigit(line).replace(/[|\[\]]/g,' '));
+    if(!boxes.length){ if(HEAD_RE.test(head)){ lastHead=head; cur=null; } return; }
+    if(!cur){ cur={type:isDrum?'drum':'song',name:lastHead||L('โน้ตนำเข้า','Imported'),boxes:[]}; items.push(cur);
+      if(lastHead && /^(สองชั้น|2 ชั้น|ชั้นเดียว|ชั้นเดียว|3 ชั้น|สามชั้น)/.test(lastHead.replace(/\s/g,'')) && items.length>1){
+        const prev=items[items.length-2].name.replace(/\s*(๓|๒|3|2|สาม|สอง)?\s*ชั้น.*$|ชั้นเดียว.*$/,'').trim(); cur.name=prev+' '+lastHead; } }
+    cur.boxes.push(...boxes);
+  });
+  items.forEach(it=>{ if(it.type==='drum'){ const n=it.name; it.ching=/3|๓|สาม/.test(n)?8:/เดียว/.test(n)?2:4; } });
+  return items;
+}
+// เก็บเฉพาะกลุ่มตัวอักษรที่เป็นตัวโน้ตล้วน (ด ร ม ฟ ซ ล ท + ํ ุ ฺ) ตัดคำอื่น เช่น ชื่อเพลง ออก
+function keepNotes(line){ return line.replace(/ล้อ/g,'--').replace(/[ก-๙]+/g,w=>/^[ดรมฟซลทํฺุ]+$/.test(w)?w:' '); }
+function lineBoxes(line,isDrum){
+  if(!isDrum) line=keepNotes(line);
+  const parts=line.includes('|')? line.split('|') : null;
+  const tokRe=isDrum? /ติง|ทั่ม|โจ๊ะ|จ๊ะ|ป๊ะ|-/g : /[ดรมฟซลท][ํฺุ]?|-/g;
+  const out=[];
+  const pushBox=toks=>{ if(!toks.length) return; if(toks.every(x=>x==='-') && toks.length<2) return;
+    while(toks.length<4) toks.unshift('-'); out.push(toks.slice(0,4).join('')); };
+  if(parts){ parts.forEach(p=>{ const t=(p.match(tokRe)||[]); if(t.length) pushBox(t); }); }
+  else { const t=line.match(tokRe)||[]; if(t.filter(x=>x!=='-').length<1 && t.length<4) return out; for(let i=0;i<t.length;i+=4) pushBox(t.slice(i,i+4)); }
+  return isDrum? out : out;
+}
+// ---- อ่านไฟล์ ----
+function impProgress(msg,p){ impMsg.innerHTML=`<div class="rStat">${msg}${p!=null?`<div class="impBar"><i style="width:${Math.round(p*100)}%"></i></div>`:''}</div>`; }
+function impError(msg){ impMsg.innerHTML=`<div class="rStat err">${msg}</div>`; }
+async function readImage(fileOrCanvas){
+  impProgress(L('กำลังเตรียมระบบอ่านภาษาไทย (ครั้งแรกใช้เวลาสักครู่)…','Loading the Thai reader (first time takes a moment)…'),0.05);
+  await loadScript(['https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js','https://unpkg.com/tesseract.js@5.1.1/dist/tesseract.min.js']);
+  const canvas=fileOrCanvas instanceof HTMLCanvasElement? fileOrCanvas : await imageToCanvas(fileOrCanvas);
+  prepCanvas(canvas);
+  const worker=await Tesseract.createWorker('tha',1,{langPath:'https://cdn.jsdelivr.net/npm/@tesseract.js-data/tha/4.0.0_best_int',
+    logger:m=>{ if(m.status==='recognizing text') impProgress(L('กำลังอ่านโน้ตจากภาพ…','Reading the image…'),0.3+0.7*m.progress); }});
+  await worker.setParameters({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
+  const {data}=await worker.recognize(canvas); await worker.terminate();
+  return data.text;
+}
+function imageToCanvas(file){ return new Promise((res,rej)=>{ const url=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{ const sc=Math.min(3,Math.max(1,2200/Math.max(im.width,im.height))); const c=document.createElement('canvas'); c.width=Math.round(im.width*sc); c.height=Math.round(im.height*sc);
+    const g=c.getContext('2d'); g.imageSmoothingQuality='high'; g.drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c); };
+  im.onerror=()=>rej(new Error('image')); im.src=url; }); }
+// ขาวดำ + ปรับความต่างอัตโนมัติ (Otsu) ให้อ่านง่ายขึ้น
+function prepCanvas(c){ const g=c.getContext('2d'), d=g.getImageData(0,0,c.width,c.height), p=d.data, hist=new Array(256).fill(0), n=p.length/4;
+  for(let i=0;i<p.length;i+=4){ const v=(p[i]*0.299+p[i+1]*0.587+p[i+2]*0.114)|0; p[i]=v; hist[v]++; }
+  let sum=0; for(let i=0;i<256;i++) sum+=i*hist[i]; let sB=0,wB=0,best=0,th=150;
+  for(let i=0;i<256;i++){ wB+=hist[i]; if(!wB) continue; const wF=n-wB; if(!wF) break; sB+=i*hist[i]; const mB=sB/wB, mF=(sum-sB)/wF, b=wB*wF*(mB-mF)*(mB-mF); if(b>best){ best=b; th=i; } }
+  for(let i=0;i<p.length;i+=4){ const v=p[i]>th?255:0; p[i]=p[i+1]=p[i+2]=v; } g.putImageData(d,0,0); }
+async function readPDF(file){
+  impProgress(L('กำลังเปิด PDF…','Opening PDF…'),0.05);
+  await loadScript(['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js']);
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise; let all='';
+  for(let i=1;i<=Math.min(pdf.numPages,10);i++){
+    const pg=await pdf.getPage(i), tc=await pg.getTextContent();
+    // จัดข้อความเป็นบรรทัดตามตำแหน่งแนวตั้ง
+    const rows={}; tc.items.forEach(it=>{ const y=Math.round(it.transform[5]/4); (rows[y]=rows[y]||[]).push(it); });
+    let txt=Object.keys(rows).sort((a,b)=>b-a).map(y=>rows[y].sort((a,b)=>a.transform[4]-b.transform[4]).map(x=>x.str).join(' ')).join('\n');
+    if(txt.replace(/\s/g,'').length<15){   // PDF สแกน: แปลงเป็นภาพแล้วอ่าน
+      const vp=pg.getViewport({scale:2.2}), c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height;
+      await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; txt=await readImage(c); }
+    all+=txt+'\n';
+  }
+  return all;
+}
+async function readDocx(file){ impProgress(L('กำลังอ่านไฟล์ Word…','Reading Word file…'),0.3);
+  await loadScript(['https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js']);
+  const r=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()});
+  // ตาราง: แต่ละแถวเป็นหนึ่งบรรทัด ช่องคั่นด้วย |
+  const div=document.createElement('div'); div.innerHTML=r.value; let out=[];
+  div.childNodes.forEach(n=>{ if(n.tagName==='TABLE'){ n.querySelectorAll('tr').forEach(tr=>out.push([...tr.children].map(td=>td.textContent.trim()).join(' | '))); } else out.push(n.textContent); });
+  return out.join('\n'); }
+async function readSheet(file){ impProgress(L('กำลังอ่านไฟล์ตาราง…','Reading spreadsheet…'),0.3);
+  await loadScript(['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js']);
+  const wb=XLSX.read(await file.arrayBuffer()); let out=[];
+  wb.SheetNames.forEach(n=>{ XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,blankrows:false}).forEach(r=>out.push(r.filter(x=>x!=null&&x!=='').join(' | '))); });
+  return out.join('\n'); }
+async function impFile(file){
+  if(!file) return; impItems.innerHTML='';
+  const nm=(file.name||'').toLowerCase();
+  try{
+    let text='';
+    if(file.type.startsWith('image/')) text=await readImage(file);
+    else if(nm.endsWith('.pdf')) text=await readPDF(file);
+    else if(nm.endsWith('.docx')) text=await readDocx(file);
+    else if(/\.(xlsx|xls|csv)$/.test(nm)) text=await readSheet(file);
+    else text=await file.text();
+    impShow(text, file.name.replace(/\.[^.]+$/,''));
+  }catch(e){ impError(L('อ่านไฟล์ไม่สำเร็จ ตรวจสอบอินเทอร์เน็ต หรือลองไฟล์อื่น','Could not read the file — check the internet or try another file')+` (${esc(e.message||e)})`); }
+}
+function impShow(text,fallbackName){
+  let items=parseImport(text);
+  if(!items.length){ impError(L('ไม่พบโน้ตในไฟล์นี้ ลองถ่ายให้ชัดขึ้น หรือกด ✏️ พิมพ์โน้ตเอง','No notation found — try a clearer photo, or tap ✏️ Type it myself')); return; }
+  items.forEach(it=>{ if(it.name===L('โน้ตนำเข้า','Imported') && fallbackName) it.name=fallbackName; });
+  window._lastOCR=text;
+  impMsg.innerHTML=`<div class="rStat">✅ ${L('อ่านได้','Found')} ${items.length} ${L('รายการ — ตรวจแก้ช่องที่เป็นสีแดง แล้วกดบันทึก','item(s) — fix the red boxes, then save')}</div>`;
+  impItems.innerHTML=''; items.forEach(it=>impItems.appendChild(impEditor(it)));
+}
+// ตัวแก้ไขหนึ่งรายการ
+function impEditor(it){
+  const d=document.createElement('div'); d.className='impItem';
+  const asText=b=>{ const out=[]; for(let i=0;i<b.length;i+=8) out.push(b.slice(i,i+8).join(' | ')); return out.join('\n'); };
+  d.innerHTML=`<div class="ih"><input class="nm" value="${esc(it.name)}">
+    <select class="ty"><option value="song">🎵 ${L('โน้ตเพลง','Melody')}</option><option value="drum">🥁 ${L('หน้าทับ','Drum pattern')}</option></select>
+    <select class="ch"><option value="2">${L('ชั้นเดียว','Chan Diao')}</option><option value="4">${L('2 ชั้น','Song Chan')}</option><option value="8">${L('3 ชั้น','Sam Chan')}</option></select></div>
+    <textarea spellcheck="false">${esc(asText(it.boxes))}</textarea>
+    <div class="impPrev"></div><div class="impInfo"></div>
+    <div class="rRow"><button type="button" class="rBtn x tr">▶ ${L('ทดลองฟัง','Preview')}</button><button type="button" class="rBtn g sv">💾 ${L('บันทึก','Save')}</button><button type="button" class="rBtn x rm">🗑</button></div>`;
+  const ty=d.querySelector('.ty'), ch=d.querySelector('.ch'), ta=d.querySelector('textarea'), pv=d.querySelector('.impPrev'), info=d.querySelector('.impInfo');
+  ty.value=it.type; ch.value=String(it.ching||4);
+  const upd=()=>{ ch.style.display=ty.value==='drum'?'':'none';
+    const isD=ty.value==='drum', bx=ta.value.split(/[|\n]/).map(x=>x.trim()).filter(Boolean);
+    const re=isD?/^(ติง|ทั่ม|ทั่ง|โจ๊ะ|จ๊ะ|ป๊ะ|-)+$/:/^([ดรมฟซลท][ํฺุ]?|-|ล้อ|\(|\))+$/;
+    let bad=0; pv.innerHTML=bx.map(b=>{ const c=b.replace(/\s/g,''); const tk=isD?(c.match(/ติง|ทั่ม|ทั่ง|โจ๊ะ|จ๊ะ|ป๊ะ|-/g)||[]):(c.replace(/[()]/g,'').match(/[ดรมฟซลท][ํฺุ]?|-/g)||[]);
+      const ok=re.test(c) && (isD? tk.length===4 : tk.length<=4 && tk.length>0); if(!ok) bad++; return `<span class="b${ok?'':' bad'}">${esc(c)}</span>`; }).join('');
+    info.className='impInfo'+(bad?' err':''); info.textContent=`${bx.length} ${L('ห้อง','bars')}`+(bad?` · ${bad} ${L('ห้องต้องแก้ (ห้องละ 4 ช่อง ใช้ - แทนช่องว่าง)','bar(s) need fixing (4 slots per bar; use - for rests)')}`:' · ✓');
+    return {bx,bad}; };
+  ty.onchange=upd; ta.oninput=upd; upd();
+  d.querySelector('.rm').onclick=()=>d.remove();
+  d.querySelector('.tr').onclick=()=>{ const {bx}=upd(); impPreview(ty.value,bx,+ch.value); };
+  d.querySelector('.sv').onclick=()=>{ const {bx,bad}=upd(); if(!bx.length||bad){ info.className='impInfo err'; info.textContent=L('ยังมีห้องที่ต้องแก้ก่อนบันทึก','Fix the red bars before saving'); return; }
+    const name=d.querySelector('.nm').value.trim()||L('โน้ตนำเข้า','Imported'), id=Date.now().toString(36);
+    if(ty.value==='drum'){ const boxes=bx.map(b=>b.replace(/\s/g,'').replace(/ทั่ง/g,'ทั่ม')); const list=store.get('myPats',[])||[]; list.push({id,name,ching:+ch.value,boxes}); store.set('myPats',list);
+      NATAB['my_'+id]=prepPat({name:'📥 '+name,en:'📥 '+name,ching:+ch.value,boxes,custom:true}); rebuildPatOpts(); drumSel.value='my_'+id; drumSel.onchange(); }
+    else { const text=[]; for(let i=0;i<bx.length;i+=8) text.push(bx.slice(i,i+8).join(' | ')); const t=text.join('\n');
+      const list=store.get('mySongs',[])||[]; list.push({id,name,text:t}); store.set('mySongs',list);
+      SONGS.push({name:'📥 '+name,shift:-7,text:t,custom:true,id}); rebuildSongOpts(); songSel.value=String(SONGS.length-1); songSel.onchange(); pSong.value=songSel.value; pSong.onchange(); }
+    d.innerHTML=`<div class="rStat">💾 ${L('บันทึกแล้ว','Saved')}: <b>${esc(name)}</b> — ${ty.value==='drum'?L('อยู่ในรายการหน้าทับ (เมนู 🥁)','in the drum pattern list (🥁 menu)'):L('อยู่ในรายการเพลง ฝึกซ้อม และห้องวง','in the song, practice and band-room lists')}</div>`;
+    impLib(); };
+  return d;
+}
+function rebuildSongOpts(){
+  [songSel,pSong].forEach(sel=>{ const v=sel.value; sel.innerHTML='';
+    SONGS.forEach((sg,i)=>{ if(!sg) return; const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); sel.appendChild(o); });
+    const o=document.createElement('option'); o.value='own'; o.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); sel.appendChild(o);
+    sel.value=v; if(!sel.value) sel.value='0'; });
+}
+let impPrevStop=null;
+function impPreview(type,bx,ching){
+  initAudio(); ctx.resume(); loadAngklung(); if(impPrevStop) impPrevStop();
+  if(type==='drum'){ const old=drumPat; drumPat=prepPat({ching,boxes:bx.map(b=>b.replace(/\s/g,''))}); drumStart();
+    const t=setTimeout(()=>{ drumStop(); drumPat=old; },Math.min(16,bx.length*4)*60000/+drumTempo.value*2+400);
+    impPrevStop=()=>{ clearTimeout(t); drumStop(); drumPat=old; impPrevStop=null; }; return; }
+  const boxes=parseSheet(bx.slice(0,16).join('|')), slotSec=60/120, T0=ctx.currentTime+0.2; let i=0;
+  boxes.forEach(b=>b.slots.forEach(st=>{ if(st!==null){ const a=AK[fitStep(st-7)+7]; songNote(a,T0+i*slotSec,T0+(i+0.9)*slotSec,[soloEls[a.idx]]); } i++; }));
+  P.voices=(P.voices||[]).concat(songVoices.splice(0));
+  impPrevStop=()=>{ stopSong(); impPrevStop=null; };
+}
+function impLib(){
+  const ps=store.get('myPats',[])||[], ss=store.get('mySongs',[])||[];
+  if(!ps.length&&!ss.length){ impLibEl().innerHTML=''; return; }
+  impLibEl().innerHTML=`<div class="impLib"><b>📚 ${L('โน้ตที่นำเข้าไว้ในเครื่องนี้','Imported on this device')}</b>`+
+    ss.map(x=>`<div class="li"><span>🎵 ${esc(x.name)}</span><button data-k="song" data-id="${x.id}">🗑</button></div>`).join('')+
+    ps.map(x=>`<div class="li"><span>🥁 ${esc(x.name)}</span><button data-k="drum" data-id="${x.id}">🗑</button></div>`).join('')+`</div>`;
+  impLibEl().querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.k==='song'){ store.set('mySongs',ss.filter(x=>x.id!==b.dataset.id)); const i=SONGS.findIndex(x=>x&&x.id===b.dataset.id); if(i>=0) SONGS[i]=null; rebuildSongOpts(); }
+    else { store.set('myPats',ps.filter(x=>x.id!==b.dataset.id)); delete NATAB['my_'+b.dataset.id]; if(drumSel.value==='my_'+b.dataset.id){ drumSel.value='prob2'; drumSel.onchange(); } rebuildPatOpts(); }
+    impLib(); });
+}
+const impLibEl=()=>document.getElementById('impLib');
+if(!STANDALONE){ impNo.hidden=false; impNo.innerHTML=`${L('การถ่ายรูปและอ่านไฟล์ใช้ได้ในเว็บแอป','Photo & file import works in the web app')} — <a href="${WEBAPP_URL}" target="_blank" rel="noopener">${L('เปิดเว็บแอป','open the web app')}</a> · ${L('ที่นี่ยังพิมพ์โน้ตเองได้','you can still type notation here')}`;
+  impCam.disabled=true; impFileBtn.disabled=true; impCam.style.opacity=impFileBtn.style.opacity=.45; }
+impCam.onclick=()=>impCamIn.click(); impFileBtn.onclick=()=>impFileIn.click();
+impCamIn.onchange=()=>{ impFile(impCamIn.files[0]); impCamIn.value=''; };
+impFileIn.onchange=()=>{ impFile(impFileIn.files[0]); impFileIn.value=''; };
+impBlank.onclick=()=>{ impMsg.innerHTML=''; impItems.innerHTML=''; impItems.appendChild(impEditor({type:'song',name:L('เพลงใหม่','New song'),boxes:['----','---ล','--ซล','ดํรํ-ดํ']})); };
+impLib();
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
