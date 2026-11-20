@@ -1596,11 +1596,27 @@ syncRitSel();
 // ---------- บรรเลงตามโน้ต (โน้ตไทยแบบห้อง ห้องละ 4 ตัว) ----------
 // shift: เลื่อนช่วงเสียงของเพลงให้อยู่ในอังกะลุง 14 เสียง (-7 = เสียงกลางของโน้ตเพลง → ชุดใหญ่)
 const SONGS=[
- {name:'ลาวเสี่ยงเทียน · Lao Siang Thian', shift:-7, text:
-`(---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ)
-(-ซ-ม | -รมซ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)
-(---- | ล้อ--) | ซลซม | ซรมซ | (---- | ล้อ--) | ซลซม | รด-ร
-(-มํ-รํ | -ดํ-มํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)`},
+ {name:'ลาวเสี่ยงเทียน สองชั้น · Lao Siang Thian (Song Chan)', shift:-7, pat:'laoSM2', text:
+`# ท่อน 1
+(---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
+---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
+---ม | -รมซ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)
+# ท่อน 2
+(ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
+ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)
+# เที่ยวเปลี่ยน · ท่อน 1
+(---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
+---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ)
+# เที่ยวเปลี่ยน · ท่อน 2
+(-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
+-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ)`},
  {name:'ลายเต้ยโขง · Lai Toei Khong', shift:-7, text:
 `---- | (---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
 ---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
@@ -1622,7 +1638,9 @@ const NOTE_CH='ดรมฟซลท';
 // แยกเป็นห้อง: [{shown, slots:[step|null ×4], line}]
 function parseSheet(text){
   const boxes=[];
+  let label=null;
   text.replace(/\(:/g,'(').replace(/:\)/g,')').replace(/[–—]/g,'-').split(/\n/).forEach((line,li)=>{
+    if(/^\s*#/.test(line)){ label=line.replace(/^\s*#\s*/,'').trim(); return; }
     line.split('|').map(x=>x.trim()).filter(x=>x).forEach(raw=>{
       let open=raw.startsWith('('), close=raw.endsWith(')');
       let body=raw.replace(/[()]/g,'').replace(/\s+/g,'');
@@ -1638,7 +1656,8 @@ function parseSheet(text){
         else if(nx==='ุ'||nx==='ฺ'||nx==='̣'){ oct=-1; k++; }
         slots.push(oct*7+i);
       }
-      boxes.push({shown, slots, line:li, open, close});
+      if(!slots.length && !open && !close) return;
+      boxes.push({shown, slots, line:li, open, close, label}); label=null;
     });
   });
   return boxes;
@@ -1665,7 +1684,7 @@ function renderSheet8(boxes,el){
   const rows=[]; let cur=null, lastLine=-1;
   boxes.forEach((b,i)=>{ if(!cur||b.line!==lastLine||cur.length===8){ cur=[]; rows.push(cur); lastLine=b.line; } cur.push(i); });
   const els=[];
-  el.className='mel8'; el.innerHTML=rows.map(r=>`<div class="row">${Array.from({length:8},(_,k)=>{
+  el.className='mel8'; el.innerHTML=rows.map(r=>`${boxes[r[0]].label?`<div class="row"><div class="rlab">${boxes[r[0]].label.replace(/[<>&]/g,'')}</div></div>`:''}<div class="row">${Array.from({length:8},(_,k)=>{
     const i=r[k]; if(i===undefined) return `<div class="sb empty"></div>`;
     const b=boxes[i], sl=b.slots.slice(0,4); while(sl.length<4) sl.unshift(null);
     return `<div class="sb${b.open?' ro':''}${b.close?' rc':''}" data-i="${i}">${sl.map(st=>st===null?'<span class="s r">-</span>':`<span class="s">${noteSpan(st)}</span>`).join('')}</div>`; }).join('')}</div>`).join('');
@@ -1686,7 +1705,7 @@ function makeGrid(host,text,onChange){
     <div class="gInfo"></div>`;
   const tbl=host.querySelector('.g8'), info=host.querySelector('.gInfo');
   const lowFix=t=>String(t||'').replace(/([ดรมฟซลท])\u0e38/g,'$1\u0e3a');
-  const fromText=t=>{ const out=[]; lowFix(t).split('\n').forEach(line=>{ const bx=line.split('|').map(x=>x.replace(/\s/g,'')).filter(x=>x!==''); for(let i=0;i<bx.length;i+=8) out.push(bx.slice(i,i+8)); }); if(!out.length) out.push([]); return out.map(r=>{ while(r.length<8) r.push(''); return r; }); };
+  const fromText=t=>{ const out=[]; lowFix(t).split('\n').filter(l=>!/^\s*#/.test(l)).forEach(line=>{ const bx=line.split('|').map(x=>x.replace(/\s/g,'')).filter(x=>x!==''); for(let i=0;i<bx.length;i+=8) out.push(bx.slice(i,i+8)); }); if(!out.length) out.push([]); return out.map(r=>{ while(r.length<8) r.push(''); return r; }); };
   const draw=()=>{ tbl.innerHTML=rows.map((r,ri)=>`<div class="row"><div class="rn">${ri+1}</div>${r.map((v,ci)=>`<input data-r="${ri}" data-c="${ci}" value="${String(v).replace(/[&<>"]/g,"")}" placeholder="----" autocomplete="off" autocapitalize="off" spellcheck="false">`).join('')}</div>`).join('');
     tbl.querySelectorAll('input').forEach(inp=>{ inp.addEventListener('focus',()=>lastIn=inp); inp.addEventListener('input',()=>{ if(/\u0e38/.test(inp.value)) inp.value=lowFix(inp.value); rows[+inp.dataset.r][+inp.dataset.c]=inp.value.replace(/\s/g,''); mark(inp); emit(); }); mark(inp); }); };
   const mark=inp=>{ const v=inp.value.replace(/\s/g,'').replace(/ล้อ/g,'--'); inp.classList.toggle('bad',v!==''&&(!OK_BOX.test(v)||boxSlots(v)!==4)); inp.classList.toggle('ok',v!==''&&OK_BOX.test(v)&&boxSlots(v)===4); };
@@ -1767,7 +1786,7 @@ playScore.onclick=()=>{
     if(b.slots.length<4) t+=4-b.slots.length;
   });
   timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); if(drumRun && drumRun.rate) drumStop(); }, t*slotMs+200));
-  if(drumWithSong.checked) drumStart(+tempo.value,T0);
+  if(drumWithSong.checked){ if(curSong.pat && NATAB[curSong.pat] && drumSel.value!==curSong.pat){ drumSel.value=curSong.pat; loadDrum(curSong.pat); } drumStart(+tempo.value,T0); }
   ev.forEach((e,k)=>{
     const a=AK[fitStep(e.st+curSong.shift)+7];
     const gap=(k+1<ev.length? ev[k+1].t : t)-e.t;
@@ -1980,7 +1999,7 @@ function pracRun(opt){
     win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:times[cells.length],onFinish:opt.onFinish,drumOn:!!opt.drum});
   pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
   if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
-  if(opt.drum) drumStart(tempoV,T0,{times});
+  if(opt.drum){ if(song.pat && NATAB[song.pat] && drumSel.value!==song.pat){ drumSel.value=song.pat; loadDrum(song.pat); } drumStart(tempoV,T0,{times}); }
   const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
   ev.forEach(e=>{
     const ts=times[e.i], te=ts+(times[Math.min(e.i+e.len,cells.length)]-ts)*0.9; e.t=ts;
