@@ -475,12 +475,21 @@ body.m-solo .pOpts .bandOnly{display:none}
 body.phone.land .prac{padding:4px 6px 5px;margin-bottom:5px}
 body.phone.land .pTop{margin-bottom:3px;min-height:26px;font-size:.8rem}
 body.phone.land .prac{--laneh:44px}
+
+.instBtn{display:block;margin:0 auto 10px;border:0;border-radius:999px;padding:10px 20px;font:inherit;font-weight:700;font-size:1rem;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#2f9e44,#1f7a33);box-shadow:0 6px 16px #2f9e4455;animation:instPulse 2.4s infinite}
+.instBtn[hidden],#instHelp[hidden]{display:none !important}
+@keyframes instPulse{50%{box-shadow:0 6px 22px #2f9e4499}}
+#instHelp{z-index:80}
+#instBody ol{padding-left:1.3em;margin:.4em 0}
+#instBody .k{display:inline-block;border:1px solid #e6c9a8;background:#fff;border-radius:8px;padding:0 .4em;font-weight:700}
 </style>
 </head>
 <body>
 <div class="welcome" id="startOv">
 <div class="floaters" aria-hidden="true"><i>♪</i><i>♫</i><i>♩</i><i>♬</i><i>♪</i><i>♫</i></div>
 <div class="wbox">
+  <button type="button" class="instBtn" id="instBtn" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
   <div class="langSw" role="group" aria-label="Language">
     <button type="button" data-lang="th">🇹🇭 ไทย</button><button type="button" data-lang="en">🇬🇧 English</button>
   </div>
@@ -666,6 +675,7 @@ body.phone.land .prac{--laneh:44px}
     <button type="button" data-pop="drum">🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm</span></button>
     <button type="button" data-pop="prac">🎯 <span class="th">ฝึกซ้อม (ตามจังหวะ)</span><span class="en">Practice (play along)</span></button>
     <button type="button" data-pop="song">🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></button>
+    <button type="button" data-act="install" id="instMenu" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
     <button type="button" data-act="rate">⭐ <span class="th">ประเมินความพึงพอใจ</span><span class="en">Rate this app</span></button>
     <button type="button" data-act="home">🏠 <span class="th">หน้าแรก / เปลี่ยนโหมด</span><span class="en">Home / Change mode</span></button>
   </div>
@@ -674,6 +684,10 @@ body.phone.land .prac{--laneh:44px}
 <div class="pop" id="pop" hidden><div class="popBox">
   <div class="popHead"><b id="popTitle"></b><button type="button" class="popX" id="popX" aria-label="ปิด / Close">✕</button></div>
   <div class="popBody" id="popBody"></div>
+</div></div>
+<div class="pop" id="instHelp" hidden><div class="popBox">
+  <div class="popHead"><b>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install the app</span></b><button type="button" class="popX" id="instX">✕</button></div>
+  <div class="popBody" id="instBody" style="font-size:1.05rem;line-height:1.7"></div>
 </div></div>
 <div id="popStore" hidden>
   <div class="card" id="pracCard">
@@ -1608,7 +1622,7 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
     if(open) fmMode.textContent=L('โหมด','Mode')+': '+modeLabel.textContent; };
   fabMenu.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return;
     if(b.dataset.pop) openPop(b.dataset.pop);
-    else { fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); if(b.dataset.act==='rate') rateBtn.click(); if(b.dataset.act==='home') homeBtn.click(); } });
+    else { fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); if(b.dataset.act==='rate') rateBtn.click(); if(b.dataset.act==='install') doInstall(); if(b.dataset.act==='home') homeBtn.click(); } });
   document.addEventListener('pointerdown',e=>{ if(!fabMenu.hidden && !e.target.closest('.fab')){ fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); } },true);
   // กดเริ่มเพลง/กลองแล้วปิดป็อบอัพ เพื่อให้เห็นอังกะลุงและไฟนำ
   playScore.addEventListener('click',()=>setTimeout(closePop,120));
@@ -1763,6 +1777,31 @@ function pracFinish(){
 pStart.onclick=pracStart;
 pAgain.onclick=pracStart;
 pStop.onclick=pracStop;
+
+// ---------- ปุ่มติดตั้งแอป (เฉพาะเว็บแอปที่วางบนเว็บไซต์เอง) ----------
+let instPrompt=null;
+const isInstalled=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const UA=navigator.userAgent, isIOS=/iphone|ipad|ipod/i.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const inApp=/Line\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(UA), isAndroid=/android/i.test(UA);
+function updInst(){ const show=STANDALONE && !isInstalled(); instBtn.hidden=!show; instMenu.hidden=!show; }
+addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); instPrompt=e; updInst(); });
+addEventListener('appinstalled',()=>{ instPrompt=null; instBtn.hidden=true; instMenu.hidden=true; instHelp.hidden=true; });
+function doInstall(){
+  if(instPrompt){ instPrompt.prompt(); instPrompt.userChoice.finally(()=>{ instPrompt=null; }); return; }
+  let h;
+  if(inApp) h=L(`<p>ตอนนี้เปิดอยู่ในแอป LINE / Facebook ซึ่งติดตั้งไม่ได้</p><ol><li>กดปุ่ม <span class="k">⋯</span> หรือ <span class="k">⋮</span> มุมขวาบน</li><li>เลือก <b>เปิดในเบราว์เซอร์</b> (${isIOS?'Safari':'Chrome'})</li><li>แล้วกดปุ่ม 📲 ติดตั้งแอป อีกครั้ง</li></ol>`,
+    `<p>You are inside LINE / Facebook, which can't install apps.</p><ol><li>Tap <span class="k">⋯</span> or <span class="k">⋮</span> (top-right)</li><li>Choose <b>Open in browser</b> (${isIOS?'Safari':'Chrome'})</li><li>Then tap 📲 Install app again</li></ol>`);
+  else if(isIOS) h=L(`<ol><li>เปิดหน้านี้ด้วย <b>Safari</b></li><li>กดปุ่มแชร์ <span class="k">⬆︎</span> (ด้านล่างหรือด้านบนของจอ)</li><li>เลื่อนลง เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></li><li>กด <b>เพิ่ม</b> — จะมีไอคอนอังกะลุงบนหน้าจอ</li></ol>`,
+    `<ol><li>Open this page in <b>Safari</b></li><li>Tap the Share button <span class="k">⬆︎</span></li><li>Scroll and choose <b>Add to Home Screen</b></li><li>Tap <b>Add</b> — the angklung icon appears on your home screen</li></ol>`);
+  else if(isAndroid) h=L(`<ol><li>เปิดหน้านี้ด้วย <b>Chrome</b></li><li>กดเมนู <span class="k">⋮</span> มุมขวาบน</li><li>เลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b></li></ol>`,
+    `<ol><li>Open this page in <b>Chrome</b></li><li>Tap the menu <span class="k">⋮</span></li><li>Choose <b>Install app</b> or <b>Add to Home screen</b></li></ol>`);
+  else h=L(`<ol><li>ใช้ <b>Chrome</b> หรือ <b>Edge</b></li><li>กดไอคอนติดตั้ง <span class="k">⊕</span> ท้ายช่องที่อยู่เว็บ<br>หรือเมนู <span class="k">⋮</span> → <b>ติดตั้งอังกะลุงดิจิทัล</b> / <b>แอป → ติดตั้งไซต์นี้เป็นแอป</b></li></ol>`,
+    `<ol><li>Use <b>Chrome</b> or <b>Edge</b></li><li>Click the install icon <span class="k">⊕</span> at the end of the address bar<br>or menu <span class="k">⋮</span> → <b>Install Digital Angklung</b> / <b>Apps → Install this site as an app</b></li></ol>`);
+  instBody.innerHTML=h; instHelp.hidden=false;
+}
+instBtn.onclick=doInstall; instX.onclick=()=>instHelp.hidden=true;
+instHelp.addEventListener('pointerdown',e=>{ if(e.target===instHelp) instHelp.hidden=true; });
+updInst();
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
