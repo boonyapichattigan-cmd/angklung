@@ -729,17 +729,53 @@ body.phone:not(.land) .qDrum{margin-top:10px}
 .songPick select{min-width:0;width:100%}
 @media (max-width:360px){ .rChoice{grid-template-columns:1fr} }
 
-/* หน้าแรกแนวนอน (แท็บเล็ต/มือถือแนวนอน): รูปซ้าย ข้อความขวา ปุ่มอยู่แถบบน */
-body.wland .wbox{display:grid !important;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);column-gap:24px;align-items:center;
-  max-width:min(1100px,96vw) !important;padding-top:64px !important;text-align:left}
+
+/* ---------- หน้าแรก: จัดองค์ประกอบใหม่ ---------- */
+.wLeft{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
+.wHead{text-align:center}
+.wtext{width:100%;display:flex;flex-direction:column;align-items:center}
+.wChips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:440px;margin:10px auto 4px}
+.wChips > span{display:flex !important;align-items:center;gap:8px;justify-content:flex-start;border-radius:14px !important;padding:8px 12px !important;font-size:.92rem !important;
+  background:rgba(255,255,255,.9) !important;box-shadow:0 2px 10px rgba(13,59,102,.07) !important;text-align:left}
+.wChips > span .ci{flex:none;width:30px;height:30px;margin:0;border-radius:9px;background:linear-gradient(145deg,#f9e38f,#f4d35e);display:grid;place-items:center}
+.wChips > span .ci svg{width:17px;height:17px}
+.wChips > span .ci img{max-width:24px;max-height:24px}
+.wChips .ci+.ci{margin-left:0}
+.wedu{margin-top:4px}
+#modeStep,#regStep{width:100%}
+#modeStep .whoami{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 8px;width:fit-content;max-width:100%;margin:12px auto 0}
+.wbtn{min-height:120px}
+/* แนวนอน: 2 คอลัมน์ ซ้ายรูป+ชื่อ ขวาเนื้อหา */
+body.wland .wbox{display:grid !important;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:clamp(16px,3vw,40px);align-items:center;
+  max-width:min(1080px,96vw) !important;padding:64px clamp(16px,3vw,36px) 22px !important;text-align:center}
 body.wland .wbox > .bgmBtn{top:14px;left:16px}
 body.wland .wbox > .instBtn{position:absolute;top:14px;left:70px;margin:0;padding:9px 16px;font-size:.92rem}
-body.wland .wbox > .langSw{top:14px !important;right:16px !important}
-body.wland .wHero{grid-column:1;grid-row:1 / span 2;align-self:start;justify-self:center;max-width:100%;position:sticky;top:12px}
-body.wland .wHero img{height:min(62vh,460px) !important;max-width:100%;object-fit:contain}
-body.wland .wtext{grid-column:2;min-width:0}
-body.wland .wbox > :not(.wHero):not(.wtext):not(.bgmBtn):not(.instBtn):not(.langSw){grid-column:2;min-width:0}
-body.wland .wtitle{font-size:clamp(1.6rem,4.2vw,2.6rem)}
+body.wland .wbox > .langSw{position:absolute;top:14px !important;right:16px !important;margin:0}
+body.wland .wLeft{grid-column:1;align-self:center;padding:8px 0;border-radius:26px;background:radial-gradient(closest-side,rgba(244,211,94,.28),rgba(244,211,94,0))}
+body.wland .wHero img{height:min(46vh,380px) !important;max-width:100%;object-fit:contain}
+body.wland .wtitle{font-size:clamp(1.7rem,3.6vw,2.7rem) !important}
+body.wland .wtext{grid-column:2;min-width:0;align-items:stretch}
+body.wland .wChips{max-width:none;margin-top:0}
+body.wland .wedu{align-self:center}
+body.wland .wq{margin:12px 0 8px;text-align:center}
+body.wland .wnote{display:none}
+/* มือถือแนวนอน (จอเตี้ย): ย่อทุกอย่างให้เห็นปุ่มเลือกโหมดโดยไม่ต้องเลื่อน */
+@media (max-height:520px){
+  body.wland .wbox{padding-top:58px !important;padding-bottom:12px !important}
+  body.wland .wHero img{height:min(42vh,200px) !important}
+  body.wland .whi{font-size:.85rem}
+  body.wland .wtitle{font-size:clamp(1.4rem,3.4vw,1.9rem) !important}
+  body.wland .wdev{font-size:.82rem}
+  body.wland .wChips{gap:6px}
+  body.wland .wChips > span{padding:5px 9px !important;font-size:.82rem !important}
+  body.wland .wChips > span .ci{width:24px;height:24px}
+  body.wland .wedu{font-size:.78rem;padding:2px 10px}
+  body.wland #modeStep .whoami{margin-top:8px;font-size:.85rem;padding:4px 12px}
+  body.wland .wq{margin:8px 0 6px;font-size:.95rem}
+  body.wland .wbtn{min-height:0;padding:10px 8px}
+  body.wland .wbtn .wi img{max-height:40px !important}
+  body.wland .wbtn small{display:none}
+}
 </style>
 </head>
 <body>
@@ -751,11 +787,15 @@ body.wland .wtitle{font-size:clamp(1.6rem,4.2vw,2.6rem)}
   <div class="langSw" role="group" aria-label="Language">
     <button type="button" data-lang="th">🇹🇭 ไทย</button><button type="button" data-lang="en">🇬🇧 English</button>
   </div>
+  <div class="wLeft">
   <div class="wHero"><div class="glow"></div><img id="wImg" alt="อังกะลุง" draggable="false"></div>
-  <div class="wtext">
+  <div class="wHead">
     <p class="whi"><span class="th">ยินดีต้อนรับสู่</span><span class="en i">Welcome to</span></p>
     <h1 class="wtitle"><span class="th">อังกะลุงดิจิทัล</span><span class="en">Digital Angklung</span></h1>
     <p class="wdev"><span class="th">พัฒนาโดย <b>นายเจษฎา บุญญาภิชาติกาล</b></span><span class="en">Developed by <b>Mr. Jedsada Boonyapichattigan</b></span></p>
+  </div>
+  </div>
+  <div class="wtext">
     <div class="wChips">
       <span><i class="ci" data-i="ak"></i><span class="th">14 เสียง</span><span class="en">14 notes</span></span>
       <span><i class="ci" data-i="room"></i><span class="th">เล่นเป็นวง</span><span class="en">Ensemble</span></span>
@@ -1597,7 +1637,7 @@ function showReg(){ regStep.hidden=false; modeStep.hidden=true; regForm.hidden=t
 function showModes(){
   regStep.hidden=true; modeStep.hidden=false;
   whoTxt.textContent='👤 '+user.name+(user.type==='student'?` · ${user.cls} ${L('เลขที่','No.')} ${user.no}`:` · ${user.pos||''} · ${user.school} · ${user.prov}`);
-  logNote.hidden=!FORM_PREFILL;
+  logNote.hidden=!FORM_PREFILL || !!(SCRIPT_URL && STANDALONE);
   const logged = !isNewUser && (SCRIPT_URL ? sessionLogged : store.get('lastLog','')===todayKey());   // บันทึกการเข้าใช้วันละ 1 ครั้งต่อเครื่อง
   logNote.hidden=!FORM_PREFILL || logged;
   document.querySelectorAll('.wbtn[data-mode]').forEach(b=>{
