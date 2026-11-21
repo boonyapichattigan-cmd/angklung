@@ -1921,7 +1921,7 @@ function fitKeys(){
     const fabW=(document.body.classList.contains('phone')&&!document.body.classList.contains('land'))?0:56;
     const W0=solo.clientWidth, top=solo.getBoundingClientRect().top+scrollY;
     const portrait=document.body.classList.contains('phone')&&!document.body.classList.contains('land');
-    const H=Math.max(240, vh-top-12-(portrait?140:0)), gap=document.body.classList.contains('phone')?6:10;
+    const H=Math.max(240, vh-top-12), gap=document.body.classList.contains('phone')?6:10;
     solo.style.gap=gap+'px';
     let best=null;
     for(const cols of [7,5,4,3,2]){
@@ -1934,11 +1934,9 @@ function fitKeys(){
     if(!best) best={cols:7,rows:2,pic:60,fs:18,cellH:110};
     if(best.rows*best.cols===14) solo.style.paddingRight=fabW+'px';
     // แถวละ 7: แถวบน ด̣→ท̣ จากซ้าย · แถวล่าง ด→ท จากขวา (ท̣ กับ ด อยู่ติดกันตรงมุมขวา)
-    // เรียงแบบงู: แถวคี่เรียงซ้าย→ขวา แถวคู่เรียงขวา→ซ้าย (ทุกรูปแบบจอ)
-    soloRev=true; const C=best.cols, place=[];
-    soloEls.forEach((el,idx)=>{ const r=Math.floor(idx/C), c=idx%C, col=r%2?C-1-c:c;
-      el.style.gridRow=String(r+1); el.style.gridColumn=String(col+1); el.style.order=''; place.push({idx,p:r*C+col}); });
-    place.sort((a,b)=>a.p-b.p); keyMap=place.map(x=>x.idx);
+    // เรียงตามลำดับเสียง ซ้าย→ขวา ทุกแถว
+    soloRev=false; keyMap=[...Array(14).keys()];
+    soloEls.forEach((el,idx)=>{ el.style.gridRow=''; el.style.gridColumn=''; el.style.order=String(idx); });
     keyMap.forEach((idx,k)=>{ const kc=soloEls[idx].querySelector('.kcap'); if(kc) kc.textContent=(SOLO_KEYS[k]||'').toUpperCase(); });
     solo.style.gridTemplateColumns=`repeat(${best.cols},1fr)`;
     solo.style.height=H+'px';
