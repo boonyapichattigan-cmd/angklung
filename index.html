@@ -576,6 +576,12 @@ body.phone footer.credit{font-size:.8rem;line-height:1.55;padding-left:10px;padd
 body.phone footer.credit .cs{display:none}
 body.phone footer.credit .cl{display:block}
 body.phone footer.credit .cl:first-child{font-weight:600}
+/* ป้ายแป้นพิมพ์บนปุ่ม: แสดงเฉพาะคอมพิวเตอร์ */
+.kcap{display:none}
+body.desktop .kcap{display:grid;place-items:center;position:absolute;top:8px;right:8px;min-width:30px;height:30px;padding:0 6px;border-radius:7px;
+  background:linear-gradient(#fff,#efe6da);border:1px solid #cdbba3;border-bottom-width:3px;color:#5a3a20;font:700 .95rem/1 'Prompt',sans-serif;box-shadow:0 1px 2px #0002;pointer-events:none;z-index:2}
+body.desktop .stage .kcap{top:10px;right:10px;min-width:40px;height:40px;font-size:1.25rem}
+.solo .ak,.stage .ak{position:relative}
 </style>
 </head>
 <body>
@@ -1159,7 +1165,7 @@ function renderSlot(s){
   const it=SET[slots[s]], a=it.ak, c=slotCards[s];
   c.style.setProperty('--c',a.c);
   c.innerHTML=`<span class="slotNo">${s?L("มือขวา","Right hand"):L("มือซ้าย","Left hand")} · #${it.no}</span><span class="cueTag">${L("ถึงคิว!","Your turn!")}</span>${svgFor(a)}
-    <div class="nm">${a.html}</div><div class="sub"><span class="kk">${document.body.classList.contains('desktop')?L('ปุ่ม ','Key ')+(s?'J':'F'):''}</span></div>`;
+    <div class="nm">${a.html}</div><span class="kcap">${s?'J':'F'}</span>`;
 }
 
 // ตัวเลือก: รายการ 28 ตัว + ชิปสีเลือกตามเสียง
@@ -1194,11 +1200,12 @@ const rackEls=AK.map(()=>[]);
 // ---------- เล่นคนเดียว: ปุ่ม 14 เสียง ----------
 const SOLO_KEYS=['q','w','e','r','t','y','u','a','s','d','f','g','h','j'];
 let soloRev=false;   // แถวล่างเรียงจากขวาไปซ้าย
-const keyToIdx=i=>soloRev&&i>=7?7+(13-i):i;
+let keyMap=[...Array(14).keys()];   // ลำดับแป้น → อังกะลุงตัวที่ (ตามตำแหน่งบนจอ อ่านซ้าย→ขวา บน→ล่าง)
+const keyToIdx=i=>keyMap[i];
 const soloEls=[];
 AK.forEach(a=>{
   const d=document.createElement('div'); d.className='ak'; d.style.setProperty('--c',a.c);
-  d.innerHTML=`<span class="rno">${a.idx+1}</span>`+svgFor(a)+`<div class="nm">${a.html}</div><div class="sub"><span class="kk">${SOLO_KEYS[a.idx].toUpperCase()}</span></div>`;
+  d.innerHTML=`<span class="rno">${a.idx+1}</span><span class="kcap">${SOLO_KEYS[a.idx].toUpperCase()}</span>`+svgFor(a)+`<div class="nm">${a.html}</div>`;
   solo.appendChild(d); soloEls[a.idx]=d;
   bindPress(d,'solo'+a.idx,()=>a);
 });
@@ -1913,7 +1920,8 @@ function fitKeys(){
     solo.style.paddingRight='0px';
     const fabW=(document.body.classList.contains('phone')&&!document.body.classList.contains('land'))?0:56;
     const W0=solo.clientWidth, top=solo.getBoundingClientRect().top+scrollY;
-    const H=Math.max(240, vh-top-12), gap=document.body.classList.contains('phone')?6:10;
+    const portrait=document.body.classList.contains('phone')&&!document.body.classList.contains('land');
+    const H=Math.max(240, vh-top-12-(portrait?140:0)), gap=document.body.classList.contains('phone')?6:10;
     solo.style.gap=gap+'px';
     let best=null;
     for(const cols of [7,5,4,3,2]){
@@ -1926,8 +1934,12 @@ function fitKeys(){
     if(!best) best={cols:7,rows:2,pic:60,fs:18,cellH:110};
     if(best.rows*best.cols===14) solo.style.paddingRight=fabW+'px';
     // แถวละ 7: แถวบน ด̣→ท̣ จากซ้าย · แถวล่าง ด→ท จากขวา (ท̣ กับ ด อยู่ติดกันตรงมุมขวา)
-    soloRev=(best.cols===7);
-    soloEls.forEach((el,idx)=>{ const pos=soloRev&&idx>=7?7+(13-idx):idx; el.style.order=pos; const kk=el.querySelector('.kk'); if(kk) kk.textContent=SOLO_KEYS[pos].toUpperCase(); });
+    // เรียงแบบงู: แถวคี่เรียงซ้าย→ขวา แถวคู่เรียงขวา→ซ้าย (ทุกรูปแบบจอ)
+    soloRev=true; const C=best.cols, place=[];
+    soloEls.forEach((el,idx)=>{ const r=Math.floor(idx/C), c=idx%C, col=r%2?C-1-c:c;
+      el.style.gridRow=String(r+1); el.style.gridColumn=String(col+1); el.style.order=''; place.push({idx,p:r*C+col}); });
+    place.sort((a,b)=>a.p-b.p); keyMap=place.map(x=>x.idx);
+    keyMap.forEach((idx,k)=>{ const kc=soloEls[idx].querySelector('.kcap'); if(kc) kc.textContent=(SOLO_KEYS[k]||'').toUpperCase(); });
     solo.style.gridTemplateColumns=`repeat(${best.cols},1fr)`;
     solo.style.height=H+'px';
     solo.style.setProperty('--soloh',Math.floor(best.pic)+'px');
