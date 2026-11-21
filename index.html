@@ -1193,6 +1193,8 @@ const rackEls=AK.map(()=>[]);
 
 // ---------- เล่นคนเดียว: ปุ่ม 14 เสียง ----------
 const SOLO_KEYS=['q','w','e','r','t','y','u','a','s','d','f','g','h','j'];
+let soloRev=false;   // แถวล่างเรียงจากขวาไปซ้าย
+const keyToIdx=i=>soloRev&&i>=7?7+(13-i):i;
 const soloEls=[];
 AK.forEach(a=>{
   const d=document.createElement('div'); d.className='ak'; d.style.setProperty('--c',a.c);
@@ -1228,8 +1230,8 @@ addEventListener('keydown',e=>{
   if(e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT'||e.repeat) return;
   const k=e.key.toLowerCase();
   if(playMode==='solo'){
-    const i=SOLO_KEYS.indexOf(k); if(i<0) return;
-    mode==='hold' ? startShake('ks'+i,AK[i],[soloEls[i]]) : flick(AK[i],[soloEls[i]]); return;
+    const p=SOLO_KEYS.indexOf(k); if(p<0) return; const i=keyToIdx(p);
+    mode==='hold' ? startShake('ks'+p,AK[i],[soloEls[i]]) : flick(AK[i],[soloEls[i]]); return;
   }
   if(!document.body.classList.contains('band-play')) return;
   const s = k==='f'?0 : k==='j'?1 : -1; if(s<0) return;
@@ -1923,6 +1925,9 @@ function fitKeys(){
     }
     if(!best) best={cols:7,rows:2,pic:60,fs:18,cellH:110};
     if(best.rows*best.cols===14) solo.style.paddingRight=fabW+'px';
+    // แถวละ 7: แถวบน ด̣→ท̣ จากซ้าย · แถวล่าง ด→ท จากขวา (ท̣ กับ ด อยู่ติดกันตรงมุมขวา)
+    soloRev=(best.cols===7);
+    soloEls.forEach((el,idx)=>{ const pos=soloRev&&idx>=7?7+(13-idx):idx; el.style.order=pos; const kk=el.querySelector('.kk'); if(kk) kk.textContent=SOLO_KEYS[pos].toUpperCase(); });
     solo.style.gridTemplateColumns=`repeat(${best.cols},1fr)`;
     solo.style.height=H+'px';
     solo.style.setProperty('--soloh',Math.floor(best.pic)+'px');
