@@ -604,6 +604,25 @@ body.desktop .stage .kcap{top:10px;right:10px;min-width:40px;height:40px;font-si
 .wbtn .wi[data-i="school"],.wbtn .wi[data-i="globe"]{color:#a5531f}
 img.logoAk{height:1.25em;width:auto;vertical-align:-.28em;margin-right:6px}
 footer.credit img.logoAk{height:1.3em}
+
+/* แถบเครื่องประกอบจังหวะ (โหมดเล่นคนเดียว) */
+body.m-solo .qDrum.soloOnly{display:flex}
+.qDrum{align-items:center;gap:6px;flex-wrap:nowrap;margin:0 0 8px;padding:5px 8px;background:#fffaf2;border:1px solid #f0dcc0;border-radius:14px;box-shadow:0 2px 8px rgba(120,70,20,.08)}
+body.practicing .qDrum{display:none !important}
+.qIco{width:34px;height:30px;flex:none;background-size:contain;background-repeat:no-repeat;background-position:center}
+.qDrum select{flex:1 1 auto;min-width:0;max-width:260px;font:inherit;font-size:.9rem;padding:6px 8px;border-radius:10px;border:1px solid #e6cfae;background:#fff;color:#5a3412}
+.qB{flex:none;min-width:40px;height:36px;border:0;border-radius:10px;background:#f6e6cf;color:#7a3f10;font-size:1.05rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+.qB.sm{min-width:32px;padding:0 6px}
+.qB.qPlay{background:linear-gradient(#d0742c,#b35a1d);color:#fff;min-width:46px}
+.qB.qPlay.on{background:linear-gradient(#c0392b,#962d22)}
+.qB.on{outline:3px solid rgba(227,162,59,.6)}
+.qT{display:flex;align-items:center;gap:3px;flex:none}
+.qT b{min-width:2.4em;text-align:center;font-size:.95rem;color:#5a3412}
+body.phone .qDrum{gap:4px;padding:4px 6px;margin-bottom:6px}
+body.phone .qB{height:34px;min-width:34px}
+body.phone .qB.sm{min-width:28px}
+body.phone .qIco{width:26px}
+body.phone .qDrum select{font-size:.82rem;padding:5px 4px}
 </style>
 </head>
 <body>
@@ -690,6 +709,14 @@ footer.credit img.logoAk{height:1.3em}
         <div class="lane" id="pLane"><div class="strip" id="pStrip"></div><div class="phead"></div><div class="pCnt" id="pCnt"></div></div>
       </div>
       <div class="stage" id="stage"></div>
+      <div class="qDrum soloOnly" id="qDrum">
+        <span class="qIco ico-klong"></span>
+        <select id="qPat" aria-label="หน้าทับ / Pattern"></select>
+        <button type="button" class="qB qPlay" id="qPlay" title="เริ่ม/หยุด · Start/Stop">▶</button>
+        <button type="button" class="qB" id="qRit" title="ทอดจบ · Slow down &amp; end">🐢</button>
+        <span class="qT"><button type="button" class="qB sm" id="qSlow" title="ช้าลง · Slower">−</button><b id="qTv">160</b><button type="button" class="qB sm" id="qFast" title="เร็วขึ้น · Faster">+</button></span>
+        <button type="button" class="qB sm qMore" id="qMore" title="ตั้งค่าเพิ่ม · More">⋯</button>
+      </div>
       <div class="solo" id="solo"></div>
     </div>
 
@@ -2582,6 +2609,24 @@ Object.assign(ICO,{
 });
 document.querySelectorAll('.ci[data-i],.wi[data-i]').forEach(e=>{ const k=e.dataset.i; if(ICO[k]) e.innerHTML=ICO[k]; });
 document.querySelectorAll('img.logoAk').forEach(i=>i.src=AK_IMG);
+
+// แถบควบคุมจังหวะในโหมดเล่นคนเดียว (สะท้อนตัวควบคุมหลัก)
+(function(){
+  qDrum.querySelector('.qIco').style.backgroundImage=`url(${KLONG_IMG})`;
+  const syncPats=()=>{ qPat.innerHTML=drumSel.innerHTML; qPat.value=drumSel.value; };
+  syncPats(); new MutationObserver(syncPats).observe(drumSel,{childList:true,subtree:true});
+  const setT=v=>{ v=Math.max(+drumTempo.min,Math.min(+drumTempo.max,v)); drumTempo.value=v; drumTempo.oninput(); };
+  const refresh=()=>{ const on=!!drumRun; qPlay.classList.toggle('on',on); qPlay.textContent=on?'■':'▶';
+    qRit.classList.toggle('on',!!(drumRun&&drumRun.rit)); qTv.textContent=drumTempo.value; if(qPat.value!==drumSel.value) qPat.value=drumSel.value; };
+  qPat.onchange=()=>{ drumSel.value=qPat.value; drumSel.onchange(); refresh(); };
+  qPlay.onclick=()=>{ if(drumRun) drumStop(); else drumStart(); refresh(); };
+  qRit.onclick=()=>{ if(drumRun&&drumRitard()) drumRitBtn.classList.add('on'); refresh(); };
+  qSlow.onclick=()=>{ setT(+drumTempo.value-10); refresh(); };
+  qFast.onclick=()=>{ setT(+drumTempo.value+10); refresh(); };
+  qMore.onclick=()=>openPop('drum');
+  drumTempo.addEventListener('input',refresh);
+  setInterval(refresh,300); refresh();
+})();
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
