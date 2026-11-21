@@ -1123,7 +1123,10 @@ function initAudio(){
   const wHp=ctx.createBiquadFilter(); wHp.type='highpass'; wHp.frequency.value=280;
   const wLp=ctx.createBiquadFilter(); wLp.type='lowpass'; wLp.frequency.value=6500;
   lp.connect(pre); pre.connect(wHp); wHp.connect(wLp); wLp.connect(fxConv); fxConv.connect(fxWet); fxWet.connect(comp);
-  comp.connect(ctx.destination);
+  // ลิมิตเตอร์ท้ายสาย: กันเสียงรวมเกิน 0 dB (เสียงแตก) ตอนโน้ตถี่ + กลอง
+  const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-4; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.002; lim.release.value=0.12;
+  const trim=ctx.createGain(); trim.gain.value=0.85;
+  comp.connect(trim); trim.connect(lim); lim.connect(ctx.destination);
   applyFx(fx);
   setTimeout(()=>{ loadAngklung(); loadSamples(); },0);
 }
@@ -2051,7 +2054,7 @@ function songNote(a,ts,te,els){
   timers.push(setTimeout(()=>els.forEach(e=>e.classList.remove('play')),Math.max(0,(te-now)*1000)));
 }
 function stopSong(){
-  timers.forEach(clearTimeout); timers=[];
+  timers.forEach(x=>{ clearTimeout(x); clearInterval(x); }); timers=[];
   songVoices.forEach(v=>{ try{ const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,0.03); v.src.stop(t+0.2);}catch(e){} }); songVoices=[];
   [...active.keys()].filter(k=>k.startsWith('song')).forEach(stopShake);
   slotCards.forEach(c=>c.classList.remove('cue')); soloEls.forEach(c=>c.classList.remove('cue'));
@@ -2064,27 +2067,39 @@ playScore.onclick=()=>{
   const T0=ctx.currentTime+0.15, T0ms=performance.now()+150;
   const slotMs=60000/ +tempo.value, boxes=curSong.boxes, order=playOrder(boxes);
   // รวมเป็นเหตุการณ์ตามเวลา
-  const ev=[]; let t=0;
+  const ev=[], bxT=[]; let t=0;
   order.forEach(bi=>{
-    const b=boxes[bi];
-    timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); boxEls[bi].classList.add('now'); boxEls[bi].scrollIntoView({block:'nearest'}); }, t*slotMs+150));
+    const b=boxes[bi]; bxT.push({t,bi});
     b.slots.forEach(st=>{ if(st!==null) ev.push({t, st}); t++; });
     if(b.slots.length<4) t+=4-b.slots.length;
   });
-  timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); if(drumRun && drumRun.rate) drumStop(); }, t*slotMs+200));
+  const total=t;
   if(drumWithSong.checked){ if(curSong.pat && NATAB[curSong.pat] && drumSel.value!==curSong.pat){ drumSel.value=curSong.pat; loadDrum(curSong.pat); } drumStart(+tempo.value,T0,{noPlan:true}); }
-  ev.forEach((e,k)=>{
-    const a=AK[fitStep(e.st+curSong.shift)+7];
-    const gap=(k+1<ev.length? ev[k+1].t : t)-e.t;
-    const t0=e.t*slotMs, t1=t0+Math.min(gap,2)*slotMs*0.9;
-    const cueEls = playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s]);
-    if(cueEls.length){
-      timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.add('cue')), Math.max(0,t0+150-slotMs*0.3)));
-      timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.remove('cue')), t1+150));
-      if(leaveMine.checked) return;
+  const song=curSong, mine=leaveMine.checked; let k=0, kb=0, ended=false;
+  const sched=()=>{
+    const horizon=(ctx.currentTime-T0)*1000+1500;     // ตั้งล่วงหน้า 1.5 วินาที
+    const base=(ctx.currentTime-T0)*1000, off=ms=>Math.max(0,ms-base);
+    while(kb<bxT.length && bxT[kb].t*slotMs<horizon){ const {t:bt,bi}=bxT[kb++];
+      timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); boxEls[bi]&&boxEls[bi].classList.add('now'); boxEls[bi]&&boxEls[bi].scrollIntoView({block:'nearest'}); }, off(bt*slotMs))); }
+    while(k<ev.length && ev[k].t*slotMs<horizon){
+      const e=ev[k], a=AK[fitStep(e.st+song.shift)+7];
+      const gap=(k+1<ev.length? ev[k+1].t : total)-e.t; k++;
+      const t0=e.t*slotMs, t1=t0+Math.min(gap,2)*slotMs*0.9;
+      const cueEls = playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s]);
+      if(cueEls.length){
+        timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.add('cue')), off(t0-slotMs*0.3)));
+        timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.remove('cue')), off(t1)));
+        if(mine) continue;
+      }
+      songNote(a,T0+t0/1000,T0+t1/1000,playMode==='solo'?[soloEls[a.idx]]:rackEls[a.idx]);
     }
-    songNote(a,T0+t0/1000,T0+t1/1000,playMode==='solo'?[soloEls[a.idx]]:rackEls[a.idx]);
-  });
+    if(!ended && k>=ev.length && kb>=bxT.length){ ended=true;
+      timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); if(drumRun && drumRun.rate) drumStop(); clearInterval(iv); setTimeout(()=>{ if(timers.includes(iv)) timers=[]; },1000); }, off(total*slotMs+50))); }
+    // ล้างรายการเสียง/ตัวตั้งเวลาที่จบแล้ว
+    if(songVoices.length>64) songVoices.splice(0,songVoices.length-64);
+    if(timers.length>400) timers.splice(0,timers.length-400);
+  };
+  const iv=setInterval(sched,200); timers.push(iv); sched();
 };
 stopScore.onclick=stopSong;
 songSel.value=store.get('songSel','0'); if(!songSel.value) songSel.value='0'; songSel.onchange();
@@ -2253,7 +2268,7 @@ pEye.onclick=()=>{ pShow.checked=!pShow.checked; pShow.onchange(); };
 function keyElsFor(a){ return playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s]); }
 function pracSong(){ return pSong.value==='own' ? {name:L('โน้ตที่พิมพ์เอง','My notation'),shift:-7,text:ownText} : SONGS[+pSong.value]; }
 function pracStop(keepBar){
-  if(P.raf) cancelAnimationFrame(P.raf); (P.timers||[]).forEach(clearTimeout); P.timers=[];
+  if(P.raf) cancelAnimationFrame(P.raf); clearInterval(P.schedIv); (P.timers||[]).forEach(clearTimeout); P.timers=[];
   (P.voices||[]).forEach(v=>{ try{ v.g.gain.setTargetAtTime(0,ctx.currentTime,0.03); v.src.stop(ctx.currentTime+0.2);}catch(e){} }); P.voices=[];
   if(P.drumOn && drumRun && drumRun.rate) drumStop();
   document.querySelectorAll('.ak.cue').forEach(e=>e.classList.remove('cue'));
@@ -2293,15 +2308,21 @@ function pracRun(opt){
   pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
   if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
   if(opt.drum){ if(song.pat && NATAB[song.pat] && drumSel.value!==song.pat){ drumSel.value=song.pat; loadDrum(song.pat); } drumStart(tempoV,T0,{times}); }
-  const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
-  ev.forEach(e=>{
-    const ts=times[e.i], te=ts+(times[Math.min(e.i+e.len,cells.length)]-ts)*0.9; e.t=ts;
-    if(!e.mine){ if(opt.autoFn && opt.autoFn(e.a) && ts>ctx.currentTime) songNote(e.a,ts,te,playMode==='solo'?[soloEls[e.a.idx]]:(rackEls[e.a.idx]||[])); return; }
-    if(opt.light){ const els=keyElsFor(e.a);
-      P.timers.push(setTimeout(()=>{ if(pLight.checked||ROOM.role==='member') els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
-      P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); }
-  });
-  P.voices=songVoices.splice(0);
+  ev.forEach(e=>{ e.t=times[e.i]; e.te=e.t+(times[Math.min(e.i+e.len,cells.length)]-e.t)*0.9; });
+  let pk=0; P.voices=[];
+  const psched=()=>{
+    if(!P.run && pk>0) return;
+    const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
+    while(pk<ev.length && ev[pk].t<now+1.5){ const e=ev[pk++], ts=e.t, te=e.te;
+      if(!e.mine){ if(opt.autoFn && opt.autoFn(e.a) && ts>now) songNote(e.a,ts,te,playMode==='solo'?[soloEls[e.a.idx]]:(rackEls[e.a.idx]||[])); continue; }
+      if(opt.light){ const els=keyElsFor(e.a);
+        P.timers.push(setTimeout(()=>{ if(pLight.checked||ROOM.role==='member') els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
+        P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); } }
+    P.voices.push(...songVoices.splice(0)); if(P.voices.length>64) P.voices.splice(0,P.voices.length-64);
+    if(P.timers.length>400) P.timers.splice(0,P.timers.length-400);
+    if(pk>=ev.length) clearInterval(P.schedIv);
+  };
+  clearInterval(P.schedIv); P.schedIv=setInterval(psched,200); psched();
   const loop=()=>{
     if(!P.run) return;
     const t=ctx.currentTime; let pos;
