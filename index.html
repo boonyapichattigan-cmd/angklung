@@ -2757,6 +2757,7 @@ function fillSongs(sel,opt={}){
 // หน้าทับตั้งต้นตามประเภทเพลง (เลือกเปลี่ยนเองได้)
 function defPat(sg){ if(!sg) return 'prob2'; if(sg.pat && NATAB[sg.pat]) return sg.pat;
   const t=(sg.name||'').split(' · ')[0];
+  if(/ลาว/.test(t) && /สองชั้น/.test(t)) return 'laoSM2';   // เพลงสำเนียงลาว 2 ชั้น ใช้หน้าทับลาว (สองไม้ลาว)
   if(/ชั้นเดียว/.test(t)) return 'prob1'; if(/สองชั้น/.test(t)) return 'prob2'; if(/สามชั้น|เถา|โหมโรง/.test(t)) return 'prob3'; return 'prob2'; }
 fillSongs(songSel);
 const ownOpt=document.createElement('option'); ownOpt.value='own'; ownOpt.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); songSel.appendChild(ownOpt);
@@ -3045,8 +3046,17 @@ function lisStart(){
   initAudio(); ctx.resume(); loadAngklung(); stopSong(); if(window.pracStop && window.P && P.run) pracStop(); lisStop(); bgmHalt&&bgmHalt(true);
   const bx=sg.boxes||parseSheet(sg.text), slotMs=60000/ +lisTempo.value, T0=ctx.currentTime+0.25;
   const {ev,bxT,total}=songEvents(bx,-7,13);   // 3 ช่วงเสียง: ล้อ/เครื่องนำขึ้นเสียงสูง รับ/เครื่องตามลงเสียงต่ำ
-  if(NATAB[lisPat.value]){ drumSel.value=lisPat.value; loadDrum(lisPat.value); }
+  // เพลงเถา / เพลงที่มีหลายอัตรา: เปลี่ยนหน้าทับตามท่อน (สามชั้น → สองชั้น → ชั้นเดียว · ลูกหมด) ตามแบบแผน
+  const fam=(lisPat.value.match(/^(prob|song)[123]$/)||[])[1], rateOf=l=>/ลูกหมด/.test(l)?'lukmot':/สามชั้น/.test(l)?3:/สองชั้น/.test(l)?2:/ชั้นเดียว/.test(l)?1:null;
+  const secPats=[]; if(fam && lisPat.value===defPat(sg)){ const seen=new Set();
+    bxT.forEach(({t,bi})=>{ const b=bx[bi]; if(!b.label||b.rep&&b.label==='กลับต้น') return; const r=rateOf(b.label); if(r===null) return;
+      const k=r==='lukmot'?'lukmot':fam+r; if(!NATAB[k]) return; if(secPats.length&&secPats[secPats.length-1].k===k) return; secPats.push({t,k}); });
+    if(secPats.length<2||new Set(secPats.map(x=>x.k)).size<2) secPats.length=0; }
+  const pat0=secPats.length&&secPats[0].t===0?secPats[0].k:lisPat.value;
+  if(NATAB[pat0]){ drumSel.value=pat0; loadDrum(pat0); }
   drumStart(+lisTempo.value,T0,{noPlan:true,tail:true});   // ขึ้นท้ายหน้าทับ ตามห้องเพลง
+  secPats.filter(x=>x.t>0).forEach(({t,k})=>LIS.timers.push(setTimeout(()=>{ if(!LIS.run) return; drumSel.value=k; loadDrum(k);
+    drumStart(+lisTempo.value,T0+t*slotMs/1000,{noPlan:true}); },Math.max(0,t*slotMs-400-(ctx.currentTime-T0)*1000))));
   LIS.run=true; lisPlay.classList.add('on'); let k=0,kb=0;
   const sched=()=>{ if(!LIS.run) return;
     const now=(ctx.currentTime-T0)*1000, horizon=now+1500, off=ms=>Math.max(0,ms-now);
