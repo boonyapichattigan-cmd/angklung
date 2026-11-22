@@ -932,6 +932,8 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
 }
 
 @media (max-width:400px){ #lisCard .bar{gap:8px;flex-wrap:wrap} #lisCard .bar .btn{padding:10px 12px;font-size:.92rem;white-space:nowrap} #lisCard .lisLoopL{white-space:nowrap;font-size:.86rem} #lisCard .lisNow{flex-basis:100%} #lisCard .lisNow:empty{display:none} }
+
+.tw{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -994,14 +996,14 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
     <div id="modeStep" hidden>
       <p class="whoami"><span id="whoTxt"></span> <button type="button" class="linkBtn" id="changeUser">เปลี่ยนผู้ใช้ / Switch user</button></p>
       <p class="wq"><span class="th">เลือกโหมดการเล่น</span><span class="en">Choose a play mode</span></p>
-      <p class="wnote" id="logNote"><span class="th">แตะเลือกโหมดแล้ว จะมีแท็บบันทึกการเข้าใช้เด้งขึ้น ปิดแท็บนั้นแล้วกลับมาเล่นได้เลย</span><span class="en">A sign-in record tab will open — just close it and come back to play.</span></p>
+      <p class="wnote" id="logNote"><span class="th"><span class="nw">แตะเลือกโหมดแล้ว</span> <span class="nw">จะมีแท็บบันทึกการเข้าใช้เด้งขึ้น</span> <span class="nw">ปิดแท็บนั้นแล้วกลับมาเล่นได้เลย</span></span><span class="en">A sign-in record tab will open — just close it and come back to play.</span></p>
       <div class="wbtns">
         <a class="wbtn" data-mode="solo" target="_blank" rel="noopener"><span class="wi" data-i="ak"></span><b><span class="th">เล่นคนเดียว</span><span class="en">Solo</span></b><small class="th">อังกะลุง 14 เสียง บรรเลงเป็นเพลง</small><small class="en">Play songs on all 14 notes</small></a>
         <a class="wbtn" data-mode="band" target="_blank" rel="noopener"><span class="wi" data-i="band"></span><b><span class="th">เล่นเป็นวง</span><span class="en">Ensemble</span></b><small class="th">เลือกอังกะลุง 2 ตัว แล้วบรรเลง</small><small class="en">Hold 2 angklungs and play together</small></a>
       </div>
     </div>
     <p class="wEdu"><i class="ci" data-i="edu"></i><span class="th">แอปพลิเคชั่นเพื่อการศึกษาเท่านั้น</span><span class="en i">For educational use only</span></p>
-    <p class="wLic"><span class="th"><span class="nw">© 2569 นายเจษฎา บุญญาภิชาติกาล</span> · <span class="nw">CC BY-NC 4.0 ให้เครดิต ห้ามขาย</span></span><span class="en">© 2026 Jedsada Boonyapichattigan · CC BY-NC 4.0 credit required, no sale</span></p>
+    <p class="wLic"><span class="th"><span class="nw">© 2569 นายเจษฎา บุญญาภิชาติกาล</span> · <span class="nw">CC BY-NC 4.0 ให้เครดิต · ห้ามขาย</span></span><span class="en">© 2026 Jedsada Boonyapichattigan · CC BY-NC 4.0 credit required, no sale</span></p>
   </div>
 </div></div>
 
@@ -3979,6 +3981,29 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 bgmUi();
 // เบราว์เซอร์ให้เปิดเสียงได้หลังแตะหน้าจอครั้งแรก
 addEventListener('pointerdown',()=>{ if(bgmOn.checked){ initAudio(); ctx.resume(); loadAngklung(); } },{once:true,capture:true});
+
+// ---------- ตัดคำภาษาไทยให้ถูกต้องทุกเบราว์เซอร์ (Safari บน iPhone มักตัดกลางคำ เช่น "แท็|บนั้น") ----------
+// แบ่งคำด้วย Intl.Segmenter แล้วห่อแต่ละคำไม่ให้ขาด ขึ้นบรรทัดใหม่ได้เฉพาะระหว่างคำ
+(function(){
+  if(!window.Intl || !Intl.Segmenter) return;
+  const seg=new Intl.Segmenter('th',{granularity:'word'}), TH=/[฀-๿]/;
+  const SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','SELECT','OPTION','svg','SVG','CODE','PRE']);
+  const skipEl=el=>{ for(let e=el;e&&e!==document.body;e=e.parentElement){ if(SKIP.has(e.tagName)||e.isContentEditable) return true;
+    const c=e.classList; if(c&&(c.contains('tw')||c.contains('nw')||c.contains('mel8')||c.contains('strip')||c.contains('nt')||c.contains('flTrack')||c.contains('g8')||c.contains('drumSheet'))) return true; if(e.id==='flow') return true; } return false; };
+  const doNode=tn=>{ const t=tn.nodeValue; if(!t||t.length<8||!TH.test(t)||!tn.parentElement||skipEl(tn.parentElement)) return;
+    const parts=[...seg.segment(t)].map(x=>x.segment); if(parts.length<3) return;
+    const f=document.createDocumentFragment();
+    parts.forEach((w,i)=>{ if(TH.test(w)&&w.length>1){ const sp=document.createElement('span'); sp.className='tw'; sp.textContent=w; f.appendChild(sp); } else f.appendChild(document.createTextNode(w));
+      if(i<parts.length-1 && TH.test(w) && TH.test(parts[i+1])) f.appendChild(document.createTextNode('​')); });
+    tn.parentNode.replaceChild(f,tn); };
+  const walk=root=>{ if(root.nodeType===3){ doNode(root); return; } if(root.nodeType!==1||skipEl(root)) return;
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT), list=[]; let n; while((n=w.nextNode())) list.push(n); list.forEach(doNode); };
+  let q=new Set(), raf=0;
+  const flush=()=>{ raf=0; const a=[...q]; q.clear(); a.forEach(x=>{ if(x.isConnected) walk(x); }); };
+  new MutationObserver(ms=>{ ms.forEach(m=>{ if(m.type==='characterData') q.add(m.target); else m.addedNodes.forEach(x=>q.add(x)); }); if(!raf) raf=requestAnimationFrame(flush); })
+    .observe(document.body,{childList:true,subtree:true,characterData:true});
+  walk(document.body); const ps=document.getElementById('popStore'); if(ps) walk(ps);
+})();
 </script>
 <script>
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost')){ addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
