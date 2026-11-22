@@ -1989,7 +1989,7 @@ const NATAB={
           boxes: ['-จ๊ะ--','-จ๊ะ-ทั่ม','-จ๊ะ--','-จ๊ะ-ทั่ม','-จ๊ะ--','-จ๊ะ-ทั่ม','-ทั่ม-ทั่ม','-จ๊ะ-ทั่ม'],
           boxes2:['----','---จ๊ะ','----','---จ๊ะ','----','---จ๊ะ','-จ๊ะ-จ๊ะ','---จ๊ะ']},
   // จากแบบฝึกของครู (หน้าทับประจำภาษา)
-  laoSM2:{name:'หน้าทับลาว 2 ชั้น (สองไม้ลาว)', en:'Lao · Song Chan (Song Mai Lao)', ching:4,
+  laoSM2:{name:'หน้าทับลาว 2 ชั้น', en:'Lao · Song Chan', ching:4,
           boxes:['-ติง-โจ๊ะ','-ติง-ติง','--ติงทั่ม','-ติง-ทั่ม']},
   yuan2: {name:'หน้าทับญวน 2 ชั้น', en:'Yuan · Song Chan', ching:4,
           boxes:['----','-ติง-ทั่ม','-ติง-ทั่ม','-ติง-ติง']},
@@ -2775,7 +2775,7 @@ function fillSongs(sel,opt={}){
 // หน้าทับตั้งต้นตามประเภทเพลง (เลือกเปลี่ยนเองได้)
 function defPat(sg){ if(!sg) return 'prob2'; if(sg.pat && NATAB[sg.pat]) return sg.pat;
   const t=(sg.name||'').split(' · ')[0];
-  if(/ลาว/.test(t) && /สองชั้น/.test(t)) return 'laoSM2';   // เพลงสำเนียงลาว 2 ชั้น ใช้หน้าทับลาว (สองไม้ลาว)
+  if(/ลาว/.test(t) && /สองชั้น/.test(t)) return 'laoSM2';   // เพลงสำเนียงลาว 2 ชั้น ใช้หน้าทับลาว
   if(/ชั้นเดียว/.test(t)) return 'prob1'; if(/สองชั้น/.test(t)) return 'prob2'; if(/สามชั้น|เถา|โหมโรง/.test(t)) return 'prob3'; return 'prob2'; }
 fillSongs(songSel);
 const ownOpt=document.createElement('option'); ownOpt.value='own'; ownOpt.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); songSel.appendChild(ownOpt);
