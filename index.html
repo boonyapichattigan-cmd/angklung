@@ -862,6 +862,28 @@ body.lang-en .mel8 .sb.lem::before{content:'lem'}
 #lisCard select{max-width:100%}
 #lisCard .lisRow .sl{white-space:nowrap}
 #lisCard .lisNow{font-weight:700;color:#f95738;min-height:1.2em}
+
+/* หน้าแรก: แถบบน (เพลง · ภาษา) แถวเดียว · ปุ่มคู่มือเด่นชัด · หมายเหตุการศึกษาเป็นบรรทัดเล็กท้ายหน้า */
+.wbox{position:relative}
+.wbox > .langSw{position:absolute !important;top:14px;right:14px;margin:0 !important;z-index:2}
+body:not(.wland) .wbox .wHero{margin-top:46px}
+.wActs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:12px 0 4px}
+.wGuide{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 22px;font:inherit;font-weight:700;font-size:1rem;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,#1d5c96,#0d3b66);box-shadow:0 6px 16px rgba(13,59,102,.28);transition:transform .12s}
+.wGuide .ci{width:22px;height:22px;display:inline-flex}.wGuide .ci svg{width:100%;height:100%}
+.wGuide:active,.wActs .instBtn:active{transform:scale(.96)}
+.wActs .instBtn{margin:0 !important;position:static !important;padding:10px 20px !important;font-size:1rem !important}
+.wEdu{display:flex;align-items:center;justify-content:center;gap:6px;margin:14px 0 0;font-size:.82rem;font-weight:600;color:#8a7a62}
+.wEdu .ci{width:18px;height:18px;display:inline-flex;opacity:.8}.wEdu .ci svg{width:100%;height:100%}
+body.phone.typing .wActs,body.phone.typing .wEdu{display:none}
+body.wland .wActs{justify-content:flex-start}
+.wGuide .ci svg,.wGuide .ci svg *{stroke:#fff !important;color:#fff}
+.wActs > *{flex:0 1 auto;white-space:nowrap}
+body.phone:not(.land) .wActs{flex-wrap:nowrap;gap:8px}
+body.phone:not(.land) .wActs > *{flex:1 1 0;justify-content:center;padding:10px 10px !important;font-size:.9rem !important;min-width:0}
+body.wland .wbox > .langSw{left:68px !important;right:auto !important;top:14px !important}
+body.phone.land .wbox > .langSw button{padding:5px 10px;font-size:.85rem}
+body.wland .wEdu{justify-content:flex-start}
 </style>
 </head>
 <body>
@@ -869,7 +891,6 @@ body.lang-en .mel8 .sb.lem::before{content:'lem'}
 <div class="floaters" aria-hidden="true"><i>♪</i><i>♫</i><i>♩</i><i>♬</i><i>♪</i><i>♫</i></div>
 <div class="wbox">
   <button type="button" class="bgmBtn" id="bgmBtn" title="เพลงพื้นหลัง / Background music" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></button>
-  <button type="button" class="instBtn" id="instBtn" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
   <div class="langSw" role="group" aria-label="Language">
     <button type="button" data-lang="th">🇹🇭 ไทย</button><button type="button" data-lang="en">🇬🇧 English</button>
   </div>
@@ -888,9 +909,9 @@ body.lang-en .mel8 .sb.lem::before{content:'lem'}
       <span><i class="ci" data-i="drum"></i><span class="th">กลองแขก · ฉิ่ง</span><span class="en">Drums · Ching</span></span>
       <span><i class="ci" data-i="song"></i><span class="th">ฝึกเพลงไทย</span><span class="en">Thai songs</span></span>
     </div>
-    <div class="wEduRow">
-      <p class="wedu"><i class="ci" data-i="edu"></i><span class="th">แอปพลิเคชั่นเพื่อการศึกษาเท่านั้น</span><span class="en i">For educational use only</span></p>
-      <button type="button" class="wedu wHist" id="wHistBtn"><i class="ci" data-i="hist"></i><span class="th">ประวัติอังกะลุง</span><span class="en">Angklung history</span></button>
+    <div class="wActs">
+      <button type="button" class="wGuide" id="wHelpBtn"><i class="ci" data-i="help"></i><span class="th">คู่มือการใช้งาน</span><span class="en">User guide</span></button>
+      <button type="button" class="instBtn" id="instBtn" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
     </div>
     <!-- ขั้นที่ 1: ลงชื่อ -->
     <div id="regStep">
@@ -931,6 +952,7 @@ body.lang-en .mel8 .sb.lem::before{content:'lem'}
         <a class="wbtn" data-mode="band" target="_blank" rel="noopener"><span class="wi" data-i="band"></span><b><span class="th">เล่นเป็นวง</span><span class="en">Ensemble</span></b><small class="th">เลือกอังกะลุง 2 ตัว แล้วบรรเลง</small><small class="en">Hold 2 angklungs and play together</small></a>
       </div>
     </div>
+    <p class="wEdu"><i class="ci" data-i="edu"></i><span class="th">แอปพลิเคชั่นเพื่อการศึกษาเท่านั้น</span><span class="en i">For educational use only</span></p>
   </div>
 </div></div>
 
@@ -1725,7 +1747,7 @@ seg('modeSeg',mode,v=>{mode=v;store.set('mode',v);});
 seg('fxSeg',fx,v=>{store.set('fx',v);applyFx(v);});
 vol.value=store.get('vol',0.75);
 vol.addEventListener('input',()=>{ if(master) master.gain.value=+vol.value; store.set('vol',+vol.value); });
-wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHistBtn'); if(hb) hb.onclick=()=>openPop('hist'); } { const hp=document.getElementById('hpImg'); if(hp) hp.src=AKREAL_IMG; const hc=document.getElementById('histCard');
+wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHelpBtn'); if(hb) hb.onclick=()=>openPop('help'); } { const hp=document.getElementById('hpImg'); if(hp) hp.src=AKREAL_IMG; const hc=document.getElementById('histCard');
   if(hc){ const sel=n=>{ hc.querySelectorAll('.hpM,.hpList li').forEach(e=>e.classList.toggle('on',e.dataset.n===n)); };
     hc.querySelectorAll('.hpM').forEach(m=>m.addEventListener('click',()=>{ sel(m.dataset.n); const li=hc.querySelector('.hpList li[data-n="'+m.dataset.n+'"]'); if(li&&li.scrollIntoView) li.scrollIntoView({block:'nearest',behavior:'smooth'}); }));
     hc.querySelectorAll('.hpList li').forEach(li=>li.addEventListener('click',()=>{ sel(li.dataset.n); const fig=hc.querySelector('.hpFig'); if(fig&&fig.scrollIntoView&&innerWidth<640) fig.scrollIntoView({block:'nearest',behavior:'smooth'}); }));
