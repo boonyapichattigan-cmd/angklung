@@ -3173,7 +3173,7 @@ function applyLang(l){
   if(window.lisPat) [...lisPat.options].forEach(o=>{ if(NATAB[o.value]) o.textContent=L(NATAB[o.value].name,NATAB[o.value].en); });
   [songSel,pSong,...(window.lisSong?[lisSong]:[])].forEach(sel=>[...sel.options].forEach(o=>{ const sg=SONGS[+o.value]; o.textContent = o.value==='own' ? '✏️ '+L('โน้ตที่พิมพ์เอง','My notation') : (sg&&sg.custom?'':'🎵 ')+pair(sg?sg.name:''); }));
   document.querySelectorAll('optgroup[data-lab]').forEach(g=>g.label=pair(g.dataset.lab));
-  setRegHead(); if(user && user.name) showModes(); updModeLabel(); try{ const dk=Object.keys(NATAB).find(k=>NATAB[k]===drumPat); if(dk) loadDrum(dk); }catch(e){} if(window.ritText) ritText(); if(window.rndInfo) try{ rndInfo(); }catch(e){}
+  setRegHead(); if(user && user.name) showModes(); updModeLabel(); try{ if(typeof fillPSec==='function') fillPSec(); }catch(e){} try{ if(typeof roomRender==='function') roomRender(); }catch(e){} try{ const dk=Object.keys(NATAB).find(k=>NATAB[k]===drumPat); if(dk) loadDrum(dk); }catch(e){} if(window.ritText) ritText(); if(window.rndInfo) try{ rndInfo(); }catch(e){}
   detect.last=null; detect(); regErr.textContent=''; sErr.textContent='';
 }
 document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
@@ -4176,6 +4176,7 @@ addEventListener('pointerdown',()=>{ if(bgmOn.checked){ initAudio(); ctx.resume(
   const skipEl=el=>{ for(let e=el;e&&e!==document.body;e=e.parentElement){ if(SKIP.has(e.tagName)||e.isContentEditable) return true;
     const c=e.classList; if(c&&(c.contains('tw')||c.contains('nw')||c.contains('mel8')||c.contains('strip')||c.contains('nt')||c.contains('flTrack')||c.contains('g8')||c.contains('drumSheet'))) return true; if(e.id==='flow') return true; } return false; };
   const doNode=tn=>{ const t=tn.nodeValue; if(!t||t.length<8||!TH.test(t)||!tn.parentElement||skipEl(tn.parentElement)) return;
+    if(/flex|grid/.test(getComputedStyle(tn.parentElement).display)) return;   // flex/grid มีช่องว่างระหว่างลูก คำจะแยกห่างกัน
     const parts=[...seg.segment(t)].map(x=>x.segment); if(parts.length<3) return;
     const f=document.createDocumentFragment();
     parts.forEach((w,i)=>{ if(TH.test(w)&&w.length>1){ const sp=document.createElement('span'); sp.className='tw'; sp.textContent=w; f.appendChild(sp); } else f.appendChild(document.createTextNode(w));
