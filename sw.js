@@ -1,5 +1,5 @@
 // อังกะลุงมือถือ: เก็บแอปไว้ในเครื่อง เปิดได้แม้ไม่มีอินเทอร์เน็ต (ยกเว้นการบันทึกการเข้าใช้)
-const CACHE = 'angklung-v43';
+const CACHE = 'angklung-v44';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
