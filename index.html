@@ -2978,14 +2978,14 @@ function fitKeys(){
     solo.style.gap=gap+'px';
     let best=null;
     for(const cols of [7,5,4,3,2]){
-      const rows=Math.ceil(14/cols), W=rows*cols===14?W0-fabW:W0, w=(W-(cols-1)*gap)/cols, cellH=(H-(rows-1)*gap)/rows;
+      const rows=Math.ceil(14/cols), W=rows*cols===14?W0-2*fabW:W0, w=(W-(cols-1)*gap)/cols, cellH=(H-(rows-1)*gap)/rows;
       const fs=Math.max(16,Math.min(56,w*0.26,cellH*0.2)), extra=fs*1.55+30;   // แถบสี + ชื่อโน้ต + เลขที่
       const pic=Math.min(w*1.15, cellH-extra);
       const score=pic*(cols===7?1.2:1)*(1-((rows*cols-14)*0.04));             // ชอบแถวละ 7 (ตรงกับช่วงเสียง)
       if(pic>40 && (!best||score>best.score)) best={cols,rows,pic,fs,score,cellH};
     }
     if(!best) best={cols:7,rows:2,pic:60,fs:18,cellH:110};
-    if(best.rows*best.cols===14) solo.style.paddingRight=fabW+'px';
+    solo.style.paddingLeft=solo.style.paddingRight=''; if(best.rows*best.cols===14&&fabW){ solo.style.paddingRight=fabW+'px'; solo.style.paddingLeft=fabW+'px'; }   // เว้นซ้ายขวาเท่ากัน ปุ่มโน้ตอยู่กลางจอ
     // แถวละ 7: แถวบน ด̣→ท̣ จากซ้าย · แถวล่าง ด→ท จากขวา (ท̣ กับ ด อยู่ติดกันตรงมุมขวา)
     // เรียงตามลำดับเสียง ซ้าย→ขวา ทุกแถว
     soloRev=false; keyMap=[...Array(14).keys()];
