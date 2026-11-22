@@ -812,6 +812,24 @@ body.wland .wnote{display:none}
 .wHist{cursor:pointer;font:inherit;font-size:.9rem;font-weight:700;color:#0d3b66;box-shadow:inset 0 0 0 1.5px #0d3b66 !important;background:#fff !important;display:inline-flex;align-items:center;gap:4px}
 .wHist:active{transform:scale(.97)}
 body.phone.typing .wEduRow{display:none}
+
+#histCard .hpWrap{display:grid;gap:12px;align-items:start}
+@media (min-width:640px){ #histCard .hpWrap{grid-template-columns:minmax(0,300px) minmax(0,1fr)} #histCard .hpWrap .hpFig{position:sticky;top:6px} }
+#histCard .hpFig{position:relative;width:min(100%,300px);margin:0 auto;background:radial-gradient(circle at 50% 45%,#fff6d6 0%,rgba(255,246,214,0) 70%);border-radius:16px}
+#histCard .hpFig img{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 8px #0002)}
+#histCard .hpM{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;border:2.5px solid #fff;background:#0d3b66;color:#fff;font:800 .85rem/1 system-ui,sans-serif;display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 2px 6px #0005;transition:transform .15s,background .15s}
+#histCard .hpM::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid #f95738;opacity:0;transform:scale(.7)}
+#histCard .hpM.on{background:#f95738;transform:translate(-50%,-50%) scale(1.18);z-index:2}
+#histCard .hpM.on::after{animation:hpPing 1.2s ease-out infinite}
+@keyframes hpPing{0%{opacity:.9;transform:scale(.7)}100%{opacity:0;transform:scale(1.6)}}
+#histCard .hpList{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+#histCard .hpList li{display:flex;gap:8px;align-items:flex-start;background:#fffdf6;border:1px solid #ecdfae;border-radius:10px;padding:6px 10px;font-size:.92rem;cursor:pointer;transition:background .15s,border-color .15s}
+#histCard .hpList li i{flex:none;width:22px;height:22px;border-radius:50%;background:#0d3b66;color:#fff;font:800 .75rem/22px system-ui,sans-serif;text-align:center;font-style:normal;margin-top:2px}
+#histCard .hpList li b{display:block;color:#0d3b66}
+#histCard .hpList li.on{background:#fff1e6;border-color:#f95738}
+#histCard .hpList li.on i{background:#f95738}
+#histCard .hpTip{margin:0 0 8px}
+@media (prefers-reduced-motion:reduce){ #histCard .hpM.on::after{animation:none} }
 </style>
 </head>
 <body>
@@ -1095,11 +1113,9 @@ body.phone.typing .wEduRow{display:none}
         <p class="en">On 18 November 2010 UNESCO inscribed the Indonesian angklung on the Representative List of the Intangible Cultural Heritage of Humanity, noting that playing it promotes teamwork, mutual respect and social harmony.</p></li>
     </ol>
     <h4 class="hsH"><span class="th">ส่วนประกอบของอังกะลุง</span><span class="en">Parts of an angklung</span></h4>
-    <ul class="hsParts">
-      <li><b class="th">กระบอกเสียง</b><b class="en">Sound tubes</b><span class="th">ไม้ไผ่ปาดปลายบนครึ่งลำ ปลายล่างบากเป็นขาสองขา กระบอกยาวให้เสียงต่ำ กระบอกสั้นให้เสียงสูง</span><span class="en">Bamboo tubes cut away at the top, with two "legs" carved at the bottom. Long tubes sound low, short tubes sound high.</span></li>
-      <li><b class="th">ราง (ฐาน)</b><b class="en">Base rail</b><span class="th">ไม้ที่มีร่องให้ขากระบอกเสียงสอดอยู่ เมื่อเขย่า ขากระบอกจะกระทบรางจนเกิดเสียง</span><span class="en">A slotted rail holding the tube legs; shaking makes the legs knock against it.</span></li>
-      <li><b class="th">เสาและราวยึด</b><b class="en">Posts and top rail</b><span class="th">โครงที่ยึดกระบอกเสียงไว้ และเป็นที่จับเวลาบรรเลง</span><span class="en">The frame that holds the tubes and where the player grips the instrument.</span></li>
-    </ul>
+    <p class="hint hpTip"><span class="th">แตะตัวเลขบนภาพหรือชื่อในรายการ เพื่อดูว่าแต่ละส่วนอยู่ตรงไหน</span><span class="en">Tap a number on the picture or a name in the list to see where each part is.</span></p>
+    <div class="hpWrap"><div class="hpFig"><img id="hpImg" alt="ส่วนประกอบของอังกะลุง" draggable="false"><button type="button" class="hpM" data-n="1" style="left:75%;top:41%" aria-label="กระบอกเสียงใหญ่">1</button><button type="button" class="hpM" data-n="2" style="left:24%;top:67%" aria-label="กระบอกเสียงเล็ก">2</button><button type="button" class="hpM" data-n="3" style="left:44%;top:45%" aria-label="ปากกระบอก">3</button><button type="button" class="hpM" data-n="4" style="left:73%;top:87%" aria-label="ขากระบอก">4</button><button type="button" class="hpM" data-n="5" style="left:30%;top:88%" aria-label="ราง (ฐาน)">5</button><button type="button" class="hpM" data-n="6" style="left:87%;top:52%" aria-label="เสา">6</button><button type="button" class="hpM" data-n="7" style="left:16%;top:46%" aria-label="ราวขวาง">7</button><button type="button" class="hpM" data-n="8" style="left:55%;top:20%" aria-label="จุดผูกยึด">8</button></div>
+    <ol class="hpList"><li data-n="1"><i>1</i><div><b class="th">กระบอกเสียงใหญ่</b><b class="en">Large tube</b><span class="th">กระบอกยาวและกว้าง ให้เสียงต่ำ</span><span class="en">Long, wide tube that gives the low pitch</span></div></li><li data-n="2"><i>2</i><div><b class="th">กระบอกเสียงเล็ก</b><b class="en">Small tube</b><span class="th">กระบอกสั้น ให้เสียงสูง กระบอกในชุดเดียวกันตั้งเสียงเดียวกันแต่ต่างช่วงทบเสียง (อ็อกเทฟ)</span><span class="en">Short tube with a higher pitch; tubes in one frame play the same note in different octaves</span></div></li><li data-n="3"><i>3</i><div><b class="th">ปากกระบอก</b><b class="en">Cut-away top</b><span class="th">ปลายบนที่ปาดออกครึ่งลำ ช่างจะเหลาส่วนนี้เพื่อปรับเสียงให้ตรง</span><span class="en">The top half cut away; makers shave this part to tune the note</span></div></li><li data-n="4"><i>4</i><div><b class="th">ขากระบอก</b><b class="en">Tube legs</b><span class="th">ปลายล่างบากเป็นขาสองขา สอดอยู่ในร่องของราง</span><span class="en">The bottom is carved into two legs that sit in the rail slot</span></div></li><li data-n="5"><i>5</i><div><b class="th">ราง (ฐาน)</b><b class="en">Base rail</b><span class="th">ไม้ที่มีร่องให้ขากระบอกขยับได้ เมื่อเขย่า ขากระบอกจะกระทบรางจนเกิดเสียง</span><span class="en">A slotted rail; when shaken, the legs knock against it to make the sound</span></div></li><li data-n="6"><i>6</i><div><b class="th">เสา</b><b class="en">Posts</b><span class="th">ไม้ไผ่แนวตั้งที่ยึดโครงทั้งหมดไว้</span><span class="en">Upright bamboo posts that hold the frame together</span></div></li><li data-n="7"><i>7</i><div><b class="th">ราวขวาง</b><b class="en">Cross rails</b><span class="th">ราวแนวนอนที่ยึดกระบอกเสียงไว้ ผู้เล่นจับโครงตรงส่วนบนเวลาบรรเลง</span><span class="en">Horizontal rails that hold the tubes; players grip the top of the frame</span></div></li><li data-n="8"><i>8</i><div><b class="th">จุดผูกยึด</b><b class="en">Lashings</b><span class="th">ผูกด้วยหวายหรือเชือกให้โครงแข็งแรง</span><span class="en">Rattan or cord ties that keep the frame firm</span></div></li></ol></div>
     <p class="hint hsApp"><span class="th">ในแอปนี้ แต่ละปุ่มเท่ากับอังกะลุง 1 ชุด โหมดเล่นคนเดียวมีครบ 14 เสียง ส่วนโหมดเล่นเป็นวงจะให้แต่ละคนถือ 2 เสียงเหมือนการบรรเลงจริง</span><span class="en">In this app each key is one angklung. Solo mode gives you all 14 notes; band mode gives each player two notes, just like a real ensemble.</span></p>
     <p class="hsSrc"><span class="th">แหล่งข้อมูล:</span><span class="en">Sources:</span> นิตยสารศิลปวัฒนธรรม (อัษฎาวุธ สาคริก และอานันท์ นาคคง, ก.ค. 2544) · UNESCO Intangible Cultural Heritage (Indonesian Angklung, 2010)</p>
   </div>
@@ -1653,7 +1669,11 @@ seg('modeSeg',mode,v=>{mode=v;store.set('mode',v);});
 seg('fxSeg',fx,v=>{store.set('fx',v);applyFx(v);});
 vol.value=store.get('vol',0.75);
 vol.addEventListener('input',()=>{ if(master) master.gain.value=+vol.value; store.set('vol',+vol.value); });
-wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHistBtn'); if(hb) hb.onclick=()=>openPop('hist'); } { const wp=document.getElementById('wPhone'); if(wp){ wp.onload=()=>wp.classList.add('on'); wp.src=PHONE_IMG; } }
+wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHistBtn'); if(hb) hb.onclick=()=>openPop('hist'); } { const hp=document.getElementById('hpImg'); if(hp) hp.src=AK_IMG; const hc=document.getElementById('histCard');
+  if(hc){ const sel=n=>{ hc.querySelectorAll('.hpM,.hpList li').forEach(e=>e.classList.toggle('on',e.dataset.n===n)); };
+    hc.querySelectorAll('.hpM').forEach(m=>m.addEventListener('click',()=>{ sel(m.dataset.n); const li=hc.querySelector('.hpList li[data-n="'+m.dataset.n+'"]'); if(li&&li.scrollIntoView) li.scrollIntoView({block:'nearest',behavior:'smooth'}); }));
+    hc.querySelectorAll('.hpList li').forEach(li=>li.addEventListener('click',()=>{ sel(li.dataset.n); const fig=hc.querySelector('.hpFig'); if(fig&&fig.scrollIntoView&&innerWidth<640) fig.scrollIntoView({block:'nearest',behavior:'smooth'}); }));
+    sel('1'); } } { const wp=document.getElementById('wPhone'); if(wp){ wp.onload=()=>wp.classList.add('on'); wp.src=PHONE_IMG; } }
 // ---------- ลงชื่อ + นับการเข้าใช้ → Google Sheet (ผ่าน Google Form) ----------
 // ① ฟอร์มบันทึกการเข้าใช้: ลิงก์ "รับลิงก์ที่กรอกไว้ล่วงหน้า" ที่กรอก A1–A8 ตามลำดับคำถาม
 const FORM_PREFILL = 'https://docs.google.com/forms/d/e/1FAIpQLSeSTxxP6puIgSgU2zSIzCFK5m-am6x5NyuwI8R1xCA1F2DNXw/viewform?usp=pp_url&entry.755933289=A1&entry.468108914=A2&entry.11459872=A3&entry.395649195=A4&entry.582101708=A5&entry.1347797155=A6&entry.490406614=A7&entry.161451763=A8';
