@@ -1172,7 +1172,7 @@ body.wland .wEdu{justify-content:flex-start}
       <label class="sl"><input type="checkbox" data-sync="useMong"><span class="th">โหม่ง</span><span class="en i">Mong</span></label>
       <label class="sl"><input type="checkbox" data-sync="useKrap"><span class="th">กรับ</span><span class="en i">Krap</span></label>
     </div>
-    <div class="bar"><button class="btn" id="lisPlay">▶ <span class="th">ฟังเพลง</span><span class="en i">Listen</span></button><button class="btn alt" id="lisStopBtn">■ <span class="th">หยุด</span><span class="en i">Stop</span></button><span class="lisNow" id="lisNow"></span></div>
+    <div class="bar"><button class="btn" id="lisPlay">▶ <span class="th">ฟังเพลง</span><span class="en i">Listen</span></button><label class="sl lisLoopL"><input type="checkbox" id="lisLoop"><span class="th">🔁 เล่นวนซ้ำ</span><span class="en i">🔁 Repeat</span></label><button class="btn alt" id="lisStopBtn">■ <span class="th">หยุด</span><span class="en i">Stop</span></button><span class="lisNow" id="lisNow"></span></div>
     <div class="sheet" id="lisSheet" style="margin-top:8px"></div>
   </div>
   <div class="card" id="histCard">
@@ -2133,7 +2133,7 @@ function secPlan(boxes,order,base,sg){
 function drumStart(rate,at,opt){
   opt=opt||{};
   drumOut(); if(ctx.state!=='running') ctx.resume(); drumStop();
-  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[], times:opt.times||null, onHit:opt.onHit||null, onEnd:opt.onEnd||null, rit:null, done:false, tail:!!opt.tail, secs:opt.secs?opt.secs.slice():null, base:0};
+  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[], times:opt.times||null, onHit:opt.onHit||null, onEnd:opt.onEnd||null, rit:null, done:false, tail:!!opt.tail, secs:opt.secs?opt.secs.slice():null, base:0, endSi:opt.endSi||0};
   const plan=(!opt.times&&!opt.noPlan)?drumPlan():null;
   if(plan){ r.plan=plan; r.si=plan.startSi; if(plan.rit) r.rit={...plan.rit};
     if(plan.pick){ r.leadT0=r.next; r.leadBeat=60/(rate||+drumTempo.value); r.next+=8*r.leadBeat; } }
@@ -2147,13 +2147,8 @@ function drumStart(rate,at,opt){
       // ขึ้นท้ายหน้าทับ (ฟังเพลง): รอบแรกกลองเงียบ แล้วรับ 2 ห้องท้าย -โจ๊ะ-ติง | -ติง-ทั่ม · ฉิ่งขึ้นที่ฉิ่งตัวสุดท้ายก่อนฉับท้ายหน้าทับ
       const tl=r.tail&&r.base===0&&rel<n&&n>=8, inTail=tl&&rel>=n-8, mute=tl&&!inTail;
       let k=inPick?PICK_SLOTS[r.si-r.plan.startSi]:inTail?PICK_SLOTS[rel-(n-8)]:drumPat.slots[si]; if(mute) k='-';
-      const last = r.times ? r.si>=r.times.length-2 : (r.rit && r.si>=r.rit.end);
-      if(last){   // จบเพลง: ฉับ + ทั่ม พร้อมกัน
-        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t); if(useChab.checked) chabHit(false,t); if(useKrap.checked) krapHit(t); if(useMong.checked) mongHit(t,1.1); if(useChabY.checked) chabYaiHit(t,1);
-        if(r.onHit) r.onHit('chap',t);
-        r.done=true; const ms=Math.max(0,(t-ctx.currentTime)*1000);
-        r.uiT.push(setTimeout(()=>{ if(r.onEnd) r.onEnd(); if(drumRun===r) drumStop(); },ms+1200)); break;
-      }
+      // จบ: ตีเฉพาะจังหวะตามหน้าทับในช่องสุดท้าย แล้วหยุด (ไม่ตีซ้ำเพิ่ม)
+      const last = r.times ? r.si>=r.times.length-2 : (r.endSi ? r.si>=r.endSi-1 : (r.rit && r.si>=r.rit.end));
       if(k!=='-' && useKlong.checked) drumHit(k,t);
       if(drumPat.slots2&&!inPick&&!tl){ const k2=drumPat.slots2[si]; if(k2&&k2!=='-'&&useKlong.checked) drumHit(k2,t+0.004); }
       const c=(tl&&rel<n-1-drumPat.ching)?null:chingAt(si); if(c && useChing.checked) chingHit(c==='ching',t);
@@ -2166,6 +2161,8 @@ function drumStart(rate,at,opt){
       if(c && r.onHit) r.onHit(c,t);
       if(si%4===0){ const bi=si/4, ms=Math.max(0,(t-ctx.currentTime)*1000);
         r.uiT.push(setTimeout(()=>{ drumBoxEls.forEach(x=>x.classList.remove('now')); drumBoxEls[bi]&&drumBoxEls[bi].classList.add('now'); },ms)); }
+      if(last){ r.done=true; const ms=Math.max(0,(t-ctx.currentTime)*1000);
+        r.uiT.push(setTimeout(()=>{ if(r.onEnd) r.onEnd(); if(drumRun===r) drumStop(); },ms+1200)); break; }
       r.si++;
       if(r.times) r.next=r.times[r.si];
       else { let d=base; if(r.rit && r.si-1>=r.rit.start) d=base*ritF((r.si-r.rit.start)/(r.rit.end-r.rit.start+1)); r.next+=d; }
@@ -2852,7 +2849,7 @@ playScore.onclick=()=>{
   const slotMs=60000/ +tempo.value, boxes=curSong.boxes, sh=curSong.shift||0;
   const {ev,bxT,total}=songEvents(boxes,-7-sh,6-sh);
   flowShow(ev,T0,slotMs,curSong);
-  if(drumWithSong.checked){ loadDrum(drumSel.value); drumStart(+tempo.value,T0,{noPlan:true,secs:secPlan(boxes,bxT.map(x=>x.bi),drumSel.value,curSong)}); }
+  if(drumWithSong.checked){ loadDrum(drumSel.value); drumStart(+tempo.value,T0,{noPlan:true,endSi:total,secs:secPlan(boxes,bxT.map(x=>x.bi),drumSel.value,curSong)}); }
   const song=curSong, mine=leaveMine.checked; let k=0, kb=0, ended=false;
   const sched=()=>{
     const horizon=(ctx.currentTime-T0)*1000+1500;     // ตั้งล่วงหน้า 1.5 วินาที
@@ -2932,6 +2929,7 @@ function applyLang(l){
   [...keySel.options].forEach((o,i)=>{ const k=KEYS[i]; o.textContent=L('คีย์ '+k.n+' (ด = '+k.n.split(' ')[0]+')','Key of '+k.n+' (Do = '+k.n.split(' ')[0]+')'); });
   document.querySelectorAll('#sel0 option,#sel1 option').forEach(o=>{ if(o.dataset.th) o.textContent=L(o.dataset.th,o.dataset.en); });
   [...drumSel.options].forEach(o=>o.textContent=(NATAB[o.value].custom?'':'')+L(NATAB[o.value].name,NATAB[o.value].en));
+  if(window.lisPat) [...lisPat.options].forEach(o=>{ if(NATAB[o.value]) o.textContent=L(NATAB[o.value].name,NATAB[o.value].en); });
   [songSel,pSong].forEach(sel=>[...sel.options].forEach(o=>{ const sg=SONGS[+o.value]; o.textContent = o.value==='own' ? '✏️ '+L('โน้ตที่พิมพ์เอง','My notation') : (sg&&sg.custom?'':'🎵 ')+pair(sg?sg.name:''); }));
   document.querySelectorAll('optgroup[data-lab]').forEach(g=>g.label=pair(g.dataset.lab));
   setRegHead(); if(user && user.name) showModes(); updModeLabel(); if(window.ritText) ritText();
@@ -3062,21 +3060,24 @@ function lisStart(){
   const {ev,bxT,total}=songEvents(bx,-7,13);   // 3 ช่วงเสียง: ล้อ/เครื่องนำขึ้นเสียงสูง รับ/เครื่องตามลงเสียงต่ำ
   // เพลงเถา / เพลงที่มีหลายอัตรา: เปลี่ยนหน้าทับตามท่อน (สามชั้น → สองชั้น → ชั้นเดียว · ลูกหมด) ตามแบบแผน
   if(NATAB[lisPat.value]) loadDrum(lisPat.value);
-  drumStart(+lisTempo.value,T0,{noPlan:true,tail:true,secs:secPlan(bx,bxT.map(x=>x.bi),lisPat.value,sg)});   // ขึ้นท้ายหน้าทับ ตามห้องเพลง
-  LIS.run=true; lisPlay.classList.add('on'); let k=0,kb=0;
+  // เล่นวน: ขึ้นท้ายหน้าทับเฉพาะรอบแรก รอบต่อไปบรรเลงต่อเนื่อง หน้าทับเริ่มรอบใหม่พร้อมห้องแรกของเพลง
+  const plan=secPlan(bx,bxT.map(x=>x.bi),lisPat.value,sg)||[{si:0,k:lisPat.value}];
+  drumStart(+lisTempo.value,T0,{noPlan:true,tail:true,secs:plan,endSi:total});   // ขึ้นท้ายหน้าทับ ตามห้องเพลง
+  LIS.run=true; lisPlay.classList.add('on'); let k=0,kb=0,it=0,ended=false;
   const sched=()=>{ if(!LIS.run) return;
-    const now=(ctx.currentTime-T0)*1000, horizon=now+1500, off=ms=>Math.max(0,ms-now);
-    while(kb<bxT.length && bxT[kb].t*slotMs<horizon){ const {t,bi}=bxT[kb++]; const b=bx[bi];
+    const base=it*total, now=(ctx.currentTime-T0)*1000, horizon=now+1500, off=ms=>Math.max(0,ms-now);
+    while(kb<bxT.length && (base+bxT[kb].t)*slotMs<horizon){ const {t,bi}=bxT[kb++]; const b=bx[bi], rnd=it+1;
       LIS.timers.push(setTimeout(()=>{ LIS.els.forEach(x=>x&&x.classList.remove('now')); const el=LIS.els[bi]; if(el){ el.classList.add('now'); el.scrollIntoView({block:'nearest'}); }
-        lisNow.textContent=(b.secLab?b.secLab+' · ':'')+L('ห้องที่ ','Bar ')+(bi+1)+(b.lem?' · '+L('เลื่อม','lem'):'')+(b.grp==='a'?' · '+L('ล้อ (สูง)','lead (high)'):b.grp==='b'?' · '+L('รับ (ต่ำ)','answer (low)'):''); },off(t*slotMs))); }
-    while(k<ev.length && ev[k].t*slotMs<horizon){ const e=ev[k++], ts=T0+e.t*slotMs/1000, te=ts+e.d*slotMs/1000*0.92;
+        lisNow.textContent=(lisLoop.checked||rnd>1?'🔁 '+L('รอบที่ ','Round ')+rnd+' · ':'')+(b.secLab?b.secLab+' · ':'')+L('ห้องที่ ','Bar ')+(bi+1)+(b.lem?' · '+L('เลื่อม','lem'):'')+(b.grp==='a'?' · '+L('ล้อ (สูง)','lead (high)'):b.grp==='b'?' · '+L('รับ (ต่ำ)','answer (low)'):''); },off((base+t)*slotMs))); }
+    while(k<ev.length && (base+ev[k].t)*slotMs<horizon){ const e=ev[k++], ts=T0+(base+e.t)*slotMs/1000, te=ts+e.d*slotMs/1000*0.92;
       if(e.orn) lisOrn(e.orn,ts,slotMs/1000,e.vel,e.tech);
       lisVoice(e.st,ts,te,(e.vel||1)*(e.follow?0.85:1)); }
     if(LIS.voices.length>120) LIS.voices.splice(0,LIS.voices.length-120);
-    if(k>=ev.length && kb>=bxT.length){ clearInterval(LIS.iv);
-      LIS.timers.push(setTimeout(()=>{ if(drumRun) drumStop(); const t=ctx.currentTime+0.02;   // ลงจบ: ฉับ + ทั่ม + โหม่ง
-        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t); if(useChab.checked) chabHit(false,t); if(useChabY.checked) chabYaiHit(t,1); if(useMong.checked) mongHit(t,1.2);
-        setTimeout(()=>{ LIS.run=false; lisPlay.classList.remove('on'); LIS.els.forEach(x=>x&&x.classList.remove('now')); lisNow.textContent=L('จบเพลง','End'); },1500); },off(total*slotMs))); } };
+    if(k>=ev.length && kb>=bxT.length){
+      if(lisLoop.checked && drumRun){   // วนรอบใหม่ทันที ไม่ขึ้นหน้าทับใหม่
+        it++; k=0; kb=0; drumRun.endSi=(it+1)*total; drumRun.secs=(drumRun.secs||[]).concat(plan.map(x=>({si:x.si+it*total,k:x.k}))); return; }
+      if(ended) return; ended=true; clearInterval(LIS.iv);
+      LIS.timers.push(setTimeout(()=>{ LIS.run=false; lisPlay.classList.remove('on'); LIS.els.forEach(x=>x&&x.classList.remove('now')); lisNow.textContent=L('จบเพลง','End'); },off((base+total)*slotMs+1200))); } };
   sched(); LIS.iv=setInterval(sched,250);
 }
 fillSongs(lisSong,{noCustom:false});
@@ -3086,6 +3087,7 @@ lisTempo.value=store.get('lisTempo',150); lisTempoV.textContent=lisTempo.value;
 lisTempo.oninput=()=>{ lisTempoV.textContent=lisTempo.value; store.set('lisTempo',+lisTempo.value); };
 lisSong.onchange=()=>{ lisStop(); lisLoad(); };
 lisPlay.onclick=lisStart; lisStopBtn.onclick=lisStop;
+lisLoop.checked=!!store.get('lisLoop',false); lisLoop.onchange=()=>store.set('lisLoop',lisLoop.checked);
 document.querySelectorAll('[data-sync]').forEach(x=>{ const src=document.getElementById(x.dataset.sync); x.checked=src.checked;
   x.addEventListener('change',()=>{ src.checked=x.checked; src.dispatchEvent(new Event('change')); }); });
 ['useKlong','useChing'].forEach(id=>document.getElementById(id).addEventListener('change',e=>document.querySelectorAll(`[data-sync="${id}"]`).forEach(x=>x.checked=e.target.checked)));
