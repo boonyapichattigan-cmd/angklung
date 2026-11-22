@@ -778,10 +778,14 @@ body.wland .wnote{display:none}
 }
 
 .wHero .glow{z-index:0}
-.wHero .wPhone{position:absolute;z-index:1;left:46%;bottom:6%;height:60%;width:auto;max-width:56%;object-fit:contain;object-position:left bottom;transform:rotate(-6deg);transform-origin:0 100%;filter:drop-shadow(0 10px 14px #0d3b6633);pointer-events:none;opacity:0;transition:opacity .5s}
-.wHero .wPhone.on{opacity:1}
 .wHero{width:100%}
-.wHero #wImg{z-index:2;left:-16%}
+.wHero::after{content:"";position:absolute;z-index:0;left:50%;bottom:1%;width:74%;height:7%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(13,59,102,.22) 0%,rgba(13,59,102,0) 70%);animation:shad 3.2s ease-in-out infinite}
+.wHero .wPhone{position:absolute;z-index:1;left:44%;bottom:7%;height:58%;width:auto;max-width:56%;object-fit:contain;object-position:left bottom;transform-origin:30% 100%;filter:drop-shadow(0 12px 16px rgba(13,59,102,.28));pointer-events:none;opacity:0;transition:opacity .6s;animation:phoneFloat 3.2s ease-in-out infinite;animation-delay:-1.6s}
+.wHero .wPhone.on{opacity:1}
+.wHero #wImg{z-index:2;left:-17%}
+@keyframes phoneFloat{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-7px) rotate(-3.5deg)}}
+@keyframes shad{0%,100%{opacity:1;transform:translateX(-50%) scaleX(1)}50%{opacity:.75;transform:translateX(-50%) scaleX(.94)}}
+@media (prefers-reduced-motion:reduce){ .wHero .wPhone,.wHero::after{animation:none} .wHero .wPhone{transform:rotate(-6deg)} }
 </style>
 </head>
 <body>
