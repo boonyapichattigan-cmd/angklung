@@ -1832,7 +1832,7 @@ let surveyAsked=false;
 let rotDismissed=false;
 function checkRot(){
   const b=document.body.classList;
-  const playing = b.contains('m-solo') || b.contains('band-play');
+  const playing = b.contains('m-solo');
   const show = b.contains('phone') && !b.contains('land') && playing && startOv.classList.contains('hide') && !rotDismissed;
   rotHint.classList.toggle('show',show);
 }
@@ -2519,17 +2519,26 @@ function fitKeys(){
     solo.style.setProperty('--nmfs',Math.round(best.fs)+'px');
   }
   if(document.body.classList.contains('m-band') && stage.offsetParent){
+    // เล่นเป็นวง: ปุ่มมือซ้าย-มือขวา อยู่กลางครึ่งซ้ายและครึ่งขวาของจอเสมอ (ทั้งแนวตั้งและแนวนอน) ใช้นิ้วโป้งสองข้างกดได้ถนัด
     stage.classList.add('fit');
+    const bc=document.body.classList, portrait=bc.contains('phone')&&!bc.contains('land') || innerHeight>innerWidth*1.15;
+    stage.style.paddingRight=''; stage.style.paddingLeft='';
     const W=stage.clientWidth, top=stage.getBoundingClientRect().top+scrollY;
-    const H=Math.max(260, vh-top-12), stack=H>W*1.15 && document.body.classList.contains('phone');              // จอแนวตั้ง: วางบน-ล่าง ภาพใหญ่กว่า
-    const fabW=stack?0:56; stage.style.paddingRight=fabW+'px';
-    stage.style.gridTemplateColumns=stack?'1fr':'1fr 1fr';
-    const w=stack?W:(W-fabW-14)/2, cellH=stack?(H-14)/2:H;
-    const fs=Math.max(22,Math.min(72,w*0.2,cellH*0.14)), extra=fs*1.6+46;
-    const akh=Math.floor(Math.min(cellH-extra, w*1.3));
-    stage.style.minHeight=H+'px';
-    slotCards.forEach(c=>{ c.style.setProperty('--akh',akh+'px'); });
+    const H=Math.max(260, vh-top-12);
+    const pad=portrait?4:56, gap=portrait?10:28;                     // เว้นขอบสองข้างเท่ากัน (ฝั่งขวามีปุ่มเมนู)
+    const avail=Math.max(120,(W-2*pad-gap)/2);
+    const w=Math.floor(portrait?avail:Math.min(avail,H*1.02));
+    const ch=Math.floor(portrait?Math.min(H,w*2.2):H);
+    stage.style.paddingLeft=pad+'px'; stage.style.paddingRight=pad+'px';
+    stage.style.gridTemplateColumns=`${w}px ${w}px`;
+    stage.style.justifyContent='space-evenly'; stage.style.alignContent='center'; stage.style.alignItems='center';
+    stage.style.columnGap=gap+'px';
+    stage.style.minHeight=H+'px'; stage.style.height=H+'px';
+    const fs=Math.max(22,Math.min(72,w*0.2,ch*0.13)), extra=fs*1.6+46;
+    const akh=Math.floor(Math.max(60,Math.min(ch-extra, w*1.3)));
+    slotCards.forEach(c=>{ c.style.setProperty('--akh',akh+'px'); c.style.height=ch+'px'; c.style.width=w+'px'; });
     stage.style.setProperty('--nmfs',Math.round(fs)+'px');
+    stage.classList.toggle('bandPortrait',portrait);
   }
 }
 let fitT=0; const fitSoon=()=>{ clearTimeout(fitT); fitT=setTimeout(fitKeys,80); };
