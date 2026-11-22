@@ -782,13 +782,13 @@ body.wland .wnote{display:none}
 .wHero::after{pointer-events:none}
 .wHero{width:100%}
 .wHero::after{content:"";position:absolute;z-index:0;left:50%;bottom:1%;width:74%;height:7%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(13,59,102,.22) 0%,rgba(13,59,102,0) 70%);animation:shad 3.2s ease-in-out infinite}
-.wHero .wPhone{position:absolute;z-index:1;left:47%;top:2%;bottom:auto;height:58%;width:auto;max-width:56%;object-fit:contain;object-position:left top;transform-origin:4% 8%;filter:drop-shadow(0 12px 16px rgba(13,59,102,.28));pointer-events:none;opacity:0;transition:opacity .6s;animation:phoneFloat 3.2s ease-in-out infinite;animation-delay:-1.6s}
+.wHero .wPhone{position:absolute;z-index:1;left:44%;right:auto;top:auto;bottom:10%;height:52%;width:auto;max-width:54%;object-fit:contain;object-position:right bottom;transform-origin:96% 96%;filter:drop-shadow(0 12px 16px rgba(13,59,102,.28));pointer-events:none;opacity:0;transition:opacity .6s;animation:phoneFloat 3.2s ease-in-out infinite;animation-delay:-1.6s}
 .wHero .wPhone.on{opacity:1}
 .wHero #wImg{z-index:2;left:-17%}
-body.phone .wHero .wPhone{left:49%;height:48%;top:1%}
-@keyframes phoneFloat{0%,100%{transform:translateY(0) rotate(26deg)}50%{transform:translateY(-6px) rotate(23deg)}}
+body.phone .wHero .wPhone{left:45%;height:42%}
+@keyframes phoneFloat{0%,100%{transform:rotate(15deg)}50%{transform:translateY(-3px) rotate(17.5deg)}}
 @keyframes shad{0%,100%{opacity:1;transform:translateX(-50%) scaleX(1)}50%{opacity:.75;transform:translateX(-50%) scaleX(.94)}}
-@media (prefers-reduced-motion:reduce){ .wHero .wPhone,.wHero::after{animation:none} .wHero .wPhone{transform:rotate(25deg)} }
+@media (prefers-reduced-motion:reduce){ .wHero .wPhone,.wHero::after{animation:none} .wHero .wPhone{transform:rotate(16deg)} }
 
 #histCard{line-height:1.7}
 #histCard .hsHero{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff6d6,#fde3c8);border-radius:14px;padding:10px 12px;margin-bottom:12px}
