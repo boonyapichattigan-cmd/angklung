@@ -934,6 +934,12 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
 @media (max-width:400px){ #lisCard .bar{gap:8px;flex-wrap:wrap} #lisCard .bar .btn{padding:10px 12px;font-size:.92rem;white-space:nowrap} #lisCard .lisLoopL{white-space:nowrap;font-size:.86rem} #lisCard .lisNow{flex-basis:100%} #lisCard .lisNow:empty{display:none} }
 
 .tw{white-space:nowrap}
+
+/* ล้อ-รับ: คำว่า ล้อ / รับ ตัวเล็กบนวรรคที่บรรเลง (ไม่ใช้สีพื้นหรือวงเล็บแบบสากล) */
+.mel8 .sb.g-a,.mel8 .sb.g-b{background:#fff !important;box-shadow:none !important}
+.mel8 .sb .glab{position:absolute;left:3px;top:1px;font:700 .62rem/1 'Sarabun',sans-serif;color:#6b7f95;font-style:normal;pointer-events:none}
+.mel8 .sb.hasGl{padding-top:12px}
+.gLegend .lgLo::before{display:none}
 </style>
 </head>
 <body>
@@ -1156,7 +1162,7 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
           </div>
           <details class="own" id="ownBox">
             <summary>✏️ <span class="th">พิมพ์โน้ตเพลงเอง</span><span class="en i">Write your own notation</span></summary>
-            <p class="hint"><span class="th">บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แตะช่องห้องแล้วกดปุ่มโน้ตด้านล่าง (หรือพิมพ์เอง) · <b>-</b> = เว้นจังหวะ · ดฺ = เสียงต่ำ (จุดล่าง) · ดํ = เสียงสูง (จุดบน) · <b>{มรด}</b> = ลูกสะบัด (หลายเสียงในจังหวะเดียว ตัวสุดท้ายตกจังหวะ) · <b>^-ซ-ล</b> หรือหัวข้อที่มีคำว่า เลื่อม = บรรเลงเลื่อม (เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ) · <b>&lt; &gt;</b> = ล้อ (เสียงสูง) <b>[ ]</b> = รับ (เสียงต่ำ) · <b>~ฟซล</b> = เส้นโค้งบนโน้ต: ต่างเสียง = สะบัด, เสียงเดียวกัน (เช่น <b>---~ซซซ</b>) = สะเดาะ · <b>&lt; &gt;</b> = กลุ่ม ก (ล้อ) · <b>[ ]</b> = กลุ่ม ข (รับ) · <b>p</b> / <b>f</b> หน้าห้อง = เบา / ดัง (มี pp mp mf ff ด้วย) · <b>( )</b> = เล่นซ้ำ</span><span class="en">8 bars per line, 4 beats per bar. Tap a bar, then use the note buttons (or type). - = rest · {มรด} = luk sabat (several notes in one beat, the last on the beat) · &lt; &gt; = group A (lo) · [ ] = group B (rap) · p / f before a bar = soft / loud (also pp mp mf ff) · ( ) = repeat (written out in full) · Klap Ton = repeat from the start of the thon · ⌒ = sabat/sado.</span></p>
+            <p class="hint"><span class="th">บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แตะช่องห้องแล้วกดปุ่มโน้ตด้านล่าง (หรือพิมพ์เอง) · <b>-</b> = เว้นจังหวะ · ดฺ = เสียงต่ำ (จุดล่าง) · ดํ = เสียงสูง (จุดบน) · <b>⌒</b> หน้ากลุ่มโน้ตท้ายห้อง = เส้นโค้ง: ต่างเสียง = สะบัด, เสียงเดียวกัน (เช่น <b>---⌒ซซซ</b>) = สะเดาะ · <b>( ล้อ )</b> = วรรคล้อของเครื่องนำ (เสียงสูง) แล้วบันทึกวรรครับของเครื่องตาม (เสียงต่ำ) ในห้องถัดไปตามปกติ จำนวนห้องเท่ากัน · <b>กลับต้น</b> = บรรเลงซ้ำตั้งแต่ต้นท่อน · หัวข้อท่อนที่มีคำว่า เลื่อม = บรรเลงเลื่อม</span><span class="en">8 bars per line, 4 beats per bar. Tap a bar, then use the note buttons (or type). - = rest · ⌒ before the last note group of a bar = sabat (different notes) / sado (same note) · ( lo ) = the leading group's phrase (high); write the answering rap phrase (low) normally in the same number of bars right after · Klap Ton = repeat from the start of the thon · a thon heading containing เลื่อม = lueam.</span></p>
             <div id="ownGrid"></div>
             <textarea id="score" hidden></textarea>
             <button class="btn alt" id="useOwn" style="margin-top:6px"><span class="th">ใช้โน้ตนี้</span><span class="en i">Use</span></button>
@@ -1250,7 +1256,7 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
   </div>
   <div class="card" id="helpCard">
     <p class="hint hIntro"><span class="th">แตะหัวข้อเพื่อเปิดอ่านวิธีใช้แต่ละฟังก์ชัน</span><span class="en">Tap a topic to read how each function works.</span></p>
-    <details open><summary>🚀 <span class="th">เริ่มต้นใช้งาน</span><span class="en">Getting started</span></summary><div class="hb"><div class="th"><ul><li>ลงชื่อครั้งแรกครั้งเดียว แอปจะจำไว้ ครั้งต่อไปเข้าใช้ได้ทันที (กด “เปลี่ยนผู้ใช้” ที่หน้าแรกถ้าต้องการเปลี่ยนชื่อ)</li><li>เลือกภาษา <b>ไทย / EN</b> มุมบนขวา</li><li>เลือกโหมด <b>เล่นคนเดียว</b> (14 เสียง) หรือ <b>เล่นเป็นวง</b> (ถือ 2 เสียง)</li><li>ปุ่ม <b>☰</b> มุมล่างขวา = เมนูฟังก์ชันทั้งหมด · ปุ่ม <b>▲▼</b> = เลื่อนหน้าจอ</li><li>ติดตั้งลงเครื่องได้จากเมนู “ติดตั้งแอปลงเครื่อง” ใช้งานได้แม้ไม่มีอินเทอร์เน็ต</li></ul></div><div class="en"><ul><li>Sign in once — the app remembers you (use “Switch user” on the home screen to change).</li><li>Choose <b>ไทย / EN</b> at the top right.</li><li>Pick <b>Solo</b> (14 notes) or <b>Band</b> (hold 2 notes).</li><li><b>☰</b> at the bottom right opens every function · <b>▲▼</b> scrolls the page.</li><li>Install it from “Install the app” in the menu — it then works offline.</li></ul></div></div></details><details><summary>🎵 <span class="th">โหมดเล่นคนเดียว</span><span class="en">Solo mode</span></summary><div class="hb"><div class="th"><ul><li>อังกะลุง 14 ตัว เรียงจากเสียงต่ำ (ซ้ายบน) ไปเสียงสูง (ขวาล่าง)</li><li>เทคนิคการบรรเลงตามท่าทาง: <b>แตะสั้น = กระทบ</b> (เสียงเดียวชัด) · <b>กดค้าง = เขย่า</b> (เสียงกระทบดังทันทีแล้วต่อเป็นเสียงรัว) · <b>ปัดนิ้วบนปุ่ม = สะบัด</b> (เสียงรัวสั้นครั้งเดียว)</li><li>กดหลายนิ้วพร้อมกันได้</li><li>คอมพิวเตอร์: แถวบน <kbd>Q</kbd>–<kbd>U</kbd> = ตัวที่ 1–7 · แถวกลาง <kbd>A</kbd>–<kbd>J</kbd> = ตัวที่ 8–14</li><li><b>แถบจังหวะ</b> เหนือปุ่มอังกะลุง: เลือกหน้าทับ · ▶/■ เริ่ม/หยุด · 🐢 ทอดจบ · − + ความเร็ว · ⋯ ตั้งค่าเพิ่ม กดได้แม้อีกนิ้วกำลังกดโน้ตอยู่</li><li><b>ดัง-เบา</b>: กดบริเวณรูปอังกะลุง = ดังปกติ · กดค่อนลงมาทางชื่อโน้ต = เบาลง (ล่างสุดเบาที่สุด)</li><li>คอมพิวเตอร์: กดแล้วปล่อยเร็ว = กระทบ · กดค้าง = เขย่า · <kbd>Shift</kbd>+แป้น = สะบัด</li><li>คอมพิวเตอร์: <kbd>Space</kbd> = เริ่ม/หยุดกลอง · <kbd>Enter</kbd> = ทอดจบ</li></ul></div><div class="en"><ul><li>14 angklungs from low (top left) to high (bottom right).</li><li>Techniques by gesture: <b>short tap = strike</b> (one clear note) · <b>hold = shake</b> (strike, then a continuous roll) · <b>swipe on a key = flick</b> (one short burst).</li><li>Several fingers can play at once.</li><li>Computer: top row <kbd>Q</kbd>–<kbd>U</kbd> = notes 1–7 · middle row <kbd>A</kbd>–<kbd>J</kbd> = notes 8–14.</li><li><b>Rhythm bar</b> above the keys: Na Thap · ▶/■ start/stop · 🐢 thot (slow-down ending) · − + tempo · ⋯ more. It works even while another finger is holding a note.</li><li><b>Loud / soft</b>: press on the angklung picture = normal · press lower toward the note name = softer (softest at the bottom).</li><li>Computer: quick press = strike · hold = shake · <kbd>Shift</kbd>+key = flick.</li><li>Computer: <kbd>Space</kbd> = start/stop Klong Khaek · <kbd>Enter</kbd> = thot (slow-down ending).</li></ul></div></div></details><details><summary>👥 <span class="th">โหมดเล่นเป็นวง</span><span class="en">Band mode</span></summary><div class="hb"><div class="th"><ul><li>เลือกอังกะลุง 2 ตัวที่ถือ (มือซ้าย / มือขวา) จากรายการหมายเลข 1–28 หรือแตะชิปสี แล้วกด “บรรเลง”</li><li>คอมพิวเตอร์: <kbd>F</kbd> = มือซ้าย · <kbd>J</kbd> = มือขวา</li><li>ใช้คู่กับ “ห้องวง” เพื่อเล่นพร้อมกันหลายเครื่อง</li></ul></div><div class="en"><ul><li>Choose the 2 angklungs you hold (left / right hand) from the list 1–28 or tap a colour chip, then press “Play”.</li><li>Computer: <kbd>F</kbd> = left hand · <kbd>J</kbd> = right hand.</li><li>Use it with the Band room to play together on many devices.</li></ul></div></div></details><details><summary>⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></summary><div class="hb"><div class="th"><ul><li><b>เสียงไทย</b> (บันไดเสียงไทย 7 เสียงเท่า) หรือ <b>เสียงสากล</b> พร้อมเลือกคีย์</li><li>วิธีกด: ท่าทาง (แตะ = กระทบ · ค้าง = เขย่า · ปัด = สะบัด) หรือ แตะ = สะบัดทุกครั้ง</li><li>เสียงห้อง: เสียงตรง · ห้องเรียน · หอประชุม</li><li>ปรับระดับเสียง 🔊</li></ul></div><div class="en"><ul><li><b>Thai tuning</b> (7 equal steps) or <b>Western tuning</b> with a key.</li><li>Playing: gestures (tap = strike · hold = shake · swipe = flick) or every tap = flick.</li><li>Room sound: Dry · Room · Hall.</li><li>Volume 🔊.</li></ul></div></div></details><details><summary>🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm (Klong Khaek & Ching)</span></summary><div class="hb"><div class="th"><ul><li>เลือกหน้าทับ (ปรบไก่ สองไม้ ลูกหมด ลาว เขมร แขก ฯลฯ) แอปแสดงโน้ตหน้าทับและไฟวิ่งตามห้อง</li><li>เปิด/ปิด กลองแขก ฉิ่ง ฉาบเล็ก ฉาบใหญ่ โหม่ง และกรับ แยกกันได้ ปรับความเร็วและระดับเสียง</li><li><b>🐢 ทอดจบ</b> จบให้ครบหน้าทับเสมอ: หน้าทับ 8 ห้อง เล่นจากห้องที่ 1 แล้วทอดห้องที่ 5–8 · หน้าทับ 4 ห้อง เล่นอีก 1 รอบแล้วทอดทั้งรอบถัดไป จบด้วยฉับ + ทั่ม</li><li>ถ้ากดทอดหลังผ่านห้องที่ 1 ไปแล้ว แอปจะเล่นต่อจนครบรอบ แล้วเริ่มทอดในรอบถัดไป</li><li><b>จำนวนรอบหน้าทับ</b> (1 รอบ = หน้าทับ 1 จบ): ใช้เมื่อเพลงไม่มีโน้ตในแอป กลองจะตีครบตามจำนวนรอบแล้วจบพร้อมเพลง (เลือกได้ว่าจะทอดในรอบสุดท้ายหรือไม่) · 0 = ตีต่อเนื่อง</li><li><b>การขึ้น</b>: <b>ขึ้นพร้อมเพลง</b> = กลองเริ่มพร้อมกัน · <b>ขึ้นท้ายหน้าทับ</b> = เครื่องดนตรีขึ้นก่อน 2 ห้อง (แถบจังหวะนับห้องและจังหวะให้ดู) แล้วกลองรับ -โจ๊ะ-ติง | -ติง-ทั่ม ก่อนเข้าหน้าทับเต็ม 2 ห้องที่กลองรับนับเป็นรอบที่ 1</li></ul></div><div class="en"><ul><li>Pick a <i>na thap</i> (หน้าทับ): Prop Kai, Song Mai, Luk Mot, Lao, Chawa, Khmer, Khaek… The Na Thap sheet lights up bar by bar.</li><li>Turn Klong Khaek, Ching, Chap Lek, Chap Yai, Mong and Krap on/off separately; set tempo and volume.</li><li><b>🐢 Thot (slow-down ending)</b> always completes the Na Thap: an 8-bar Na Thap plays from bar 1 and slows over bars 5–8; a 4-bar Na Thap plays one more round and slows over the next round, ending on chap + tham.</li><li>If you press it after bar 1 has passed, the app finishes the current round first.</li><li><b>Rounds</b> (1 round = one full Na Thap): for songs without notation in the app — the Klong Khaek play that many rounds and end with the song (optionally slowing on the last round) · 0 = play until stopped.</li><li><b>Entry</b>: <b>Start with the song</b>, or <b>Khuen Thai Na Thap</b> (pickup entry) — the melody leads for 2 bars (counted on the rhythm bar), then the Klong Khaek answer -cho-ting | -ting-tham before the full Na Thap. The pickup counts as round 1.</li></ul></div></div></details><details><summary>🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลง แอปแสดงโน้ตบรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แล้วกด ▶ เล่น</li><li>ติ๊ก “ให้ฉันเล่นเอง” แอปจะแสดงไฟนำบนปุ่ม แต่ไม่เล่นเสียงให้</li><li><b>พิมพ์โน้ตเอง</b>: แตะช่องห้อง แล้วกดปุ่มโน้ตด้านล่าง ครบ 4 จังหวะจะข้ามไปห้องถัดไปเอง · <b>–</b> = จังหวะว่าง · <b>( )</b> = ช่วงที่บรรเลงซ้ำ (แอปเขียนโน้ตซ้ำให้เต็ม) · <b>กลับต้น</b> = บรรเลงซ้ำตั้งแต่ต้นท่อน · ปุ่ม ⌒ = สะบัด/สะเดาะ</li></ul></div><div class="en"><ul><li>Choose a song — notation shows 8 bars per line, 4 beats per bar — then press ▶.</li><li>Tick “I’ll play myself” to get guide lights without the app playing.</li><li><b>Write your own</b>: tap a bar, then tap note buttons; after 4 beats it moves to the next bar · <b>–</b> = rest · <b>( )</b> = repeat. You can also type C D E F G A B.</li></ul></div></div></details><details><summary>🎯 <span class="th">ฝึกซ้อมตามจังหวะ</span><span class="en">Practice (play along)</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลงและความเร็ว แอปนับ 1–2–3–4 แล้วตัวโน้ตเลื่อนผ่านเส้นเหนือปุ่มกด ให้กดตอนโน้ตถึงเส้น</li><li>เลือกได้ว่าจะแสดงตัวโน้ตหรือไม่ · ไฟนำบนปุ่ม · กลองแขก–ฉิ่งประกอบ · ทอดตอนจบเพลง</li><li>จบแล้วแอปแสดงคะแนนความแม่นยำ</li><li><b>ช่วงที่ฝึก</b>: เลือกฝึกทั้งเพลง ทีละท่อน หรือกำหนดห้องเอง ติ๊ก <b>🔁 วนซ้ำ</b> เพื่อเล่นช่วงนั้นซ้ำจนกว่าจะกดหยุด</li></ul></div><div class="en"><ul><li>Pick a song and tempo; after a 1–2–3–4 count-in, notes scroll across the line above the keys — press as each reaches the line.</li><li>Options: show notes, guide lights, Klong Khaek & Ching, thot (slow-down ending).</li><li>Your accuracy score is shown at the end.</li><li><b>Section</b>: practise the whole song, one <i>thon</i> (section), or chosen bars. Tick <b>🔁 Loop</b> to repeat it until you stop.</li></ul></div></div></details><details><summary>📡 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></summary><div class="hb"><div class="th"><ul><li><b>ครู</b>: กด “สร้างห้อง” ได้รหัส 4 หลักและ QR ให้นักเรียนสแกน แล้วแจกเสียงให้แต่ละคน</li><li><b>นักเรียน</b>: สแกน QR หรือ “เข้าร่วมห้อง” ด้วยรหัส แล้วรอครูเริ่ม ทุกเครื่องนับ 4–3–2–1 พร้อมกัน</li><li>เสียงที่ไม่มีคนถือ เครื่องครูเล่นแทนได้</li><li><b>ล้อ-รับ</b>: ครูเลือกกลุ่ม ก / ข ให้นักเรียนแต่ละคนได้ในรายชื่อ (แอปแบ่งให้อัตโนมัติ: คนที่ถือเสียงเดียวกันสลับกลุ่มกัน) นักเรียนจะเล่นเฉพาะห้องของกลุ่มตัวเองและห้องทั้งวง ถ้ากลุ่มไหนไม่มีคนถือเสียงนั้น เครื่องครูเล่นแทน</li><li><b>เฉพาะจังหวะ</b>: เครื่องครูตีกลองแขก–ฉิ่ง นักเรียนเล่นเพลงอื่นตามโน้ตของตนเอง กด 🐢 เพื่อทอดจบ</li><li>ครูเลือกช่วงที่ฝึก (ท่อน / ห้อง) ในหน้าฝึกซ้อมก่อนกดเริ่ม ทุกเครื่องจะเล่นช่วงเดียวกัน</li><li>หลังเล่นจบ กด <b>⬇️ ดาวน์โหลดคะแนน (Excel)</b> เพื่อเก็บคะแนนนักเรียนทุกคนทุกรอบเป็นไฟล์</li><li>ทุกเครื่องต้องต่ออินเทอร์เน็ต</li></ul></div><div class="en"><ul><li><b>Teacher</b>: “Create room” gives a 4-digit code and QR; assign notes to each student.</li><li><b>Students</b>: scan the QR or “Join a room” with the code and wait — everyone counts in together.</li><li>The teacher device can play notes nobody holds.</li><li><b>Lo/rap</b> (call and answer): set group A / B for each student in the member list (auto: students on the same note alternate). Students play only their group's bars and the tutti bars; if a group has nobody on a note, the teacher device plays it.</li><li><b>Rhythm only</b>: the teacher device plays Klong Khaek & Ching while students play any song; press 🐢 to end.</li><li>The teacher's practice section (part / bars) is used for everyone.</li><li>After playing, tap <b>⬇️ Download scores (Excel)</b> to save every student's scores.</li><li>All devices need internet.</li></ul></div></div></details><details><summary>📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></summary><div class="hb"><div class="th"><ul><li>ถ่ายรูปโน้ต หรือเลือกไฟล์ รูปภาพ PDF Word Excel หรือข้อความ</li><li>เลือกว่าเป็น <b>โน้ตเพลง</b> หรือ <b>หน้าทับ</b> แอปอ่านแล้วแสดงให้ตรวจแก้ ห้องที่ผิดจะเป็นสีแดง</li><li>กดบันทึก เพลง/หน้าทับจะอยู่ในรายการเพลง ฝึกซ้อม และห้องวง (เก็บในเครื่องนี้)</li></ul></div><div class="en"><ul><li>Take a photo or pick an image, PDF, Word, Excel or text file.</li><li>Choose <b>melody</b> or <b>Na Thap</b>; check and fix the result — red bars need fixing.</li><li>Save it and it appears in the song, practice and band-room lists (on this device).</li></ul></div></div></details><details><summary>🔤 <span class="th">การอ่านโน้ตในแอป</span><span class="en">Reading the notation</span></summary><div class="hb"><div class="th"><ul><li>ด ร ม ฟ ซ ล ท (ภาษาอังกฤษแสดงเป็น C D E F G A B)</li><li><b>จุดใต้ตัวโน้ต</b> = เสียงต่ำ · <b>จุดบนตัวโน้ต</b> = เสียงสูง</li><li><b>–</b> = จังหวะว่าง · หนึ่งห้องมี 4 จังหวะ · จังหวะตกที่ตัวท้ายของห้อง</li><li><b>ลูกสะบัด</b>: โน้ตตัวเล็กมีเส้นโค้งอยู่เหนือโน้ต = เสียงนำเร็ว ๆ ก่อนตัวตกจังหวะ ตอนฝึกซ้อมแอปเล่นเสียงนำให้ ผู้เล่นกดตัวตกจังหวะ</li><li><b>ฟังเพลง</b>: เมนู ☰ → ฟังเพลง เลือกเพลงในคลัง แอปบรรเลงด้วยอังกะลุง 3 ช่วงเสียง พร้อมกลองแขก ฉิ่ง ฉาบเล็ก ฉาบใหญ่ โหม่ง กรับ (เลือกเปิด-ปิดได้) หน้าทับตั้งตามประเภทเพลงให้ก่อน และเปลี่ยนเองได้ · เพลงเถาเปลี่ยนหน้าทับตามท่อนเอง · ติ๊ก 🔁 เล่นวนซ้ำ เพื่อบรรเลงต่อเนื่อง (ขึ้นหน้าทับเฉพาะรอบแรก)</li><li><b>แถบโน้ตไหล</b>: เมื่อกดเล่นในฝึกบรรเลงเพลง จะมีแถบด้านบนจอแสดงโน้ตที่กำลังจะมาถึง กดให้ตรงตอนโน้ตถึงเส้นสีแดง</li><li><b>ล้อ-รับ และเลื่อม</b>: ล้อ (กลุ่ม ก) ใช้เสียงสูง รับ (กลุ่ม ข) ใช้เสียงต่ำ · เลื่อม: เครื่องนำเสียงสูงตรงจังหวะ เครื่องตามเสียงต่ำตามหลัง 1 จังหวะ (เขียน ^ หน้าห้อง หรือใส่คำว่า เลื่อม ในหัวข้อท่อน)</li><li><b>สะบัด / สะเดาะ</b>: เส้นโค้งคร่อมโน้ต 3 เสียงที่ต่างกัน = <b>สะบัด</b> (เส้นสีส้ม) เส้นโค้งคร่อมโน้ตเสียงเดียวกัน = <b>สะเดาะ</b> (เส้นสีน้ำเงิน) เล่นเร็ว ๆ ให้ตัวสุดท้ายตกจังหวะ ตอนฝึกซ้อมแอปเล่นตัวนำให้ ผู้เล่นกดตัวสุดท้าย · ห้องที่มีโน้ตเกิน 4 ตัวจะแสดงเรียงแถวเดียว · บันทึกเองได้ด้วยปุ่ม ⌒ สะบัด/สะเดาะ (หรือพิมพ์ ~) หน้ากลุ่มโน้ตท้ายห้อง เช่น -⌒ฟซล หรือ ---⌒ซซซ</li><li><b>ล้อ-รับ</b>: ห้องพื้นฟ้า = กลุ่ม ก (ล้อ) · ห้องพื้นเหลือง = กลุ่ม ข (รับ) · ไม่มีสี = ทั้งวง</li><li><b>ดัง-เบา</b>: ตัวอักษร p (เบา) / f (ดัง) สีส้มที่มุมห้อง มีผลจนกว่าจะเปลี่ยน</li><li>หน้าทับ: ติง · ทั่ม · โจ๊ะ · จ๊ะ · ฉิ่ง ● · ฉับ ✕</li></ul></div><div class="en"><ul><li>Notes ด ร ม ฟ ซ ล ท are shown as C D E F G A B in English.</li><li><b>Dot below</b> = low · <b>dot above</b> = high.</li><li><b>–</b> = rest · 4 beats per bar · the strong beat is the last beat of each bar.</li><li><b>Luk sabat (ลูกสะบัด)</b>: small notes with an arc above = quick lead-in notes before the beat note; in practice the app plays them and you play the beat note.</li><li><b>Sabat / Sado</b>: an arc over three different notes = <b>sabat</b> (orange arc); an arc over the same note repeated = <b>sado</b> (blue arc). Play them quickly so the last note lands on the beat; in practice the app plays the lead-in notes and you play the last one. Bars with more than 4 notes are shown in one line. To write one, tap ⌒ Sabat/Sado (or type ~) before the last note group of the bar, e.g. -⌒ฟซล or ---⌒ซซซ.</li><li><b>Lo/rap</b>: blue bars = group A (lo) · yellow bars = group B (rap) · yellow bars = group B · no colour = everyone.</li><li><b>Dynamics</b>: orange p (soft) / f (loud) in a bar corner, until changed.</li><li>Klong Khaek strokes: ting · tham · cho · cha · Ching: ching ● · chap ✕</li></ul></div></div></details><details><summary>⭐ <span class="th">อื่น ๆ</span><span class="en">Other</span></summary><div class="hb"><div class="th"><ul><li><b>เพลงพื้นหลัง</b>: เปิด/ปิดได้ที่ปุ่ม ♪ มุมซ้ายบนของหน้าแรก หรือเมนู ☰ → “เพลงพื้นหลัง” เลือกเพลงและความดังได้ใน “ตั้งค่าเสียง” เพลงดังเฉพาะหน้าแรก เมนู คู่มือ และหน้าตั้งค่า และหยุดเองเมื่อเริ่มบรรเลง</li><li><b>เสียงกดปุ่ม</b>: เปิด/ปิด และเลือกแบบเสียงได้ 7 แบบใน “ตั้งค่าเสียง” (เคาะไม้ ฉิ่งเบา อังกะลุงสั้น ป๊อป หยดน้ำ คลิกนุ่ม กลองแขกเบา) เลือกแล้วได้ยินตัวอย่างทันที</li><li><b>ประเมินความพึงพอใจ</b>: ช่วยบอกความเห็นเพื่อพัฒนาแอป</li><li><b>หน้าแรก / เปลี่ยนโหมด</b>: กลับไปเลือกโหมดหรือเปลี่ยนผู้ใช้</li><li>แอปที่ติดตั้งแล้วอัปเดตเองเมื่อเปิดขณะต่ออินเทอร์เน็ต (อาจต้องเปิดใหม่ 1–2 ครั้ง)</li></ul></div><div class="en"><ul><li><b>Background music</b>: turn it on/off with the ♪ button at the top left of the home screen or ☰ → “Background music”; pick the song and volume in Sound settings. It plays only on the home screen, menu, guide and settings, and stops when you start playing.</li><li><b>Button sounds</b>: on/off and 7 styles in Sound settings (you hear a preview when you pick one).</li><li><b>Rate the app</b>: share feedback to improve it.</li><li><b>Home / switch mode</b>: go back to choose a mode or switch user.</li><li>An installed app updates itself when opened online (may need 1–2 restarts).</li></ul></div></div></details>
+    <details open><summary>🚀 <span class="th">เริ่มต้นใช้งาน</span><span class="en">Getting started</span></summary><div class="hb"><div class="th"><ul><li>ลงชื่อครั้งแรกครั้งเดียว แอปจะจำไว้ ครั้งต่อไปเข้าใช้ได้ทันที (กด “เปลี่ยนผู้ใช้” ที่หน้าแรกถ้าต้องการเปลี่ยนชื่อ)</li><li>เลือกภาษา <b>ไทย / EN</b> มุมบนขวา</li><li>เลือกโหมด <b>เล่นคนเดียว</b> (14 เสียง) หรือ <b>เล่นเป็นวง</b> (ถือ 2 เสียง)</li><li>ปุ่ม <b>☰</b> มุมล่างขวา = เมนูฟังก์ชันทั้งหมด · ปุ่ม <b>▲▼</b> = เลื่อนหน้าจอ</li><li>ติดตั้งลงเครื่องได้จากเมนู “ติดตั้งแอปลงเครื่อง” ใช้งานได้แม้ไม่มีอินเทอร์เน็ต</li></ul></div><div class="en"><ul><li>Sign in once — the app remembers you (use “Switch user” on the home screen to change).</li><li>Choose <b>ไทย / EN</b> at the top right.</li><li>Pick <b>Solo</b> (14 notes) or <b>Band</b> (hold 2 notes).</li><li><b>☰</b> at the bottom right opens every function · <b>▲▼</b> scrolls the page.</li><li>Install it from “Install the app” in the menu — it then works offline.</li></ul></div></div></details><details><summary>🎵 <span class="th">โหมดเล่นคนเดียว</span><span class="en">Solo mode</span></summary><div class="hb"><div class="th"><ul><li>อังกะลุง 14 ตัว เรียงจากเสียงต่ำ (ซ้ายบน) ไปเสียงสูง (ขวาล่าง)</li><li>เทคนิคการบรรเลงตามท่าทาง: <b>แตะสั้น = กระทบ</b> (เสียงเดียวชัด) · <b>กดค้าง = เขย่า</b> (เสียงกระทบดังทันทีแล้วต่อเป็นเสียงรัว) · <b>ปัดนิ้วบนปุ่ม = สะบัด</b> (เสียงรัวสั้นครั้งเดียว)</li><li>กดหลายนิ้วพร้อมกันได้</li><li>คอมพิวเตอร์: แถวบน <kbd>Q</kbd>–<kbd>U</kbd> = ตัวที่ 1–7 · แถวกลาง <kbd>A</kbd>–<kbd>J</kbd> = ตัวที่ 8–14</li><li><b>แถบจังหวะ</b> เหนือปุ่มอังกะลุง: เลือกหน้าทับ · ▶/■ เริ่ม/หยุด · 🐢 ทอดจบ · − + ความเร็ว · ⋯ ตั้งค่าเพิ่ม กดได้แม้อีกนิ้วกำลังกดโน้ตอยู่</li><li><b>ดัง-เบา</b>: กดบริเวณรูปอังกะลุง = ดังปกติ · กดค่อนลงมาทางชื่อโน้ต = เบาลง (ล่างสุดเบาที่สุด)</li><li>คอมพิวเตอร์: กดแล้วปล่อยเร็ว = กระทบ · กดค้าง = เขย่า · <kbd>Shift</kbd>+แป้น = สะบัด</li><li>คอมพิวเตอร์: <kbd>Space</kbd> = เริ่ม/หยุดกลอง · <kbd>Enter</kbd> = ทอดจบ</li></ul></div><div class="en"><ul><li>14 angklungs from low (top left) to high (bottom right).</li><li>Techniques by gesture: <b>short tap = strike</b> (one clear note) · <b>hold = shake</b> (strike, then a continuous roll) · <b>swipe on a key = flick</b> (one short burst).</li><li>Several fingers can play at once.</li><li>Computer: top row <kbd>Q</kbd>–<kbd>U</kbd> = notes 1–7 · middle row <kbd>A</kbd>–<kbd>J</kbd> = notes 8–14.</li><li><b>Rhythm bar</b> above the keys: Na Thap · ▶/■ start/stop · 🐢 thot (slow-down ending) · − + tempo · ⋯ more. It works even while another finger is holding a note.</li><li><b>Loud / soft</b>: press on the angklung picture = normal · press lower toward the note name = softer (softest at the bottom).</li><li>Computer: quick press = strike · hold = shake · <kbd>Shift</kbd>+key = flick.</li><li>Computer: <kbd>Space</kbd> = start/stop Klong Khaek · <kbd>Enter</kbd> = thot (slow-down ending).</li></ul></div></div></details><details><summary>👥 <span class="th">โหมดเล่นเป็นวง</span><span class="en">Band mode</span></summary><div class="hb"><div class="th"><ul><li>เลือกอังกะลุง 2 ตัวที่ถือ (มือซ้าย / มือขวา) จากรายการหมายเลข 1–28 หรือแตะชิปสี แล้วกด “บรรเลง”</li><li>คอมพิวเตอร์: <kbd>F</kbd> = มือซ้าย · <kbd>J</kbd> = มือขวา</li><li>ใช้คู่กับ “ห้องวง” เพื่อเล่นพร้อมกันหลายเครื่อง</li></ul></div><div class="en"><ul><li>Choose the 2 angklungs you hold (left / right hand) from the list 1–28 or tap a colour chip, then press “Play”.</li><li>Computer: <kbd>F</kbd> = left hand · <kbd>J</kbd> = right hand.</li><li>Use it with the Band room to play together on many devices.</li></ul></div></div></details><details><summary>⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></summary><div class="hb"><div class="th"><ul><li><b>เสียงไทย</b> (บันไดเสียงไทย 7 เสียงเท่า) หรือ <b>เสียงสากล</b> พร้อมเลือกคีย์</li><li>วิธีกด: ท่าทาง (แตะ = กระทบ · ค้าง = เขย่า · ปัด = สะบัด) หรือ แตะ = สะบัดทุกครั้ง</li><li>เสียงห้อง: เสียงตรง · ห้องเรียน · หอประชุม</li><li>ปรับระดับเสียง 🔊</li></ul></div><div class="en"><ul><li><b>Thai tuning</b> (7 equal steps) or <b>Western tuning</b> with a key.</li><li>Playing: gestures (tap = strike · hold = shake · swipe = flick) or every tap = flick.</li><li>Room sound: Dry · Room · Hall.</li><li>Volume 🔊.</li></ul></div></div></details><details><summary>🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm (Klong Khaek & Ching)</span></summary><div class="hb"><div class="th"><ul><li>เลือกหน้าทับ (ปรบไก่ สองไม้ ลูกหมด ลาว เขมร แขก ฯลฯ) แอปแสดงโน้ตหน้าทับและไฟวิ่งตามห้อง</li><li>เปิด/ปิด กลองแขก ฉิ่ง ฉาบเล็ก ฉาบใหญ่ โหม่ง และกรับ แยกกันได้ ปรับความเร็วและระดับเสียง</li><li><b>🐢 ทอดจบ</b> จบให้ครบหน้าทับเสมอ: หน้าทับ 8 ห้อง เล่นจากห้องที่ 1 แล้วทอดห้องที่ 5–8 · หน้าทับ 4 ห้อง เล่นอีก 1 รอบแล้วทอดทั้งรอบถัดไป จบด้วยฉับ + ทั่ม</li><li>ถ้ากดทอดหลังผ่านห้องที่ 1 ไปแล้ว แอปจะเล่นต่อจนครบรอบ แล้วเริ่มทอดในรอบถัดไป</li><li><b>จำนวนรอบหน้าทับ</b> (1 รอบ = หน้าทับ 1 จบ): ใช้เมื่อเพลงไม่มีโน้ตในแอป กลองจะตีครบตามจำนวนรอบแล้วจบพร้อมเพลง (เลือกได้ว่าจะทอดในรอบสุดท้ายหรือไม่) · 0 = ตีต่อเนื่อง</li><li><b>การขึ้น</b>: <b>ขึ้นพร้อมเพลง</b> = กลองเริ่มพร้อมกัน · <b>ขึ้นท้ายหน้าทับ</b> = เครื่องดนตรีขึ้นก่อน 2 ห้อง (แถบจังหวะนับห้องและจังหวะให้ดู) แล้วกลองรับ -โจ๊ะ-ติง | -ติง-ทั่ม ก่อนเข้าหน้าทับเต็ม 2 ห้องที่กลองรับนับเป็นรอบที่ 1</li></ul></div><div class="en"><ul><li>Pick a <i>na thap</i> (หน้าทับ): Prop Kai, Song Mai, Luk Mot, Lao, Chawa, Khmer, Khaek… The Na Thap sheet lights up bar by bar.</li><li>Turn Klong Khaek, Ching, Chap Lek, Chap Yai, Mong and Krap on/off separately; set tempo and volume.</li><li><b>🐢 Thot (slow-down ending)</b> always completes the Na Thap: an 8-bar Na Thap plays from bar 1 and slows over bars 5–8; a 4-bar Na Thap plays one more round and slows over the next round, ending on chap + tham.</li><li>If you press it after bar 1 has passed, the app finishes the current round first.</li><li><b>Rounds</b> (1 round = one full Na Thap): for songs without notation in the app — the Klong Khaek play that many rounds and end with the song (optionally slowing on the last round) · 0 = play until stopped.</li><li><b>Entry</b>: <b>Start with the song</b>, or <b>Khuen Thai Na Thap</b> (pickup entry) — the melody leads for 2 bars (counted on the rhythm bar), then the Klong Khaek answer -cho-ting | -ting-tham before the full Na Thap. The pickup counts as round 1.</li></ul></div></div></details><details><summary>🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลง แอปแสดงโน้ตบรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แล้วกด ▶ เล่น</li><li>ติ๊ก “ให้ฉันเล่นเอง” แอปจะแสดงไฟนำบนปุ่ม แต่ไม่เล่นเสียงให้</li><li><b>พิมพ์โน้ตเอง</b>: แตะช่องห้อง แล้วกดปุ่มโน้ตด้านล่าง ครบ 4 จังหวะจะข้ามไปห้องถัดไปเอง · <b>–</b> = จังหวะว่าง · <b>( ล้อ )</b> = วรรคล้อ (เครื่องนำ เสียงสูง) วรรครับบันทึกในห้องถัดไปตามปกติ · <b>กลับต้น</b> = บรรเลงซ้ำตั้งแต่ต้นท่อน · ปุ่ม ⌒ = สะบัด/สะเดาะ</li></ul></div><div class="en"><ul><li>Choose a song — notation shows 8 bars per line, 4 beats per bar — then press ▶.</li><li>Tick “I’ll play myself” to get guide lights without the app playing.</li><li><b>Write your own</b>: tap a bar, then tap note buttons; after 4 beats it moves to the next bar · <b>–</b> = rest · <b>( )</b> = repeat. You can also type C D E F G A B.</li></ul></div></div></details><details><summary>🎯 <span class="th">ฝึกซ้อมตามจังหวะ</span><span class="en">Practice (play along)</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลงและความเร็ว แอปนับ 1–2–3–4 แล้วตัวโน้ตเลื่อนผ่านเส้นเหนือปุ่มกด ให้กดตอนโน้ตถึงเส้น</li><li>เลือกได้ว่าจะแสดงตัวโน้ตหรือไม่ · ไฟนำบนปุ่ม · กลองแขก–ฉิ่งประกอบ · ทอดตอนจบเพลง</li><li>จบแล้วแอปแสดงคะแนนความแม่นยำ</li><li><b>ช่วงที่ฝึก</b>: เลือกฝึกทั้งเพลง ทีละท่อน หรือกำหนดห้องเอง ติ๊ก <b>🔁 วนซ้ำ</b> เพื่อเล่นช่วงนั้นซ้ำจนกว่าจะกดหยุด</li></ul></div><div class="en"><ul><li>Pick a song and tempo; after a 1–2–3–4 count-in, notes scroll across the line above the keys — press as each reaches the line.</li><li>Options: show notes, guide lights, Klong Khaek & Ching, thot (slow-down ending).</li><li>Your accuracy score is shown at the end.</li><li><b>Section</b>: practise the whole song, one <i>thon</i> (section), or chosen bars. Tick <b>🔁 Loop</b> to repeat it until you stop.</li></ul></div></div></details><details><summary>📡 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></summary><div class="hb"><div class="th"><ul><li><b>ครู</b>: กด “สร้างห้อง” ได้รหัส 4 หลักและ QR ให้นักเรียนสแกน แล้วแจกเสียงให้แต่ละคน</li><li><b>นักเรียน</b>: สแกน QR หรือ “เข้าร่วมห้อง” ด้วยรหัส แล้วรอครูเริ่ม ทุกเครื่องนับ 4–3–2–1 พร้อมกัน</li><li>เสียงที่ไม่มีคนถือ เครื่องครูเล่นแทนได้</li><li><b>ล้อ-รับ</b>: ครูเลือกกลุ่ม ก / ข ให้นักเรียนแต่ละคนได้ในรายชื่อ (แอปแบ่งให้อัตโนมัติ: คนที่ถือเสียงเดียวกันสลับกลุ่มกัน) นักเรียนจะเล่นเฉพาะห้องของกลุ่มตัวเองและห้องทั้งวง ถ้ากลุ่มไหนไม่มีคนถือเสียงนั้น เครื่องครูเล่นแทน</li><li><b>เฉพาะจังหวะ</b>: เครื่องครูตีกลองแขก–ฉิ่ง นักเรียนเล่นเพลงอื่นตามโน้ตของตนเอง กด 🐢 เพื่อทอดจบ</li><li>ครูเลือกช่วงที่ฝึก (ท่อน / ห้อง) ในหน้าฝึกซ้อมก่อนกดเริ่ม ทุกเครื่องจะเล่นช่วงเดียวกัน</li><li>หลังเล่นจบ กด <b>⬇️ ดาวน์โหลดคะแนน (Excel)</b> เพื่อเก็บคะแนนนักเรียนทุกคนทุกรอบเป็นไฟล์</li><li>ทุกเครื่องต้องต่ออินเทอร์เน็ต</li></ul></div><div class="en"><ul><li><b>Teacher</b>: “Create room” gives a 4-digit code and QR; assign notes to each student.</li><li><b>Students</b>: scan the QR or “Join a room” with the code and wait — everyone counts in together.</li><li>The teacher device can play notes nobody holds.</li><li><b>Lo/rap</b> (call and answer): set group A / B for each student in the member list (auto: students on the same note alternate). Students play only their group's bars and the tutti bars; if a group has nobody on a note, the teacher device plays it.</li><li><b>Rhythm only</b>: the teacher device plays Klong Khaek & Ching while students play any song; press 🐢 to end.</li><li>The teacher's practice section (part / bars) is used for everyone.</li><li>After playing, tap <b>⬇️ Download scores (Excel)</b> to save every student's scores.</li><li>All devices need internet.</li></ul></div></div></details><details><summary>📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></summary><div class="hb"><div class="th"><ul><li>ถ่ายรูปโน้ต หรือเลือกไฟล์ รูปภาพ PDF Word Excel หรือข้อความ</li><li>เลือกว่าเป็น <b>โน้ตเพลง</b> หรือ <b>หน้าทับ</b> แอปอ่านแล้วแสดงให้ตรวจแก้ ห้องที่ผิดจะเป็นสีแดง</li><li>กดบันทึก เพลง/หน้าทับจะอยู่ในรายการเพลง ฝึกซ้อม และห้องวง (เก็บในเครื่องนี้)</li></ul></div><div class="en"><ul><li>Take a photo or pick an image, PDF, Word, Excel or text file.</li><li>Choose <b>melody</b> or <b>Na Thap</b>; check and fix the result — red bars need fixing.</li><li>Save it and it appears in the song, practice and band-room lists (on this device).</li></ul></div></div></details><details><summary>🔤 <span class="th">การอ่านโน้ตในแอป</span><span class="en">Reading the notation</span></summary><div class="hb"><div class="th"><ul><li>ด ร ม ฟ ซ ล ท (ภาษาอังกฤษแสดงเป็น C D E F G A B)</li><li><b>จุดใต้ตัวโน้ต</b> = เสียงต่ำ · <b>จุดบนตัวโน้ต</b> = เสียงสูง</li><li><b>–</b> = จังหวะว่าง · หนึ่งห้องมี 4 จังหวะ · จังหวะตกที่ตัวท้ายของห้อง</li><li><b>ฟังเพลง</b>: เมนู ☰ → ฟังเพลง เลือกเพลงในคลัง แอปบรรเลงด้วยอังกะลุง 3 ช่วงเสียง พร้อมกลองแขก ฉิ่ง ฉาบเล็ก ฉาบใหญ่ โหม่ง กรับ (เลือกเปิด-ปิดได้) หน้าทับตั้งตามประเภทเพลงให้ก่อน และเปลี่ยนเองได้ · เพลงเถาเปลี่ยนหน้าทับตามท่อนเอง · ติ๊ก 🔁 เล่นวนซ้ำ เพื่อบรรเลงต่อเนื่อง (ขึ้นหน้าทับเฉพาะรอบแรก)</li><li><b>แถบโน้ตไหล</b>: เมื่อกดเล่นในฝึกบรรเลงเพลง จะมีแถบด้านบนจอแสดงโน้ตที่กำลังจะมาถึง กดให้ตรงตอนโน้ตถึงเส้นสีแดง</li><li><b>ล้อ-รับ และเลื่อม</b>: ล้อ (เครื่องนำ) ใช้เสียงสูง รับ (เครื่องตาม) ใช้เสียงต่ำ · เลื่อม: เครื่องนำเสียงสูงตรงจังหวะ เครื่องตามเสียงต่ำตามหลัง 1 จังหวะ (ใส่คำว่า เลื่อม ในหัวข้อท่อน)</li><li><b>สะบัด / สะเดาะ</b>: เส้นโค้งคร่อมโน้ต 3 เสียงที่ต่างกัน = <b>สะบัด</b> (เส้นสีส้ม) เส้นโค้งคร่อมโน้ตเสียงเดียวกัน = <b>สะเดาะ</b> (เส้นสีน้ำเงิน) เล่นเร็ว ๆ ให้ตัวสุดท้ายตกจังหวะ ตอนฝึกซ้อมแอปเล่นตัวนำให้ ผู้เล่นกดตัวสุดท้าย · ห้องที่มีโน้ตเกิน 4 ตัวจะแสดงเรียงแถวเดียว · บันทึกเองได้ด้วยปุ่ม ⌒ สะบัด/สะเดาะ (หรือพิมพ์ ~) หน้ากลุ่มโน้ตท้ายห้อง เช่น -⌒ฟซล หรือ ---⌒ซซซ</li><li><b>ล้อ-รับ</b>: คำว่า <b>ล้อ</b> และ <b>รับ</b> ตัวเล็กบนห้องแรกของวรรคที่บรรเลง · ล้อ = เครื่องนำ เสียงสูง · รับ = เครื่องตาม เสียงต่ำ · ห้องที่ไม่มีคำกำกับ = ทั้งวง</li><li>หน้าทับ: ติง · ทั่ม · โจ๊ะ · จ๊ะ · ฉิ่ง ● · ฉับ ✕</li></ul></div><div class="en"><ul><li>Notes ด ร ม ฟ ซ ล ท are shown as C D E F G A B in English.</li><li><b>Dot below</b> = low · <b>dot above</b> = high.</li><li><b>–</b> = rest · 4 beats per bar · the strong beat is the last beat of each bar.</li><li><b>Sabat / Sado</b>: an arc over three different notes = <b>sabat</b> (orange arc); an arc over the same note repeated = <b>sado</b> (blue arc). Play them quickly so the last note lands on the beat; in practice the app plays the lead-in notes and you play the last one. Bars with more than 4 notes are shown in one line. To write one, tap ⌒ Sabat/Sado (or type ~) before the last note group of the bar, e.g. -⌒ฟซล or ---⌒ซซซ.</li><li><b>Lo/rap</b>: the small words <b>ล้อ</b> (lo) and <b>รับ</b> (rap) mark the first bar of each phrase · lo = leading group, high · rap = answering group, low · unmarked bars = everyone.</li><li>Klong Khaek strokes: ting · tham · cho · cha · Ching: ching ● · chap ✕</li></ul></div></div></details><details><summary>⭐ <span class="th">อื่น ๆ</span><span class="en">Other</span></summary><div class="hb"><div class="th"><ul><li><b>เพลงพื้นหลัง</b>: เปิด/ปิดได้ที่ปุ่ม ♪ มุมซ้ายบนของหน้าแรก หรือเมนู ☰ → “เพลงพื้นหลัง” เลือกเพลงและความดังได้ใน “ตั้งค่าเสียง” เพลงดังเฉพาะหน้าแรก เมนู คู่มือ และหน้าตั้งค่า และหยุดเองเมื่อเริ่มบรรเลง</li><li><b>เสียงกดปุ่ม</b>: เปิด/ปิด และเลือกแบบเสียงได้ 7 แบบใน “ตั้งค่าเสียง” (เคาะไม้ ฉิ่งเบา อังกะลุงสั้น ป๊อป หยดน้ำ คลิกนุ่ม กลองแขกเบา) เลือกแล้วได้ยินตัวอย่างทันที</li><li><b>ประเมินความพึงพอใจ</b>: ช่วยบอกความเห็นเพื่อพัฒนาแอป</li><li><b>หน้าแรก / เปลี่ยนโหมด</b>: กลับไปเลือกโหมดหรือเปลี่ยนผู้ใช้</li><li>แอปที่ติดตั้งแล้วอัปเดตเองเมื่อเปิดขณะต่ออินเทอร์เน็ต (อาจต้องเปิดใหม่ 1–2 ครั้ง)</li></ul></div><div class="en"><ul><li><b>Background music</b>: turn it on/off with the ♪ button at the top left of the home screen or ☰ → “Background music”; pick the song and volume in Sound settings. It plays only on the home screen, menu, guide and settings, and stops when you start playing.</li><li><b>Button sounds</b>: on/off and 7 styles in Sound settings (you hear a preview when you pick one).</li><li><b>Rate the app</b>: share feedback to improve it.</li><li><b>Home / switch mode</b>: go back to choose a mode or switch user.</li><li>An installed app updates itself when opened online (may need 1–2 restarts).</li></ul></div></div></details>
     <p class="lic"><span class="th"><span class="nw">© 2569 นายเจษฎา บุญญาภิชาติกาล</span> · <span class="nw">ใช้ได้ฟรีเพื่อการศึกษา</span> <span class="nw">โดยต้องระบุชื่อผู้พัฒนา</span> <span class="nw">และห้ามนำไปใช้เชิงพาณิชย์</span> <span class="nw">(CC BY-NC 4.0)</span></span><span class="en">© 2026 Mr. Jedsada Boonyapichattigan · Free for education with credit to the developer; no commercial use (CC BY-NC 4.0)</span></p>
   </div>
   <div class="card" id="impCard">
@@ -2260,30 +2266,50 @@ syncRitSel();
 const SONGS=[
  {name:'ลาวเสี่ยงเทียน สองชั้น · Lao Siang Thian (Song Chan)', shift:-7, pat:'laoSM2', text:
 `# ท่อน 1
-(---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
+---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
 ---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
 ---ม | -รมซ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
--มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
+---- | ---- | -ลลล | ซลดํซ | ---ฟ | -ม-- | -ร-ซ | ---ซ
+---ม | -รมซ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
 # ท่อน 2
-(ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
+ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
 ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
 -มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
--มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ)
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
+ซลซม | ซรมซ | ซลซม | ซรมซ | ซลซม | รด-ร | ซลซม | รด-ร
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
+-มํ-รํ | -ดํรํมํ | --ดํรํ | มํรํดํล | --ดํล | ซมซล | -ดํรํมํ | -รํ-ดํ
 # เที่ยวเปลี่ยน · ท่อน 1
-(---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
+---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
 ---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
 -ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
--ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ)
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
+---ล | ดํรํมํล | ดํรํมํมํ | ซลมซ | ---ม | ซลดํมํ | ซลดํมํ | ซลมซ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
 # เที่ยวเปลี่ยน · ท่อน 2
-(-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
+-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
 -ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
 -ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
--ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ)`},
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
+-ดํรํมํ | รํดํลซ | ดํซลดํ | รํดํลซ | -ดํลซ | มซลม | ซรมซ | -ดํ-รํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ
+-ดํรํมํ | รํดํซม | รดรม | รดซล | -ดํซล | -ดํซล | -ดํรํมํ | -รํ-ดํ`},
  {name:'ลายเต้ยโขง · Lai Toei Khong', shift:-7, pat:'laoSM2', text:
-`(---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
+`---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
 ---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
 ---- | -ซ-ม | ---ร | -ด-ม | ---ร | -ซ-ม | ---ร | -ด-ล
----ด | -ร-ม | -ร-ด | -ซ-ล | ---ด | -ร-ม | -ร-ด | -ซ-ล)`},
+---ด | -ร-ม | -ร-ด | -ซ-ล | ---ด | -ร-ม | -ร-ด | -ซ-ล
+---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
+---- | ---ล | ---ซ | -ม-ล | ---ซ | -ด-ล | ---ซ | -ม-ล
+---- | -ซ-ม | ---ร | -ด-ม | ---ร | -ซ-ม | ---ร | -ด-ล
+---ด | -ร-ม | -ร-ด | -ซ-ล | ---ด | -ร-ม | -ร-ด | -ซ-ล`},
  {name:'ชวา · Chawa', shift:-7, pat:'java2', text:
 `---ล | -ดํ-ล | -ดํ-ล | -ล-ล | ---ซ | -ล-ซ | -ล-ซ | -ซ-ซ
 ---ฟ | -ซ-ฟ | -ซ-ฟ | -ฟ-ฟ | ---ร | -ฟ-ร | -ฟ-ร | -ร-ร`},
@@ -2296,7 +2322,7 @@ const SONGS=[
 ---- | -ฟ-ลฺ | ---- | -ด-ร | -ฟฟฟ | -ซ-ฟ | -ม-ร | ดลดร`},
  {cat:'ak', name:'โหมโรงปฐมดุสิต สามชั้น · Homrong Pathom Dusit (Sam Chan)', shift:-7, pat:'prob3', text:
 `# ท่อน 1
-(---ม | ซมรท | -ล-ร | ทททท | ---ล | ---ท | -รมซ | -ม-ร
+---ม | ซมรท | -ล-ร | ทททท | ---ล | ---ท | -รมซ | -ม-ร
 ---- | ---ร | -รรร | -ร-ร | ---ล | ---ท | ---ร | ---ม
 ---- | -ร-ซ | --ลล | ทลซม | ---- | ---ร | มรซม | -ร-ท
 ---- | ---- | -ร-ร | ---ซ | ---- | -ร-ม | -ลซม | -ร-ท
@@ -2305,7 +2331,17 @@ const SONGS=[
 ---- | ---- | -ร-ร | ---ม | --ลล | ทลซม | รทรม | -ซ-ล
 ---- | ---- | ลทรม | -ซ-ล | -ร-ม | -ร-ท | ---ล | ---ซ
 ---- | ---- | -ร-ร | ---ม | --ลล | ทลซม | รทรม | -ซ-ล
----- | ---- | ลทรม | -ซ-ล | -ร-ม | -ร-ท | ---ล | ---ซ)
+---- | ---- | ลทรม | -ซ-ล | -ร-ม | -ร-ท | ---ล | ---ซ
+---ม | ซมรท | -ล-ร | ทททท | ---ล | ---ท | -รมซ | -ม-ร
+---- | ---ร | -รรร | -ร-ร | ---ล | ---ท | ---ร | ---ม
+---- | -ร-ซ | --ลล | ทลซม | ---- | ---ร | มรซม | -ร-ท
+---- | ---- | -ร-ร | ---ซ | ---- | -ร-ม | -ลซม | -ร-ท
+---- | ลทรม | -ลซม | -ร-ท | -ร-ม | -ร-ท | ---ล | ---ซ
+---- | ---- | -ร-ร | ---ท | ---- | ลซลท | -มรท | -ล-ซ
+---- | ---- | -ร-ร | ---ม | --ลล | ทลซม | รทรม | -ซ-ล
+---- | ---- | ลทรม | -ซ-ล | -ร-ม | -ร-ท | ---ล | ---ซ
+---- | ---- | -ร-ร | ---ม | --ลล | ทลซม | รทรม | -ซ-ล
+---- | ---- | ลทรม | -ซ-ล | -ร-ม | -ร-ท | ---ล | ---ซ
 # ท่อน 2
 ---- | ---ซ | -ซซซ | -ซ-ซ | -ทลซ | -ร-ซ | --ทล | ซล-ท
 ---- | ---ท | -ททท | -ท-ท | -มรท | -ล-ซ | --ทล | ซล-ท
@@ -2326,14 +2362,22 @@ const SONGS=[
 -มรท | -ล-ร | ---ท | ---ล | ---ซ | ---ฟ | ---ม | ---ร`},
  {cat:'ak', name:'โหมโรงจอมสุรางค์ สามชั้น · Homrong Chom Surang (Sam Chan)', shift:-7, pat:'prob3', text:
 `# ท่อน 1
-(-~ฟซล | -ดํ-รํ | -ฟํ-รํ | -ดํ-ล | ---ซ | ---ล | ดํลซล | ดํรํ-ดํ
+-~ฟซล | -ดํ-รํ | -ฟํ-รํ | -ดํ-ล | ---ซ | ---ล | ดํลซล | ดํรํ-ดํ
 ---ด | -ดํ-ดํ | รํดํลดํ | รํดํฟํรํ | --~ซซซ | ลซฟร | ดลฺดร | -ฟ-ซ
 ---- | ---- | ซฺลฺดร | -ฟ-ซ | ลรลซ | ฟรดร | ---~ซซซ | ลซฟร
 ---~ซซซ | ลซฟร | ---~รรร | ฟรดลฺ | รดลฺด | รฟ-ร | --รร | --รร
 ---~ฟฟฟ | ซฟรด | ---~รรร | ฟรดลฺ | ---~ดดด | รํดํลซ | ลฟซล | ดํร-ฟ
 --ฟฟ | --ฟฟ | ซฺลฺดร | -ฟ-ซ | --ลร | ลซ-- | ลรลซ | ฟรฟด
 ---~รรร | ฟรดลฺ | ดซฺลฺด | -รลฺด | ---~ซซซ | ลซฟร | ดํลซฟ | -ซรฟ
---ฟด | --ฟด | --ฟด | ฟซฟฟ | ---~ซซซ | ลซฟร | ดํลซฟ | -ซรฟ)
+--ฟด | --ฟด | --ฟด | ฟซฟฟ | ---~ซซซ | ลซฟร | ดํลซฟ | -ซรฟ
+-~ฟซล | -ดํ-รํ | -ฟํ-รํ | -ดํ-ล | ---ซ | ---ล | ดํลซล | ดํรํ-ดํ
+---ด | -ดํ-ดํ | รํดํลดํ | รํดํฟํรํ | --~ซซซ | ลซฟร | ดลฺดร | -ฟ-ซ
+---- | ---- | ซฺลฺดร | -ฟ-ซ | ลรลซ | ฟรดร | ---~ซซซ | ลซฟร
+---~ซซซ | ลซฟร | ---~รรร | ฟรดลฺ | รดลฺด | รฟ-ร | --รร | --รร
+---~ฟฟฟ | ซฟรด | ---~รรร | ฟรดลฺ | ---~ดดด | รํดํลซ | ลฟซล | ดํร-ฟ
+--ฟฟ | --ฟฟ | ซฺลฺดร | -ฟ-ซ | --ลร | ลซ-- | ลรลซ | ฟรฟด
+---~รรร | ฟรดลฺ | ดซฺลฺด | -รลฺด | ---~ซซซ | ลซฟร | ดํลซฟ | -ซรฟ
+--ฟด | --ฟด | --ฟด | ฟซฟฟ | ---~ซซซ | ลซฟร | ดํลซฟ | -ซรฟ
 # ท่อน 2
 --ดํล | --ซล | --ดํรํ | ดํลซล | --ดร | มฟมฟ | --มฟ | ซลซล
 --ลซ | ลซลฟ | ซฟรด | รดฟร | --ซฟ | ซฟรด | ลฺดรฟ | -ซ-ล
@@ -2354,141 +2398,212 @@ const SONGS=[
 -มํรํท | -ล-รํ | ---ท | ---ล | ---ซ | ---ฟ | ---ม | ---ร`},
  {cat:'ak', name:'จระเข้หางยาว ทางสักวา สามชั้น · Chorakhe Hang Yao Thang Sakkawa (Sam Chan)', shift:-7, pat:'prob3', text:
 `# ท่อน 1
-(---- | ฟํรํ-ดํ | -ล-ซ | -ฟ-ดํ | -ล-ซ | -ฟ-ซ | ฟรดร | ฟด-ด
+---- | ฟํรํ-ดํ | -ล-ซ | -ฟ-ดํ | -ล-ซ | -ฟ-ซ | ฟรดร | ฟด-ด
 ---- | ซฺลฺดร | ฟซฟร | -ด-ลฺ | ลฺลฺดลฺ | ดซฺ-ลฺ | ซฺลฺดร | ฟด-ร
 ---- | ลฺดรฟ | รฟซล | ซฟดร | ---- | ซฟรด | ลฺดรด | ฟรดลฺ
----ซ | ---ลฺ | ---ดํ | ---รํ | ดํล-ดํ | -รํ-ฟํ | -ลํซํฟํ | -รํ-ดํ)
+---ซ | ---ลฺ | ---ดํ | ---รํ | ดํล-ดํ | -รํ-ฟํ | -ลํซํฟํ | -รํ-ดํ
+---- | ฟํรํ-ดํ | -ล-ซ | -ฟ-ดํ | -ล-ซ | -ฟ-ซ | ฟรดร | ฟด-ด
+---- | ซฺลฺดร | ฟซฟร | -ด-ลฺ | ลฺลฺดลฺ | ดซฺ-ลฺ | ซฺลฺดร | ฟด-ร
+---- | ลฺดรฟ | รฟซล | ซฟดร | ---- | ซฟรด | ลฺดรด | ฟรดลฺ
+---ซ | ---ลฺ | ---ดํ | ---รํ | ดํล-ดํ | -รํ-ฟํ | -ลํซํฟํ | -รํ-ดํ
 # ท่อน 2
-(---ฟํ | ---รํ | ---ดํ | ---ล | ---- | ซฟซล | ดํลซฟ | ซฟรฟ
+---ฟํ | ---รํ | ---ดํ | ---ล | ---- | ซฟซล | ดํลซฟ | ซฟรฟ
 ---- | ซฟรด | รดลฺด | -ร-ฟ | -ฟซล | ดํร-ฟ | -ฟซล | ดํซ-ล
 ---ดํ | ---รํ | -ซํฟํรํ | -ดํ-ล | ---- | ดํลซฟ | ซฟรด | ลฺดรฟ
----ฟ | ---- | ดรดฟ | -ซ-ล | --ซดํ | ---- | ซลดํล | ซฟ-ซ)
+---ฟ | ---- | ดรดฟ | -ซ-ล | --ซดํ | ---- | ซลดํล | ซฟ-ซ
+---ฟํ | ---รํ | ---ดํ | ---ล | ---- | ซฟซล | ดํลซฟ | ซฟรฟ
+---- | ซฟรด | รดลฺด | -ร-ฟ | -ฟซล | ดํร-ฟ | -ฟซล | ดํซ-ล
+---ดํ | ---รํ | -ซํฟํรํ | -ดํ-ล | ---- | ดํลซฟ | ซฟรด | ลฺดรฟ
+---ฟ | ---- | ดรดฟ | -ซ-ล | --ซดํ | ---- | ซลดํล | ซฟ-ซ
 # ท่อน 3
-(---- | -ฟํ-รํ | ---- | -ดํ-รํ | -ฟํ-ซํ | -ล-- | -ลฺ-- | -ดํ-รํ
+---- | -ฟํ-รํ | ---- | -ดํ-รํ | -ฟํ-ซํ | -ล-- | -ลฺ-- | -ดํ-รํ
 ---- | ลฟซล | -ดํฟซ | ลซฟร | ---- | ซฺลฺดร | ดรฟซ | ลฟ-ซ
 ---- | -ดํ-ล | ---ซ | -ฟ-ล | -รฟร | -ดํ-ล | -ดํฟซ | ลซฟร
--รํดํล | -ซ-ฟ | ---ซ | ---ล | -ดํ-รํ | -ดํ-ล | ---ซ | ---ฟ)`},
+-รํดํล | -ซ-ฟ | ---ซ | ---ล | -ดํ-รํ | -ดํ-ล | ---ซ | ---ฟ
+---- | -ฟํ-รํ | ---- | -ดํ-รํ | -ฟํ-ซํ | -ล-- | -ลฺ-- | -ดํ-รํ
+---- | ลฟซล | -ดํฟซ | ลซฟร | ---- | ซฺลฺดร | ดรฟซ | ลฟ-ซ
+---- | -ดํ-ล | ---ซ | -ฟ-ล | -รฟร | -ดํ-ล | -ดํฟซ | ลซฟร
+-รํดํล | -ซ-ฟ | ---ซ | ---ล | -ดํ-รํ | -ดํ-ล | ---ซ | ---ฟ`},
  {cat:'ak', name:'โหมโรงคลื่นกระทบฝั่ง สามชั้น · Homrong Khlun Krathop Fang (Sam Chan)', shift:-7, pat:'song3', text:
 `# ท่อน 1 เที่ยวแรก
----ล | ดํดํดํดํ | ---รํ | ดํดํดํดํ | ---{มํรํดํ} | -ซํ-ลํ | -ซํ-รํ | ดํดํดํดํ
+---ล | ดํดํดํดํ | ---รํ | ดํดํดํดํ | ---⌒มํรํดํ | -ซํ-ลํ | -ซํ-รํ | ดํดํดํดํ
 -รํ-รํ | มํรํดํล | ซมซล | -ด-ร | -ม-ร | -ด-ร | มรดร | มซ-ม
 ---- | ---- | --ซล | ทดํรํมํ | ---- | ---มํ | มํมํมํมํ | -มํ-มํ
-(<--ซดํ | --ซล | --ซล | ทดํรํมํ> | --ซดํ | --ซล | --ซล | ทดํรํมํ
-<--รํซํ | --รํมํ | --ซล | ซมรด> | --รซ | --รม | --ซล | ซมรด
-<--มล | --มซ | --ลซ | ฟมรม> | --มล | --มซ | --ลซ | ฟมรม
-<--รซ | --รม | --ซล | ซมรด> | --รซ | --รม | --ซล | ซมรด)
-(<--ซดํ | --ซล> | --ซล | ทดํรํมํ | <--รํซํ | --รํมํ> | --ซล | ซมรด
-<--มล | --มซ> | --ลซ | ฟมรม | <--รซ | --รม> | --ซล | ซมรด)
-<--รซ | --รม> | --ซล | ซมรด | <--รซ | --รม> | --ซล | ซมรด
-[--ซล | ซมรด] | [--ซล | ซมรด] | [--ซล | ซมรด] | [--ซล | ซมรด]
+(--ซดํ | --ซล | --ซล | ทดํรํมํ) | --ซดํ | --ซล | --ซล | ทดํรํมํ
+(--รํซํ | --รํมํ | --ซล | ซมรด) | --รซ | --รม | --ซล | ซมรด
+(--มล | --มซ | --ลซ | ฟมรม) | --มล | --มซ | --ลซ | ฟมรม
+(--รซ | --รม | --ซล | ซมรด) | --รซ | --รม | --ซล | ซมรด
+(--ซดํ | --ซล | --ซล | ทดํรํมํ) | --ซดํ | --ซล | --ซล | ทดํรํมํ
+(--รํซํ | --รํมํ | --ซล | ซมรด) | --รซ | --รม | --ซล | ซมรด
+(--มล | --มซ | --ลซ | ฟมรม) | --มล | --มซ | --ลซ | ฟมรม
+(--รซ | --รม | --ซล | ซมรด) | --รซ | --รม | --ซล | ซมรด
+(--ซดํ | --ซล) | --ซล | ทดํรํมํ | (--รํซํ | --รํมํ) | --ซล | ซมรด
+(--มล | --มซ) | --ลซ | ฟมรม | (--รซ | --รม) | --ซล | ซมรด
+(--ซดํ | --ซล) | --ซล | ทดํรํมํ | (--รํซํ | --รํมํ) | --ซล | ซมรด
+(--มล | --มซ) | --ลซ | ฟมรม | (--รซ | --รม) | --ซล | ซมรด
+(--รซ | --รม) | --ซล | ซมรด | (--รซ | --รม) | --ซล | ซมรด
+--ซล | ซมรด | --ซล | ซมรด | --ซล | ซมรด | --ซล | ซมรด
 ซมรด | รมรด | ซมรด | รมรด | --รด | รดรด | รดรด | -ร-ด
 ---- | -ม-ม | ซลซม | -ร-ด | -มรด | -ซ-ดํ | --มร | ดร-ม
 ---ซ | ---ล | ดํรํดํล | -ซ-ม | ---ร | ---ม | ---ซ | ---ล
---รํรํ | มํรํดํล | ซมซล | ดํมํรํดํ | ---ล | ---{มํรํดํ} | -ล-ดํ | ----
+--รํรํ | มํรํดํล | ซมซล | ดํมํรํดํ | ---ล | ---⌒มํรํดํ | -ล-ดํ | ----
 -มํซํรํ | มํรํดํล | ซลดํรํ | ดํทลซ | รมฟซ | ลซฟม | รดรม | ฟซ-ซ
 ---- | ---- | --ซดํ | รมฟซ | ---- | ---ซ | ซซซซ | -ซ-ซ
-(<--ลซ | --ลซ | --ลซ | ฟมรม | --ฟม | --ฟม | รดรม | ฟซ-ซ>
+(--ลซ | --ลซ | --ลซ | ฟมรม | --ฟม | --ฟม | รดรม | ฟซ-ซ)
 --ลซ | --ลซ | --ลซ | ฟมรม | --ฟม | --ฟม | รดรม | ฟซ-ซ
-<--รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ>
---รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ)
-(<--ลซ | --ลซ | --ลซ | ฟมรม> | --ฟม | --ฟม | รดรม | ฟซ-ซ
-<--รด | --รด | --รด | รดรม> | --รด | รดรม | รดรม | ฟซ-ซ)
-(<--ลซ | ฟมรม> | -ดรม | ฟซ-ซ | <--รด | รดรม> | -ดรม | ฟซ-ซ)
-[--ซดํ | รมฟซ] | [--ลดํ | รมฟซ] | [--ซดํ | รมฟซ] | [--ลดํ | รมฟซ]
+(--รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ)
+--รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ
+(--ลซ | --ลซ | --ลซ | ฟมรม | --ฟม | --ฟม | รดรม | ฟซ-ซ)
+--ลซ | --ลซ | --ลซ | ฟมรม | --ฟม | --ฟม | รดรม | ฟซ-ซ
+(--รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ)
+--รด | --รด | --รด | รดรม | --รด | รดรม | รดรม | ฟซ-ซ
+(--ลซ | --ลซ | --ลซ | ฟมรม) | --ฟม | --ฟม | รดรม | ฟซ-ซ
+(--รด | --รด | --รด | รดรม) | --รด | รดรม | รดรม | ฟซ-ซ
+(--ลซ | --ลซ | --ลซ | ฟมรม) | --ฟม | --ฟม | รดรม | ฟซ-ซ
+(--รด | --รด | --รด | รดรม) | --รด | รดรม | รดรม | ฟซ-ซ
+(--ลซ | ฟมรม) | -ดรม | ฟซ-ซ | (--รด | รดรม) | -ดรม | ฟซ-ซ
+(--ลซ | ฟมรม) | -ดรม | ฟซ-ซ | (--รด | รดรม) | -ดรม | ฟซ-ซ
+--ซดํ | รมฟซ | --ลดํ | รมฟซ | --ซดํ | รมฟซ | --ลดํ | รมฟซ
 ลลลซ | ลลลซ | ลลลซ | ลลลซ | --ลซ | ลซลซ | ลซลซ | -ล-ซ
 # ท่อน 1 เที่ยวกลับ
 --ดํล | -ดํดํดํ | -ลดํรํ | -ดํดํดํ | -มํรํดํ | -ซ-ล | -ซ-ดํ | -ดํดํดํ
--ซํ-ซํ | ---มํ | ---รํ | ---ดํ | ---{ทลซ} | -ล-ดํ | ซรมซ | -ร-ม
+-ซํ-ซํ | ---มํ | ---รํ | ---ดํ | ---⌒ทลซ | -ล-ดํ | ซรมซ | -ร-ม
 ---- | ---- | --ซล | ทดํรํมํ | ---- | ---มํ | มํมํมํมํ | -มํ-มํ
-(<--ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | ทดํรํมํ>
+(--ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | ทดํรํมํ)
 --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | ทดํรํมํ
-<--ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด>
---ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด)
-(<--ซล | --ซดํ> | --ซล | ทดํรํมํ | <--ลม | --รม> | --ซล | ซมรด)
-([--ซซ | --ซซ | --ซล | ซมรด] | [--ดด | --ดด | --ซล | ทดํรํมํ])
-[--ซล | ทดํทดํ] | [--ทดํ | รํมํรํมํ] | [--ซล | ทดํทดํ] | [--ทดํ | รํมํรํมํ]
-[--มํดํ | รํมํรํมํ] | [--ซล | ซมซม] | [--มด | รมรม] | [--ซล | ซมซม]
+(--ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด)
+--ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด
+(--ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | ทดํรํมํ)
+--ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | ทดํรํมํ
+(--ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด)
+--ลม | --รม | --ลม | --รม | --ลม | --รม | --ซล | ซมรด
+(--ซล | --ซดํ) | --ซล | ทดํรํมํ | (--ลม | --รม) | --ซล | ซมรด
+(--ซล | --ซดํ) | --ซล | ทดํรํมํ | (--ลม | --รม) | --ซล | ซมรด
+--ซซ | --ซซ | --ซล | ซมรด | --ดด | --ดด | --ซล | ทดํรํมํ
+--ซซ | --ซซ | --ซล | ซมรด | --ดด | --ดด | --ซล | ทดํรํมํ
+--ซล | ทดํทดํ | --ทดํ | รํมํรํมํ | --ซล | ทดํทดํ | --ทดํ | รํมํรํมํ
+--มํดํ | รํมํรํมํ | --ซล | ซมซม | --มด | รมรม | --ซล | ซมซม
 ซซซร | ซซซม | ซซซร | ซซซม | ซรซม | ซรซม | ซรซม | ซรซม
 ---- | -ม-ม | -ลซม | ซมรด | ลซทล | ดํทรํดํ | รํลรํดํ | มรซม
 ---- | -ซ-ซ | -มซล | ดํลซม | --ซร | --ซม | --ลซ | --ดํล
-[--ซม | --ซร | --มด | --รํล | --รํดํ | --มํรํ] | ซํมํรํดํ | ----
+--ซม | --ซร | --มด | --รํล | --รํดํ | --มํรํ | ซํมํรํดํ | ----
 -มํซํรํ | มํรํดํล | ซลดํรํ | ดํทลซ | รมฟซ | ลซฟม | รดรม | ฟซ-ซ
 ---- | ---- | --ซดํ | รมฟซ | ---- | ---ซ | ซซซซ | -ซ-ซ
 # ท่อน 2 เที่ยวแรก
 ---ม | ---ซ | ---มํ | ---รํ | ดํลซม | ลซมร | ซมรด | มํรํดํล
 ---ล | -ลลล | ดํรํดํล | ดํลซม | รมซม | มซ-ม | ลซมซ | ลดํ-ล
 ---- | ---ล | ลลลล | -ล-ล | ดํลซม | ลซมร | ซมรด | มํรํดํล
-(<--รํดํ | --รํดํ | --รํดํ | ซลทดํ | --รํดํ | ซลทดํ | --รํดํ | ทลซล>
+(--รํดํ | --รํดํ | --รํดํ | ซลทดํ | --รํดํ | ซลทดํ | --รํดํ | ทลซล)
 --รํดํ | --รํดํ | --รํดํ | ซลทดํ | --รํดํ | ซลทดํ | --รํดํ | ทลซล
-<--ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ>
---ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ)
-(<--รํดํ | --รํดํ | --รํดํ | ซลทดํ> | --รํดํ | ซลทดํ | --รํดํ | ทลซล
-<--ทล | --ทล | --รํดํ | ทลซล> | --รํดํ | ทลซล | ทลซล | ทดํรํมํ)
-(<--ซม | --รม | --ซล | ซมรด> | --ซล | ทดํทดํ | --รํดํ | ทลซล
-<--ทล | --ทล | --รํดํ | ทลซล> | --รํดํ | ทลซล | ทลซล | ทดํรํมํ)
-(<--ซม | --รม | --ซล | ซมรด> | --ซล | ทดํทดํ | --รํดํ | ทลซล)
+(--ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ)
+--ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--รํดํ | --รํดํ | --รํดํ | ซลทดํ | --รํดํ | ซลทดํ | --รํดํ | ทลซล)
+--รํดํ | --รํดํ | --รํดํ | ซลทดํ | --รํดํ | ซลทดํ | --รํดํ | ทลซล
+(--ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ)
+--ทล | --ทล | --รํดํ | ทลซล | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--รํดํ | --รํดํ | --รํดํ | ซลทดํ) | --รํดํ | ซลทดํ | --รํดํ | ทลซล
+(--ทล | --ทล | --รํดํ | ทลซล) | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--รํดํ | --รํดํ | --รํดํ | ซลทดํ) | --รํดํ | ซลทดํ | --รํดํ | ทลซล
+(--ทล | --ทล | --รํดํ | ทลซล) | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--ซม | --รม | --ซล | ซมรด) | --ซล | ทดํทดํ | --รํดํ | ทลซล
+(--ทล | --ทล | --รํดํ | ทลซล) | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--ซม | --รม | --ซล | ซมรด) | --ซล | ทดํทดํ | --รํดํ | ทลซล
+(--ทล | --ทล | --รํดํ | ทลซล) | --รํดํ | ทลซล | ทลซล | ทดํรํมํ
+(--ซม | --รม | --ซล | ซมรด) | --ซล | ทดํทดํ | --รํดํ | ทลซล
+(--ซม | --รม | --ซล | ซมรด) | --ซล | ทดํทดํ | --รํดํ | ทลซล
 --ซล | ทดํทดํ | --รํดํ | ทลซล | --ซล | ทดํทดํ | --รํดํ | ทลซล
-[--รํดํ | ทลซล] | [--รํดํ | ทลซล] | [--รํดํ | ทลซล] | [--รํดํ | ทลซล]
+--รํดํ | ทลซล | --รํดํ | ทลซล | --รํดํ | ทลซล | --รํดํ | ทลซล
 รํดํทล | รํดํทล | รํดํทล | รํดํทล | --ทล | ทลทล | ทลทล | -ท-ล
-[--ลล | ดํลซม] | [--ซซ | ลซมร] | [--มม | ซมรด] | [--รํรํ | มํรํดํล]
-[--ซซ | --มํมํ | --รํรํ | --ดํดํ] | -ลลล | -มํรํดํ | -ล-ดํ | ----
+--ลล | ดํลซม | --ซซ | ลซมร | --มม | ซมรด | --รํรํ | มํรํดํล
+--ซซ | --มํมํ | --รํรํ | --ดํดํ | -ลลล | -มํรํดํ | -ล-ดํ | ----
 -มํซํรํ | มํรํดํล | ซลดํรํ | ดํทลซ | รมฟซ | ลซฟม | รดรม | ฟซ-ซ
 ---- | ---- | --ซดํ | รมฟซ | ---- | ---ซ | ซซซซ | -ซ-ซ
-([---ล | -ซ-- | -ล-ซ | -ฟ-ม | ---ฟ | -ม-- | -ร-ม | -ล-ซ]
-[---รํ | -ดํ-- | -รํ-ดํ | -ท-ล | ---ท | -ล-- | -ซ-ล | -ท-ดํ])
-(<ซซซล | ซลทดํ> | ซซซล | ซลทดํ | <ซซซดํ | ซดํรํมํ> | ซซซดํ | ซดํรํมํ
-<ซซซดํ | ซดํรํมํ> | ซซซดํ | ซดํรํมํ | <รดรม | รมฟซ> | รดรม | รมฟซ)
-(<ซลทดํ> | ซลทดํ | <ทดํรํมํ> | ทดํรํมํ | <ซดํรํมํ> | ซดํรํมํ | <รมฟซ> | รมฟซ)
-<รมฟซ> | รมฟซ | <ลดํลซ> | ลดํลซ | <รมฟซ> | รมฟซ | <ลดํลซ> | ลดํลซ
+---ล | -ซ-- | -ล-ซ | -ฟ-ม | ---ฟ | -ม-- | -ร-ม | -ล-ซ
+---รํ | -ดํ-- | -รํ-ดํ | -ท-ล | ---ท | -ล-- | -ซ-ล | -ท-ดํ
+---ล | -ซ-- | -ล-ซ | -ฟ-ม | ---ฟ | -ม-- | -ร-ม | -ล-ซ
+---รํ | -ดํ-- | -รํ-ดํ | -ท-ล | ---ท | -ล-- | -ซ-ล | -ท-ดํ
+(ซซซล | ซลทดํ) | ซซซล | ซลทดํ | (ซซซดํ | ซดํรํมํ) | ซซซดํ | ซดํรํมํ
+(ซซซดํ | ซดํรํมํ) | ซซซดํ | ซดํรํมํ | (รดรม | รมฟซ) | รดรม | รมฟซ
+(ซซซล | ซลทดํ) | ซซซล | ซลทดํ | (ซซซดํ | ซดํรํมํ) | ซซซดํ | ซดํรํมํ
+(ซซซดํ | ซดํรํมํ) | ซซซดํ | ซดํรํมํ | (รดรม | รมฟซ) | รดรม | รมฟซ
+(ซลทดํ) | ซลทดํ | (ทดํรํมํ) | ทดํรํมํ | (ซดํรํมํ) | ซดํรํมํ | (รมฟซ) | รมฟซ
+(ซลทดํ) | ซลทดํ | (ทดํรํมํ) | ทดํรํมํ | (ซดํรํมํ) | ซดํรํมํ | (รมฟซ) | รมฟซ
+(รมฟซ) | รมฟซ | (ลดํลซ) | ลดํลซ | (รมฟซ) | รมฟซ | (ลดํลซ) | ลดํลซ
 ลดํลซ | ลดํลซ | ลดํลซ | ลดํลซ | --ลซ | ลซลซ | ลซลซ | -ล-ซ
 # ท่อน 2 เที่ยวกลับ
 ---ม | ---ซ | ---มํ | ---รํ | ดํลซม | ลซมร | ซมรด | มํรํดํล
 ลดํลล | ลดํลล | ดํรํดํล | ดํลซม | รมซร | มซ-ม | ลซมซ | ลดํ-ล
-[--มํมํ | รํมํรํมํ] | [--รํรํ | ดํรํดํรํ] | [--ดํดํ | ลดํลดํ] | [--ลล | ซลซล]
-[--ซม | --รม | --ซร | --ดร | --มด | --ลดํ | --รํล | --ซล]
-(<--ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซล | ทดํรํมํ>
+--มํมํ | รํมํรํมํ | --รํรํ | ดํรํดํรํ | --ดํดํ | ลดํลดํ | --ลล | ซลซล
+--ซม | --รม | --ซร | --ดร | --มด | --ลดํ | --รํล | --ซล
+(--ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซล | ทดํรํมํ)
 --ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซล | ทดํรํมํ
-<--รํซํ | --รํมํ | --รํซํ | --รํมํ | --รํซํ | --รํมํ | --ดํรํ | มํรํดํล>
---รซ | --รม | --รซ | --รม | --รซ | --รํมํ | --ดํรํ | มํรํดํล)
-(<--ซดํ | --ซล> | --ซล | ทดํรํมํ | <--รํซํ | --รํมํ> | --ดํรํ | มํรํดํล)
-[--ดํรํ | มํรํดํซ] | [--ดํรํ | มํรํดํล] | [--ดํรํ | มํรํดํซ] | [--ดํรํ | มํรํดํล]
+(--รํซํ | --รํมํ | --รํซํ | --รํมํ | --รํซํ | --รํมํ | --ดํรํ | มํรํดํล)
+--รซ | --รม | --รซ | --รม | --รซ | --รํมํ | --ดํรํ | มํรํดํล
+(--ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซล | ทดํรํมํ)
+--ซดํ | --ซล | --ซดํ | --ซล | --ซดํ | --ซล | --ซล | ทดํรํมํ
+(--รํซํ | --รํมํ | --รํซํ | --รํมํ | --รํซํ | --รํมํ | --ดํรํ | มํรํดํล)
+--รซ | --รม | --รซ | --รม | --รซ | --รํมํ | --ดํรํ | มํรํดํล
+(--ซดํ | --ซล) | --ซล | ทดํรํมํ | (--รํซํ | --รํมํ) | --ดํรํ | มํรํดํล
+(--ซดํ | --ซล) | --ซล | ทดํรํมํ | (--รํซํ | --รํมํ) | --ดํรํ | มํรํดํล
+--ดํรํ | มํรํดํซ | --ดํรํ | มํรํดํล | --ดํรํ | มํรํดํซ | --ดํรํ | มํรํดํล
 ดํดํดํซ | ดํดํดํล | ดํดํดํซ | ดํดํดํล | ดํซดํล | ดํซดํล | ดํซดํล | ดํซดํล
-[--ลล | ซลซล] | [--ซซ | มซมซ] | [--มํมํ | รํมํรํมํ] | [--รํรํ | ดํรํดํรํ]
-[--ดํล | --ซม | --ลซ | --มร | --ซล | --ดํรํ] | ซํมํรํดํ | ----
+--ลล | ซลซล | --ซซ | มซมซ | --มํมํ | รํมํรํมํ | --รํรํ | ดํรํดํรํ
+--ดํล | --ซม | --ลซ | --มร | --ซล | --ดํรํ | ซํมํรํดํ | ----
 -มํซํรํ | มํรํดํล | ซลดํรํ | ดํลดํซ | รมฟซ | ลซฟม | รดรม | ฟซ-ซ
 ---- | ---- | --ซดํ | รมฟซ | ---- | ---ซ | ซซซซ | -ซ-ซ
-([--ซดํ | --ซดํ | --ซดํ | รมฟซ] | [--ซดํ | รมฟซ | ลซลดํ | รมฟซ])
-[--ซดํ | รมฟซ | ลซลดํ | รมฟซ] | [--ซดํ | รมฟซ | ลซลดํ | รมฟซ]
+--ซดํ | --ซดํ | --ซดํ | รมฟซ | --ซดํ | รมฟซ | ลซลดํ | รมฟซ
+--ซดํ | --ซดํ | --ซดํ | รมฟซ | --ซดํ | รมฟซ | ลซลดํ | รมฟซ
+--ซดํ | รมฟซ | ลซลดํ | รมฟซ | --ซดํ | รมฟซ | ลซลดํ | รมฟซ
 ลซลดํ | รมฟซ | ลซลดํ | รมฟซ | ลซลดํ | รมฟซ | ลซลดํ | รมฟซ
 ลลลซ | ลลลซ | ลลลซ | ลลลซ | --ลซ | ลซลซ | ลซลซ | -ล-ซ
 # ลงวา
----{ลซม} | -ร-ซ | ---มํ | ---รํ | ---ดํ | ---ท | ---ล | ---ซ`},
+---⌒ลซม | -ร-ซ | ---มํ | ---รํ | ---ดํ | ---ท | ---ล | ---ซ`},
  {cat:'solo', name:'นาคบริพัตร สองชั้น · Nak Boriphat (Song Chan)', shift:-7, pat:'prob2', text:
-`(---- | -ซ-ร | -ด-ม | รรรร | -ซฟร | -ด-ฟ | --ลซ | ฟซ-ล
+`---- | -ซ-ร | -ด-ม | รรรร | -ซฟร | -ด-ฟ | --ลซ | ฟซ-ล
 ---ล | -ลลล | -ดํ-ซ | -ล-ดํ | ---รํ | มํรํดํล | ซลดํล | ซฟ-ซ
 ---- | -ล-ซ | -ฟ-ล | ซฟมร | -ม-ร | -ด-ร | ---ซ | -ลซฟ
--ด-ฟ | -ซ-ล | -ซ-ฟ | -ม-ร | -ม-ร | -ด-ล | --รด | ลด-ร)`},
+-ด-ฟ | -ซ-ล | -ซ-ฟ | -ม-ร | -ม-ร | -ด-ล | --รด | ลด-ร
+---- | -ซ-ร | -ด-ม | รรรร | -ซฟร | -ด-ฟ | --ลซ | ฟซ-ล
+---ล | -ลลล | -ดํ-ซ | -ล-ดํ | ---รํ | มํรํดํล | ซลดํล | ซฟ-ซ
+---- | -ล-ซ | -ฟ-ล | ซฟมร | -ม-ร | -ด-ร | ---ซ | -ลซฟ
+-ด-ฟ | -ซ-ล | -ซ-ฟ | -ม-ร | -ม-ร | -ด-ล | --รด | ลด-ร`},
  {cat:'solo', name:'ท้ายแสนคำนึง ชั้นเดียว · Thai Saen Khanueng (Chan Diao)', shift:-7, pat:'song1', text:
-`(---ด | รมฟซ | ฟซลท | ดํทลซ | ลซฟม | รมฟซ | ลซฟซ | ฟมรด
+`---ด | รมฟซ | ฟซลท | ดํทลซ | ลซฟม | รมฟซ | ลซฟซ | ฟมรด
 ---ม | ซลทดํ | ทลซล | ทดํรํมํ | ---ซ | ลทดํรํ | ---ม | ซลทดํ
 --รํมํ | รํดํทรํ | ดํทลดํ | ทลซม | --ซล | ซมรซ | มรดม | รดรด
----ม | ซลทดํ | ทลซล | ทดํรํมํ | -ดรม | -ซ-ล | -ม-ซ | -ล-ดํ)`},
+---ม | ซลทดํ | ทลซล | ทดํรํมํ | -ดรม | -ซ-ล | -ม-ซ | -ล-ดํ
+---ด | รมฟซ | ฟซลท | ดํทลซ | ลซฟม | รมฟซ | ลซฟซ | ฟมรด
+---ม | ซลทดํ | ทลซล | ทดํรํมํ | ---ซ | ลทดํรํ | ---ม | ซลทดํ
+--รํมํ | รํดํทรํ | ดํทลดํ | ทลซม | --ซล | ซมรซ | มรดม | รดรด
+---ม | ซลทดํ | ทลซล | ทดํรํมํ | -ดรม | -ซ-ล | -ม-ซ | -ล-ดํ`},
  {cat:'solo', name:'แขกบรเทศ สองชั้น · Khaek Borathet (Song Chan)', shift:-7, pat:'prob2', text:
 `# ท่อน 1
-(---ซ | -ลลล | ---ดํ | -ลลล | -ซซซ | -ล-ซ | ---ม | -มมม
-ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด)
+---ซ | -ลลล | ---ดํ | -ลลล | -ซซซ | -ล-ซ | ---ม | -มมม
+ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด
+---ซ | -ลลล | ---ดํ | -ลลล | -ซซซ | -ล-ซ | ---ม | -มมม
+ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด
 # ท่อน 2
-(มดรม | ซมรด | ซลทดํ | รํดํทล | ดํลซม | รมซล | รํดํลดํ | ซลดํรํ
-ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด)`},
+มดรม | ซมรด | ซลทดํ | รํดํทล | ดํลซม | รมซล | รํดํลดํ | ซลดํรํ
+ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด
+มดรม | ซมรด | ซลทดํ | รํดํทล | ดํลซม | รมซล | รํดํลดํ | ซลดํรํ
+ซลซม | ซมรด | มรดร | มรซม | รมซล | ดํลซม | ซลซม | ซมรด`},
  {cat:'solo', name:'คำหวาน สองชั้น · Kham Wan (Song Chan)', shift:-7, pat:'prob2', text:
-`(---- | ---ล | ---ท | -ลลล | -ท-รํ | -ท-ล | ---ซ | ---ม
+`---- | ---ล | ---ท | -ลลล | -ท-รํ | -ท-ล | ---ซ | ---ม
 ---- | ---ร | มรทฺร | -ม-ซ | -ร-ซ | -ล-ท | ลทรํท | ลซ-ล
 ---- | รมซล | ทลซล | -ททท | ---- | รมซล | ทลซล | -ซซซ
 ---ล | -ลลล | -ทรํล | ทลซม | ซมรทฺ | -ร-ม | --ลซ | มซ-ล
 ---ล | -ลลล | -ทรํล | ทลซม | ซรรร | ซมมม | ลซซซ | ทลลล
 -ร-ซ | -ล-ท | ลทรํท | ลซ-ล | -ท-ล | ซม-ซ | -รํ-ท | -ล-ซ
 ---ม | -มมม | -ร-ม | -ซ-ล | -ท-รํ | -ท-ล | ---ซ | ---ม
----- | ---ร | มรทฺร | -ม-ซ | -ร-ม | -ล-ซ | -ฟ-ม | รทฺรม)`},
+---- | ---ร | มรทฺร | -ม-ซ | -ร-ม | -ล-ซ | -ฟ-ม | รทฺรม
+---- | ---ล | ---ท | -ลลล | -ท-รํ | -ท-ล | ---ซ | ---ม
+---- | ---ร | มรทฺร | -ม-ซ | -ร-ซ | -ล-ท | ลทรํท | ลซ-ล
+---- | รมซล | ทลซล | -ททท | ---- | รมซล | ทลซล | -ซซซ
+---ล | -ลลล | -ทรํล | ทลซม | ซมรทฺ | -ร-ม | --ลซ | มซ-ล
+---ล | -ลลล | -ทรํล | ทลซม | ซรรร | ซมมม | ลซซซ | ทลลล
+-ร-ซ | -ล-ท | ลทรํท | ลซ-ล | -ท-ล | ซม-ซ | -รํ-ท | -ล-ซ
+---ม | -มมม | -ร-ม | -ซ-ล | -ท-รํ | -ท-ล | ---ซ | ---ม
+---- | ---ร | มรทฺร | -ม-ซ | -ร-ม | -ล-ซ | -ฟ-ม | รทฺรม`},
  {cat:'solo', name:'ซุ้มลาวแพน · Sum Lao Phaen', shift:-7, pat:'lukmot', secPat:{'ชั้นเดียว':'lukmot','สองชั้น':'laoSM2','ลงจบ':'laoSM2'}, entry:5, rit:{boxes:4,max:1.2}, text:
 `# ชั้นเดียว
 ---ลฺ | --ดร | ดรฟร | -ด-ด | ---- | ---- | -ร-ร | --ฟซ
@@ -2538,103 +2653,177 @@ const SONGS=[
 # ลงจบ
 -ซ-ซ | ---ล | ---ดํ | ---รํ | -มํ-รํ | -ดํ-ซ | --ลท | -ดํ-รํ`},
  {cat:'solo', name:'กล่อมนารี สามชั้น · Klom Nari (Sam Chan)', shift:-7, pat:'prob3', text:
-`(---ม | -ซซซ | ---ล | -ซซซ | -ทฺรม | -ซ-ล | ทลรํท | -ล-ซ
+`---ม | -ซซซ | ---ล | -ซซซ | -ทฺรม | -ซ-ล | ทลรํท | -ล-ซ
 -ซลท | -ดํ-รํ | -มํซํรํ | มํรํดํซ | -ร-ซ | -ล-ท | ลซลท | -ดํ-รํ
 -ลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | -ซ-ล | ดํลซม | -ลซม | ซมรด
 -ดรม | รมฟซ | ฟลซฟ | ซฟมร | -ลซม | ลซมร | ซมรด | มรดทฺ
 รํลรํท | รํมํรํท | รํลรํท | รํมํรํท | มํรํซํมํ | ซํรํมํท | รํทมํรํ | มํทรํล
 -ร-ซ | -ล-ท | -มํรํท | รํทลซ | -ทฺรม | ซรมซ | รมซล | ทซลท
 -มํรํท | มํรํทล | รํทลซ | ทลซม | -ร-ร | ลฺทฺรม | -ซ-ซ | รมซล
--มํรํท | รํทลซ | -ร-ซ | -ล-ท | -รํ-มํ | -รํ-ท | ---ล | ---ซ)`},
+-มํรํท | รํทลซ | -ร-ซ | -ล-ท | -รํ-มํ | -รํ-ท | ---ล | ---ซ
+---ม | -ซซซ | ---ล | -ซซซ | -ทฺรม | -ซ-ล | ทลรํท | -ล-ซ
+-ซลท | -ดํ-รํ | -มํซํรํ | มํรํดํซ | -ร-ซ | -ล-ท | ลซลท | -ดํ-รํ
+-ลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | -ซ-ล | ดํลซม | -ลซม | ซมรด
+-ดรม | รมฟซ | ฟลซฟ | ซฟมร | -ลซม | ลซมร | ซมรด | มรดทฺ
+รํลรํท | รํมํรํท | รํลรํท | รํมํรํท | มํรํซํมํ | ซํรํมํท | รํทมํรํ | มํทรํล
+-ร-ซ | -ล-ท | -มํรํท | รํทลซ | -ทฺรม | ซรมซ | รมซล | ทซลท
+-มํรํท | มํรํทล | รํทลซ | ทลซม | -ร-ร | ลฺทฺรม | -ซ-ซ | รมซล
+-มํรํท | รํทลซ | -ร-ซ | -ล-ท | -รํ-มํ | -รํ-ท | ---ล | ---ซ`},
  {cat:'solo', name:'สาลิกาชมเดือน สามชั้น · Salika Chom Duean (Sam Chan)', shift:-7, pat:'prob3', text:
-`(---ล | ---ท | ---รํ | ---มํ | -ลซม | -ร-ด | ---ท | ---ล
+`---ล | ---ท | ---รํ | ---มํ | -ลซม | -ร-ด | ---ท | ---ล
 -ร-ซ | -ล-ท | ลซลท | -ดํ-รํ | -ลซม | -ร-ด | ---ท | ---ล
 ---- | -ล-ท | -ล-รํ | ---- | -ร-ซ | -ล-ท | -มํรํท | -ล-ซ
 -ซ-ล | -ท-ดํ | -มํรํดํ | -ท-ล | -ท-ล | -ซ-ล | -ซ-ฟ | ---ซ
 ---ล | ทลซร | ---ซ | -ซซซ | -ฟซล | ทลซฟ | มรมฟ | -ซ-ล
 ---ซ | ---ล | ---ท | ---ดํ | -มํรํดํ | -ซ-ดํ | --มํรํ | ดํรํ-มํ
 ลทดํรํ | ดํทดํรํ | ดํทดํรํ | มํรํดํท | -ร-ซ | -ล-ท | -รํ-ท | -ล-ซ
--ซ-ล | -ท-ดํ | -มํรํดํ | -ท-ล | -ท-ล | -ซ-ล | -ซ-ฟ | ---ซ)`},
+-ซ-ล | -ท-ดํ | -มํรํดํ | -ท-ล | -ท-ล | -ซ-ล | -ซ-ฟ | ---ซ
+---ล | ---ท | ---รํ | ---มํ | -ลซม | -ร-ด | ---ท | ---ล
+-ร-ซ | -ล-ท | ลซลท | -ดํ-รํ | -ลซม | -ร-ด | ---ท | ---ล
+---- | -ล-ท | -ล-รํ | ---- | -ร-ซ | -ล-ท | -มํรํท | -ล-ซ
+-ซ-ล | -ท-ดํ | -มํรํดํ | -ท-ล | -ท-ล | -ซ-ล | -ซ-ฟ | ---ซ
+---ล | ทลซร | ---ซ | -ซซซ | -ฟซล | ทลซฟ | มรมฟ | -ซ-ล
+---ซ | ---ล | ---ท | ---ดํ | -มํรํดํ | -ซ-ดํ | --มํรํ | ดํรํ-มํ
+ลทดํรํ | ดํทดํรํ | ดํทดํรํ | มํรํดํท | -ร-ซ | -ล-ท | -รํ-ท | -ล-ซ
+-ซ-ล | -ท-ดํ | -มํรํดํ | -ท-ล | -ท-ล | -ซ-ล | -ซ-ฟ | ---ซ`},
  {cat:'solo', name:'นกขมิ้น สามชั้น · Nok Khamin (Sam Chan)', shift:-7, pat:'prob3', text:
 `# ท่อน 1
-(-ลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
+-ลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
 ทฺซฺลฺทฺ | ดลฺทฺด | รทดร | มดรม | รดรม | รมฟซ | ฟลซฟ | ซฟมร
 ซรมร | ซฟมร | ดรมร | ซฟมร | มดรม | รมฟซ | ฟลซฟ | ซฟมร
 ซลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
 ลฺทฺรม | รมซล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
-รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ)
-# ท่อน 2
-(ซลทดํ | ทลทดํ | ทลรํดํ | ทลทดํ | ลทดํรํ | มํรํดํท | ลซลท | ลทดํรํ
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ
+-ลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
+ทฺซฺลฺทฺ | ดลฺทฺด | รทดร | มดรม | รดรม | รมฟซ | ฟลซฟ | ซฟมร
+ซรมร | ซฟมร | ดรมร | ซฟมร | มดรม | รมฟซ | ฟลซฟ | ซฟมร
 ซลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
 ลฺทฺรม | รมซล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
-รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ)
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ
+# ท่อน 2
+ซลทดํ | ทลทดํ | ทลรํดํ | ทลทดํ | ลทดํรํ | มํรํดํท | ลซลท | ลทดํรํ
+ซลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
+ลฺทฺรม | รมซล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ
+ซลทดํ | ทลทดํ | ทลรํดํ | ทลทดํ | ลทดํรํ | มํรํดํท | ลซลท | ลทดํรํ
+ซลซม | ซมรด | ทฺลฺซฺลฺ | ทฺดรม | รมซล | ดํลซม | ซลซม | ซมรด
+ลฺทฺรม | รมซล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ
 # ท่อน 3
-(รํมํรํท | มํรํทล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
+รํมํรํท | มํรํทล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
 ทซลท | ลทดํรํ | ดํมํรํดํ | รํดํทล | รํมํรํท | มํรํทล | รํทลซ | ทลซม
 ซลซม | ซมรทฺ | ลฺซฺลฺทฺ | ลฺทฺรม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
-รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ)`},
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ
+รํมํรํท | มํรํทล | รํทลซ | ทลซม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
+ทซลท | ลทดํรํ | ดํมํรํดํ | รํดํทล | รํมํรํท | มํรํทล | รํทลซ | ทลซม
+ซลซม | ซมรทฺ | ลฺซฺลฺทฺ | ลฺทฺรม | ซรมร | ลฺทฺรม | ลซมซ | รมซล
+รํมํรํท | รํทลซ | ฟมรม | ฟซลท | ลทรํมํ | ซํมํรํท | รํมํรํท | รํทลซ`},
  {cat:'string', name:'บังใบ สองชั้น · Bang Bai (Song Chan)', shift:-7, pat:'song2', text:
 `# ท่อน 1
-(---ดํ | ---ท | ---ดํ | -รํ-- | -ซ-ล | -ซ-รํ | -ดรม | -ฟ-ซ
--ฟซล | ดํลซฟ | ซลซฟ | -ม-ร | ---ซ | ลทดํรํ | -รํรํรํ | -รํ-รํ)
+---ดํ | ---ท | ---ดํ | -รํ-- | -ซ-ล | -ซ-รํ | -ดรม | -ฟ-ซ
+-ฟซล | ดํลซฟ | ซลซฟ | -ม-ร | ---ซ | ลทดํรํ | -รํรํรํ | -รํ-รํ
+---ดํ | ---ท | ---ดํ | -รํ-- | -ซ-ล | -ซ-รํ | -ดรม | -ฟ-ซ
+-ฟซล | ดํลซฟ | ซลซฟ | -ม-ร | ---ซ | ลทดํรํ | -รํรํรํ | -รํ-รํ
 # ท่อน 2
-(---มํ | ---รํ | -ท-รํ | -มํ-ซํ | -มํรํท | รํทลซ | -ร-ซ | -ล-ท
+---มํ | ---รํ | -ท-รํ | -มํ-ซํ | -มํรํท | รํทลซ | -ร-ซ | -ล-ท
 -รํ-มํ | -รํ-ท | ---ล | ---ซ | -ทรม | -ซ-ล | -ทรํล | ทลซม
 ---- | -ร-ม | -ร-ล | -ซซซ | -มํรํท | รํทลซ | -ร-ซ | -ซลท
--รํ-มํ | -รํ-ท | ---ล | ---ซ)`},
+-รํ-มํ | -รํ-ท | ---ล | ---ซ
+---มํ | ---รํ | -ท-รํ | -มํ-ซํ | -มํรํท | รํทลซ | -ร-ซ | -ล-ท
+-รํ-มํ | -รํ-ท | ---ล | ---ซ | -ทรม | -ซ-ล | -ทรํล | ทลซม
+---- | -ร-ม | -ร-ล | -ซซซ | -มํรํท | รํทลซ | -ร-ซ | -ซลท
+-รํ-มํ | -รํ-ท | ---ล | ---ซ`},
  {cat:'string', name:'ทองย่อน เถา · Thong Yon (Thao)', shift:-7, pat:'prob3', text:
 `# สามชั้น ท่อน 1
-(---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ทดํท | ลซฟด | -ฟดฟ | ซลทดํ
+---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ทดํท | ลซฟด | -ฟดฟ | ซลทดํ
 -ฟ-ท | -ดํ-รํ | -ซํฟํรํ | -ดํ-ท | -ฟ-ฟ | ดฟ-ท | --รํดํ | ทดํ-รํ
 -ด-ด | -ร-ร | -ฟ-ฟ | -ซ-ซ | -ล-ดํ | -ล-ซ | ---ฟ | ---ร
--ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท | -ร-ฟ | -ซ-ท | --รํดํ | ทดํ-รํ)
+-ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท | -ร-ฟ | -ซ-ท | --รํดํ | ทดํ-รํ
+---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ทดํท | ลซฟด | -ฟดฟ | ซลทดํ
+-ฟ-ท | -ดํ-รํ | -ซํฟํรํ | -ดํ-ท | -ฟ-ฟ | ดฟ-ท | --รํดํ | ทดํ-รํ
+-ด-ด | -ร-ร | -ฟ-ฟ | -ซ-ซ | -ล-ดํ | -ล-ซ | ---ฟ | ---ร
+-ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท | -ร-ฟ | -ซ-ท | --รํดํ | ทดํ-รํ
 # สามชั้น ท่อน 2
-(-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ฟ-ฟ | -ซ-ซ | -ท-ท | -ดํ-ดํ
+-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ฟ-ฟ | -ซ-ซ | -ท-ท | -ดํ-ดํ
 -ท-ดํ | -รํ-ฟํ | -ซํ-ฟํ | -รํ-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
 -ฟรฟ | รดรฟ | รดรฟ | รดทซ | -ฟ-ฟ | -ซ-ซ | -ท-ท | -ดํ-ดํ
 -ท-ดํ | -รํ-ฟํ | -ซํ-ฟํ | -รํ-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
 ---ร | -รรร | -ฟ-ร | -ด-ท | -ท-ฟ | ฟฟ-ท | ทท-ด | ดด-ร
--ทดร | -ฟ-ซ | -ล-ซ | -ฟ-ร | -ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท)
+-ทดร | -ฟ-ซ | -ล-ซ | -ฟ-ร | -ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท
+-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ฟ-ฟ | -ซ-ซ | -ท-ท | -ดํ-ดํ
+-ท-ดํ | -รํ-ฟํ | -ซํ-ฟํ | -รํ-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
+-ฟรฟ | รดรฟ | รดรฟ | รดทซ | -ฟ-ฟ | -ซ-ซ | -ท-ท | -ดํ-ดํ
+-ท-ดํ | -รํ-ฟํ | -ซํ-ฟํ | -รํ-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
+---ร | -รรร | -ฟ-ร | -ด-ท | -ท-ฟ | ฟฟ-ท | ทท-ด | ดด-ร
+-ทดร | -ฟ-ซ | -ล-ซ | -ฟ-ร | -ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท
 # สองชั้น ท่อน 1
-(---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ
--ทดํรํ | -ฟ-ซ | -ล-ซ | -ฟ-ร | ---ด | -รรร | ---ฟ | -รรร)
+---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ
+-ทดํรํ | -ฟ-ซ | -ล-ซ | -ฟ-ร | ---ด | -รรร | ---ฟ | -รรร
+---ท | -ดํดํดํ | ---รํ | -ดํดํดํ | -ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ
+-ทดํรํ | -ฟ-ซ | -ล-ซ | -ฟ-ร | ---ด | -รรร | ---ฟ | -รรร
 # สองชั้น ท่อน 2
-(---ซ | -ซซซ | ฟรฟซ | -ท-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
+---ซ | -ซซซ | ฟรฟซ | -ท-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
 -ฟ-ฟ | ---ซ | ---ท | ---ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
--ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ | --ฟํรํ | ดํท-ดํ | รํดํฟํรํ | -ดํ-ท)
+-ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ | --ฟํรํ | ดํท-ดํ | รํดํฟํรํ | -ดํ-ท
+---ซ | -ซซซ | ฟรฟซ | -ท-ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
+-ฟ-ฟ | ---ซ | ---ท | ---ดํ | -รํ-ฟํ | -รํ-ดํ | ---ท | ---ซ
+-ซํฟํรํ | -ดํ-ท | --รํดํ | ทดํ-รํ | --ฟํรํ | ดํท-ดํ | รํดํฟํรํ | -ดํ-ท
 # ชั้นเดียว ท่อน 1
-(--ดํดํ | -ดํ-- | รํดํรํท | -ดํ-รํ | -รฟซ | ทซฟร | ฟรดท | -ด-ร)
+--ดํดํ | -ดํ-- | รํดํรํท | -ดํ-รํ | -รฟซ | ทซฟร | ฟรดท | -ด-ร
+--ดํดํ | -ดํ-- | รํดํรํท | -ดํ-รํ | -รฟซ | ทซฟร | ฟรดท | -ด-ร
 # ชั้นเดียว ท่อน 2
-(-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ซํฟํรํ | ซํฟํรํดํ | ฟํรํดํท | รํดํทซ
--ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท)
+-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ซํฟํรํ | ซํฟํรํดํ | ฟํรํดํท | รํดํทซ
+-ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท
+-รฟซ | -ท-ดํ | -รํ-ดํ | -ท-ซ | -ซํฟํรํ | ซํฟํรํดํ | ฟํรํดํท | รํดํทซ
+-ฟ-ท | -ดํ-รํ | -ฟํ-รํ | -ดํ-ท
 # ลูกหมด
 --ดํดํ | -ดํ-- | รํดํรํท | -ดํ-รํ | -ฟ-ฟ | -ท-ท | -ดํ-ดํ | -รํ-รํ
 -รํดํท | -ดํทซ | -ทซฟ | -ซฟร | -รฟซ | -ฟซท | -ซทดํ | -ทดํรํ`},
  {cat:'khlui', name:'สร้อยลำปาง สองชั้น · Soi Lampang (Song Chan)', shift:-7, pat:'laoSM2', text:
 `# ท่อน 1
-(---- | ---ซ | ---ดํ | -ดํดํดํ | -มํ-รํ | -ดํ-รํ | ---ดํ | -ดํดํดํ
+---- | ---ซ | ---ดํ | -ดํดํดํ | -มํ-รํ | -ดํ-รํ | ---ดํ | -ดํดํดํ
 ---- | ---ซ | ---ดํ | -ดํดํดํ | -มํ-รํ | -ดํ-รํ | ---ม | ---ซ
 ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซํ | ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซ
 ---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
 -ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
--ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ)
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
+---- | ---ซ | ---ดํ | -ดํดํดํ | -มํ-รํ | -ดํ-รํ | ---ดํ | -ดํดํดํ
+---- | ---ซ | ---ดํ | -ดํดํดํ | -มํ-รํ | -ดํ-รํ | ---ม | ---ซ
+---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซํ | ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซ
+---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
 # ท่อน 2
-(---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
+---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
 ---- | -ดํ-ล | -ซ-ล | -ดํ-ม | ---- | -ร-ม | -ซ-ล | -ดํ-ซ
 ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซํ | ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซ
 ---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
 -ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
--ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ)`},
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
+---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
+---- | -ดํ-ล | -ซ-ล | -ดํ-ม | ---- | -ร-ม | -ซ-ล | -ดํ-ซ
+---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซํ | ---- | -ดํ-รํ | -มํ-รํ | -ดํ-ซ
+---- | ---ม | ---- | -ซ-ล | -ดํ-ซ | ลดํ-ล | ---ซ | ---ม
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ
+-ซ-ด | -ร-ม | -ซ-ม | -ร-ด | -ล-รํ | ดํล-ซ | -ม-ซ | -ล-ดํ`},
  {cat:'khlui', name:'ชื่นชุมนุม · Chuen Chumnum', shift:-7, pat:'laoSM2', text:
-`(---- | ---ฟ | ---ร | ฟซลด | ---ล | ดํรํลดํ | -รดร | ฟซรฟ
+`---- | ---ฟ | ---ร | ฟซลด | ---ล | ดํรํลดํ | -รดร | ฟซรฟ
 ---- | รดรฟ | ซลรฟ | -ซ-ล | --ซล | ดํฟซล | ซลดํร | -ฟ-ซ
 ---ร | ---ม | รดรม | -ฟ-ซ | -ล-ซ | -ฟ-ซ | ลซลรํ | -ดํ-ล
---ฟํรํ | ดํรํฟํล | --ดํล | ซลดํซ | -ล-ซ | -ฟ-ด | --รม | -ร-ฟ)`},
+--ฟํรํ | ดํรํฟํล | --ดํล | ซลดํซ | -ล-ซ | -ฟ-ด | --รม | -ร-ฟ
+---- | ---ฟ | ---ร | ฟซลด | ---ล | ดํรํลดํ | -รดร | ฟซรฟ
+---- | รดรฟ | ซลรฟ | -ซ-ล | --ซล | ดํฟซล | ซลดํร | -ฟ-ซ
+---ร | ---ม | รดรม | -ฟ-ซ | -ล-ซ | -ฟ-ซ | ลซลรํ | -ดํ-ล
+--ฟํรํ | ดํรํฟํล | --ดํล | ซลดํซ | -ล-ซ | -ฟ-ด | --รม | -ร-ฟ`},
  {cat:'khlui', name:'กลุ่มดนตรี · Klum Dontri', shift:-7, pat:'laoSM2', text:
-`(---- | ลลดํล | -ล-- | -ดํ-รํ | --มํรํ | -ดํ-ฟ | -ฟ-- | -ซ-ล
+`---- | ลลดํล | -ล-- | -ดํ-รํ | --มํรํ | -ดํ-ฟ | -ฟ-- | -ซ-ล
 ---- | ลร-ล | -ลดํรํ | มํรํดํล | -ลซล | ดํลซฟ | -ฟมฟ | ซฟมร
 ---รํ | ---ดํ | -ลรํดํ | -ลลล | -รํ-ดํ | -ล-ซ | -ฟ-ล | -ซ-ฟ
-ดํล-ซ | -ฟ-ล | -ซ-ฟ | ---- | -ม-ร | -ด-ซ | -ดรม | -รรร)`}
+ดํล-ซ | -ฟ-ล | -ซ-ฟ | ---- | -ม-ร | -ด-ซ | -ดรม | -รรร
+---- | ลลดํล | -ล-- | -ดํ-รํ | --มํรํ | -ดํ-ฟ | -ฟ-- | -ซ-ล
+---- | ลร-ล | -ลดํรํ | มํรํดํล | -ลซล | ดํลซฟ | -ฟมฟ | ซฟมร
+---รํ | ---ดํ | -ลรํดํ | -ลลล | -รํ-ดํ | -ล-ซ | -ฟ-ล | -ซ-ฟ
+ดํล-ซ | -ฟ-ล | -ซ-ฟ | ---- | -ม-ร | -ด-ซ | -ดรม | -รรร`}
 ];
 (store.get('mySongs',[])||[]).forEach(x=>{ if(x&&x.id&&x.text) SONGS.push({name:'📥 '+x.name,shift:-7,text:x.text,custom:true,id:x.id}); });
 const NOTE_CH='ดรมฟซลท';
@@ -2643,19 +2832,15 @@ const NOTE_CH='ดรมฟซลท';
 const DYN={pp:0.35,p:0.5,mp:0.68,mf:0.85,f:1,ff:1.15};
 function parseSheet(text){
   const boxes=[];
-  let label=null, grp=null, vel=1, secLem=false;
+  let label=null, secLem=false, lo=null, rapLeft=0, rapLeft0=0;   // ( ) = ล้อ (เครื่องนำ เสียงสูง) · ห้องถัดไปจำนวนเท่ากัน = รับ (เสียงต่ำ)
   text.replace(/\(:/g,'(').replace(/:\)/g,')').replace(/[–—]/g,'-').split(/\n/).forEach((line,li)=>{
     if(/^\s*#?\s*\(?\s*กลับต้น\s*\)?\s*$/.test(line)){ boxes.push({back:true,line:li}); return; }
     if(/^\s*#/.test(line)){ label=line.replace(/^\s*#\s*/,'').trim(); secLem=/เลื่อม/.test(label); return; }
     line.split('|').map(x=>x.trim()).filter(x=>x).forEach(raw=>{
       if(/^\(?กลับต้น\)?$/.test(raw)){ boxes.push({back:true,line:li}); return; }
-      let lem=false; raw=raw.replace(/^([\s(<\[]*)\^/,(m,a)=>{ lem=true; return a; });   // ^ = บรรเลงเลื่อม
-      raw=raw.replace(/^(pp|mp|mf|ff|p|f)([(<\[]+)/,'$2$1');   // เขียน p ก่อนวงเล็บก็ได้
-      const lead=(raw.match(/^[\s(<\[]*/)||[''])[0], trail=(raw.match(/[\s)>\]]*$/)||[''])[0];
+      const lead=(raw.match(/^[\s(]*/)||[''])[0], trail=(raw.match(/[\s)]*$/)||[''])[0];
       const open=lead.includes('('), close=trail.includes(')');
-      const gOpen=lead.includes('<')?'a':lead.includes('[')?'b':null, gClose=/[>\]]/.test(trail);
-      let body=raw.slice(lead.length,raw.length-trail.length).replace(/\s+/g,'');
-      let dyn=null; const dm=body.match(/^(pp|mp|mf|ff|p|f)(?![a-z])/); if(dm){ dyn=dm[1]; vel=DYN[dyn]; body=body.slice(dyn.length); }
+      let body=raw.slice(lead.length,raw.length-trail.length).replace(/[^ดรมฟซลทํฺุ่̣̇\-~⌒ล้อ]/g,'');
       const shown=body;
       body=body.replace(/ล้อ/g,'--');   // "ล้อ" = ช่วงที่อีกทางเล่นล้อ ไม่มีโน้ตให้เล่น
       const slots=[], orn={}, tech={}, toks=[];
@@ -2664,10 +2849,6 @@ function parseSheet(text){
       for(let k=0;k<body.length;k++){
         const ch=body[k];
         if(ch==='-'){ toks.push({t:'r'}); continue; }
-        if(ch==='{'){   // ลูกสะบัด: หลายเสียงในจังหวะเดียว ตัวสุดท้ายตกจังหวะ
-          const g=[]; k++; while(k<body.length && body[k]!=='}'){ const r=noteAt(k); if(r){ g.push(r.st); k+=r.n; } else k++; }
-          if(g.length) toks.push({t:'o',g});
-          continue; }
         if(ch==='~'||ch==='⌒'){   // เส้นโค้งเหนือโน้ต: เสียงต่างกัน = สะบัด · เสียงเดียวกัน = สะเดาะ
           const g=[]; let j=k+1; while(j<body.length){ const r=noteAt(j); if(!r) break; g.push(r.st); j+=r.n; }
           if(g.length) toks.push({t:'a',g}); k=j-1; continue; }
@@ -2691,10 +2872,13 @@ function parseSheet(text){
           for(let i=g.length;i<span;i++) flat.push(null);
           farcs.push({from:flat.length,to:flat.length+g.length-1,kind}); flat.push(...g); }
       });
-      if(gOpen) grp=gOpen;
-      if(!slots.length && !open && !close){ if(gClose) grp=null; return; }
-      boxes.push({shown, slots, line:li, open, close, label, grp, vel, dyn, orn:Object.keys(orn).length?orn:null, tech:Object.keys(tech).length?tech:null, lem:lem||secLem, arcs:arcs.length?arcs:null, disp:arcs.length?disp:null, flat:farcs.length?flat:null, farcs:farcs.length?farcs:null}); label=null;
-      if(gClose) grp=null;
+      if(!slots.length) return;
+      let grp=null, grpLab=null;
+      if(open){ lo={n:0}; rapLeft=0; }
+      if(lo){ grp='a'; if(lo.n===0) grpLab='ล้อ'; lo.n++; }
+      else if(rapLeft>0){ grp='b'; if(rapLeft===rapLeft0) grpLab='รับ'; rapLeft--; }
+      if(close && lo){ rapLeft=rapLeft0=lo.n; lo=null; }
+      boxes.push({shown, slots, line:li, open:false, close:false, label, grp, grpLab, vel:1, dyn:null, orn:Object.keys(orn).length?orn:null, tech:Object.keys(tech).length?tech:null, lem:secLem, arcs:arcs.length?arcs:null, disp:arcs.length?disp:null, flat:farcs.length?flat:null, farcs:farcs.length?farcs:null}); label=null;
     });
   });
   return expandRepeats(boxes);
@@ -2740,7 +2924,7 @@ function renderSheet8(boxes,el){
     const i=r[k]; if(i===undefined) return `<div class="sb empty"></div>`;
     const b=boxes[i], sl=b.slots.slice(0,4); while(sl.length<4) sl.unshift(null);
     const pad=4-Math.min(4,b.slots.length);
-    const head=`<div class="sb${b.open?' ro':''}${b.close?' rc':''}${b.grp?' g-'+b.grp:''}${b.orn&&!b.arcs?' hasOrn':''}${b.arcs?' hasArc':''}${b.lem?' lem':''}" data-i="${i}">${b.dyn?`<i class="dyn">${b.dyn}</i>`:''}`;
+    const head=`<div class="sb${b.open?' ro':''}${b.close?' rc':''}${b.grp?' g-'+b.grp:''}${b.grpLab?' hasGl':''}${b.orn&&!b.arcs?' hasOrn':''}${b.arcs?' hasArc':''}${b.lem?' lem':''}" data-i="${i}">${b.grpLab?`<i class="glab">${L(b.grpLab,b.grpLab==='ล้อ'?'lo':'rap')}</i>`:''}`;
     if(b.flat){   // สะบัด/สะเดาะ: แสดงโน้ตทุกตัวเรียงแนวเดียวกัน แล้ววาดเส้นโค้งคร่อมกลุ่ม
       const fl=b.flat.slice(), N=Math.max(4,fl.length); while(fl.length<N) fl.unshift(null); const pd=N-b.flat.length;
       return head.replace('class="sb','class="sb flat'+(N>6?' n7':N>4?' n5':'')).replace('data-i=',`style="grid-template-columns:repeat(${N},minmax(0,1fr))" data-i=`)
@@ -2754,23 +2938,23 @@ function renderSheet8(boxes,el){
       return st===null?'<span class="s r">-</span>':`<span class="s${og?' so':''}">${og?`<span class="orn">${og.map(noteSpan).join('')}</span>`:''}${noteSpan(st)}</span>`; }).join('')}</div>`; }).join('')}</div>`).join('');
   if(boxes.some(b=>b.lem)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="lgLem">${L('เลื่อม: เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ ตามหลัง 1 จังหวะ','Lueam: leader plays high, follower plays low one beat later')}</span></div>`);
   if(boxes.some(b=>b.arcs)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="lgArc"><i style="border-color:#f95738"></i>${L('สะบัด (เส้นโค้งบนโน้ตต่างเสียง)','Sabat (arc over different notes)')}</span><span class="lgArc"><i style="border-color:#0d3b66"></i>${L('สะเดาะ (เส้นโค้งบนโน้ตเสียงเดียวกัน)','Sado (arc over the same note)')}</span></div>`);
-  if(boxes.some(b=>b.grp)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="ga">${L('กลุ่ม ก · ล้อ (เสียงสูง)','Group A · lo (high)')}</span><span class="gb">${L('กลุ่ม ข · รับ (เสียงต่ำ)','Group B · rap (low)')}</span><span>${L('ไม่มีสี = ทั้งวง','No colour = everyone')}</span></div>`);
+  if(boxes.some(b=>b.grp)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="lgLo">${L('ล้อ = เครื่องนำ เสียงสูง · รับ = เครื่องตาม เสียงต่ำ','lo = leading group, high · rap = answering group, low')}</span></div>`);
   el.querySelectorAll('.sb[data-i]').forEach(d=>els[+d.dataset.i]=d);
   return els;
 }
 // ---------- ตัวแก้ไขโน้ตแบบตาราง 8 ห้อง ----------
-const OK_BOX=/^(\(?กลับต้น\)?$)|^\^?[(<\[]*(pp|mp|mf|ff|p|f)?([ดรมฟซลท][ํฺุ̣]?|-|\{([ดรมฟซลท][ํฺุ̣]?){2,4}\}|[~⌒]([ดรมฟซลท][ํฺุ̣]?){2,4})*[)>\]]*$/;
-function boxSlots(t){ if(/^\(?กลับต้น\)?$/.test(t)) return 4; t=t.replace(/^\^/,''); if(/[~⌒]/.test(t)){ const o=(t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/[~⌒]([ดรมฟซลท][ํฺุ̣]?)+/g,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; return o<4?4:o+1; } return (t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; }
+const OK_BOX=/^(\(?กลับต้น\)?$)|^\(?(ล้อ|[ดรมฟซลท][ํฺุ̣]?|-|[~⌒]([ดรมฟซลท][ํฺุ̣]?){2,4})*\)?$/;
+function boxSlots(t){ if(/^\(?กลับต้น\)?$/.test(t)) return 4; if(/[~⌒]/.test(t)){ const o=(t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/[~⌒]([ดรมฟซลท][ํฺุ̣]?)+/g,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; return o<4?4:o+1; } return (t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; }
 function makeGrid(host,text,onChange){
   let rows=[], lastIn=null;
   host.innerHTML=`<div class="g8"></div>
     <div class="gPal">${'ดรมฟซลท'.split('').map(n=>`<button type="button" data-k="${n}" style="color:${NOTES['ดรมฟซลท'.indexOf(n)].c}">${NN(NOTES['ดรมฟซลท'.indexOf(n)])}</button>`).join('')}
       <button type="button" class="mk" data-k="ํ" title="เสียงสูง">◌ํ</button><button type="button" class="mk" data-k="ฺ" title="เสียงต่ำ">◌ฺ</button>
-      <button type="button" class="mk" data-k="-">–</button><button type="button" class="ac" data-k="(">(</button><button type="button" class="ac" data-k=")">)</button>
-      <button type="button" class="ac arcK" data-k="⌒" title="เส้นโค้ง: กดก่อนโน้ตกลุ่มสุดท้ายของห้อง · ต่างเสียง = สะบัด · เสียงเดียวกัน = สะเดาะ">⌒ ${L('สะบัด/สะเดาะ','Sabat/Sado')}</button><button type="button" class="ac" data-k="กลับต้น" title="กลับต้น: บรรเลงซ้ำตั้งแต่ต้นท่อนอัตโนมัติ">↩ ${L('กลับต้น','From top')}</button><button type="button" class="ac" data-k="{" title="ลูกสะบัด: เริ่ม">{</button><button type="button" class="ac" data-k="}" title="ลูกสะบัด: จบ">}</button><button type="button" class="ac" data-k="^" title="เลื่อม: เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ · กดก่อนพิมพ์ห้อง">^</button><button type="button" class="ac" data-k="~" title="เส้นโค้ง: สะบัด (ต่างเสียง) / สะเดาะ (เสียงเดียวกัน) · กดก่อนพิมพ์กลุ่มโน้ต">⌒</button>
-      <button type="button" class="ac" data-k="<" title="กลุ่ม ก (ล้อ)">&lt;</button><button type="button" class="ac" data-k=">" title="กลุ่ม ก จบ">&gt;</button>
-      <button type="button" class="ac" data-k="[" title="กลุ่ม ข (รับ)">[</button><button type="button" class="ac" data-k="]" title="กลุ่ม ข จบ">]</button>
-      <button type="button" class="ac" data-k="p" title="เบา">p</button><button type="button" class="ac" data-k="f" title="ดัง">f</button>
+      <button type="button" class="mk" data-k="-">–</button><button type="button" class="ac" data-k="(" title="ล้อ: เริ่มวรรคที่เครื่องนำบรรเลง (เสียงสูง) · วรรครับให้บันทึกในห้องถัดไปตามปกติ">( ${L('ล้อ','lo')}</button><button type="button" class="ac" data-k=")" title="ล้อ: จบวรรค">${L('ล้อ','lo')} )</button>
+      <button type="button" class="ac arcK" data-k="⌒" title="เส้นโค้ง: กดก่อนโน้ตกลุ่มสุดท้ายของห้อง · ต่างเสียง = สะบัด · เสียงเดียวกัน = สะเดาะ">⌒ ${L('สะบัด/สะเดาะ','Sabat/Sado')}</button><button type="button" class="ac" data-k="กลับต้น" title="กลับต้น: บรรเลงซ้ำตั้งแต่ต้นท่อนอัตโนมัติ">↩ ${L('กลับต้น','From top')}</button>
+      
+      
+      
       <button type="button" class="ac" data-k="⌫">⌫</button></div>
     <div class="gBar"><button type="button" class="btn alt gAdd">➕ ${L('เพิ่มบรรทัด','Add line')}</button><button type="button" class="btn alt gDel">➖ ${L('ลบบรรทัดสุดท้าย','Remove last line')}</button></div>
     <div class="gInfo"></div>`;
