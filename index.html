@@ -840,6 +840,27 @@ body.phone.typing .wEduRow{display:none}
 .gLegend .lgArc::before{display:none}
 .mel8 .sb .arc{min-width:30px;margin-left:0}
 .gLegend .lgArc i{display:inline-block;width:20px;height:7px;border:2px solid;border-bottom:0;border-radius:50% 50% 0 0/100% 100% 0 0}
+
+#flow{position:fixed;left:0;right:0;top:0;height:76px;z-index:55;background:rgba(255,253,246,.96);border-bottom:2px solid #f4d35e;box-shadow:0 4px 14px #0d3b6622;overflow:hidden;display:none}
+#flow.on{display:block}
+#flow .flTrack{position:absolute;left:0;top:14px;height:50px;will-change:transform;background:repeating-linear-gradient(90deg,rgba(13,59,102,.16) 0 1px,transparent 1px calc(var(--px)*4))}
+#flow .fn{position:absolute;top:4px;width:var(--px);height:42px;margin-left:calc(var(--px) * -0.5);display:grid;place-items:center;font-size:calc(var(--px)*0.62);font-weight:800;border-radius:10px;background:#fff;box-shadow:inset 0 -3px 0 var(--c),0 1px 3px #0002;transition:transform .08s}
+#flow .fn.g-a{background:#e7f0fb} #flow .fn.g-b{background:#fdf1d0}
+#flow .fn.now{transform:scale(1.25);box-shadow:inset 0 -4px 0 var(--c),0 0 0 3px #f95738,0 4px 10px #0003}
+#flow .flHead{position:absolute;top:6px;bottom:6px;left:min(140px,22vw);width:3px;margin-left:-1px;background:#f95738;border-radius:2px;box-shadow:0 0 8px #f95738}
+#flow .flX{position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;border:0;background:#0d3b66;color:#fff;font-size:1rem;cursor:pointer;z-index:2}
+#flow .flHint{position:absolute;right:50px;bottom:2px;font-size:.66rem;color:#7a6a55}
+body.flowOn{padding-top:78px}
+.mel8 .sb.lem{background:linear-gradient(180deg,rgba(13,59,102,.07),transparent)}
+.mel8 .sb.lem::before{content:'เลื่อม';position:absolute;right:3px;bottom:1px;font-size:.55rem;color:#0d3b66;opacity:.7}
+body.lang-en .mel8 .sb.lem::before{content:'lem'}
+.gLegend .lgLem::before{background:linear-gradient(180deg,rgba(13,59,102,.25),transparent) !important}
+#lisCard .lisRow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0}
+#lisCard .lisIns{display:flex;flex-wrap:wrap;gap:6px 12px;background:#fffdf6;border:1px solid #ecdfae;border-radius:12px;padding:8px 10px;margin:8px 0}
+#lisCard .lisInfo{background:#eef4fa;border-radius:10px;padding:7px 10px;color:#0d3b66;font-size:.9rem}
+#lisCard select{max-width:100%}
+#lisCard .lisRow .sl{white-space:nowrap}
+#lisCard .lisNow{font-weight:700;color:#f95738;min-height:1.2em}
 </style>
 </head>
 <body>
@@ -1019,6 +1040,9 @@ body.phone.typing .wEduRow{display:none}
         <div class="bar" style="margin-top:6px">
           <label class="sl"><input type="checkbox" id="useKlong" checked><span class="th">กลองแขก</span><span class="en i">Drums</span></label>
           <label class="sl"><input type="checkbox" id="useChing" checked><span class="th">ฉิ่ง</span><span class="en i">Ching</span></label>
+          <label class="sl"><input type="checkbox" id="useChab" checked><span class="th">ฉาบเล็ก</span><span class="en i">Small cymbals</span></label>
+          <label class="sl"><input type="checkbox" id="useMong" checked><span class="th">โหม่ง</span><span class="en i">Mong gong</span></label>
+          <label class="sl"><input type="checkbox" id="useKrap" checked><span class="th">กรับ</span><span class="en i">Krap</span></label>
           <label class="sl">🔊 <input type="range" id="drumVol" min="0" max="1" step="0.01" value="0.7"></label>
           <label class="sl"><input type="checkbox" id="drumWithSong" checked><span class="th">ตีประกอบเมื่อเล่นเพลง</span><span class="en i">Accompany songs</span></label>
         </div>
@@ -1057,7 +1081,7 @@ body.phone.typing .wEduRow{display:none}
           </div>
           <details class="own" id="ownBox">
             <summary>✏️ <span class="th">พิมพ์โน้ตเพลงเอง</span><span class="en i">Write your own notation</span></summary>
-            <p class="hint"><span class="th">บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แตะช่องห้องแล้วกดปุ่มโน้ตด้านล่าง (หรือพิมพ์เอง) · <b>-</b> = เว้นจังหวะ · ดฺ = เสียงต่ำ (จุดล่าง) · ดํ = เสียงสูง (จุดบน) · <b>{มรด}</b> = ลูกสะบัด (หลายเสียงในจังหวะเดียว ตัวสุดท้ายตกจังหวะ) · <b>~ฟซล</b> = เส้นโค้งบนโน้ต: ต่างเสียง = สะบัด, เสียงเดียวกัน (เช่น <b>---~ซซซ</b>) = สะเดาะ · <b>&lt; &gt;</b> = กลุ่ม ก (ล้อ) · <b>[ ]</b> = กลุ่ม ข (ขัด) · <b>p</b> / <b>f</b> หน้าห้อง = เบา / ดัง (มี pp mp mf ff ด้วย) · <b>( )</b> = เล่นซ้ำ</span><span class="en">8 bars per line, 4 beats per bar. Tap a bar, then use the note buttons (or type). - = rest · {มรด} = ornament (several notes in one beat, the last on the beat) · &lt; &gt; = group A (lead) · [ ] = group B (answer) · p / f before a bar = soft / loud (also pp mp mf ff) · ( ) = repeat.</span></p>
+            <p class="hint"><span class="th">บรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แตะช่องห้องแล้วกดปุ่มโน้ตด้านล่าง (หรือพิมพ์เอง) · <b>-</b> = เว้นจังหวะ · ดฺ = เสียงต่ำ (จุดล่าง) · ดํ = เสียงสูง (จุดบน) · <b>{มรด}</b> = ลูกสะบัด (หลายเสียงในจังหวะเดียว ตัวสุดท้ายตกจังหวะ) · <b>^-ซ-ล</b> หรือหัวข้อที่มีคำว่า เลื่อม = บรรเลงเลื่อม (เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ) · <b>&lt; &gt;</b> = ล้อ (เสียงสูง) <b>[ ]</b> = รับ (เสียงต่ำ) · <b>~ฟซล</b> = เส้นโค้งบนโน้ต: ต่างเสียง = สะบัด, เสียงเดียวกัน (เช่น <b>---~ซซซ</b>) = สะเดาะ · <b>&lt; &gt;</b> = กลุ่ม ก (ล้อ) · <b>[ ]</b> = กลุ่ม ข (ขัด) · <b>p</b> / <b>f</b> หน้าห้อง = เบา / ดัง (มี pp mp mf ff ด้วย) · <b>( )</b> = เล่นซ้ำ</span><span class="en">8 bars per line, 4 beats per bar. Tap a bar, then use the note buttons (or type). - = rest · {มรด} = ornament (several notes in one beat, the last on the beat) · &lt; &gt; = group A (lead) · [ ] = group B (answer) · p / f before a bar = soft / loud (also pp mp mf ff) · ( ) = repeat.</span></p>
             <div id="ownGrid"></div>
             <textarea id="score" hidden></textarea>
             <button class="btn alt" id="useOwn" style="margin-top:6px"><span class="th">ใช้โน้ตนี้</span><span class="en i">Use</span></button>
@@ -1082,6 +1106,7 @@ body.phone.typing .wEduRow{display:none}
     <button type="button" data-pop="hist">📜 <span class="th">ประวัติอังกะลุง</span><span class="en">Angklung history</span></button>
     <button type="button" data-pop="imp">📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></button>
     <button type="button" data-pop="song">🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></button>
+    <button type="button" data-pop="lis">🎧 <span class="th">ฟังเพลง (วงอังกะลุง 36 ตับ)</span><span class="en">Listen (36-frame ensemble)</span></button>
     <button type="button" data-act="install" id="instMenu" hidden>📲 <span class="th">ติดตั้งแอปลงเครื่อง</span><span class="en">Install app</span></button>
     <button type="button" data-act="bgm" id="bgmMenu"><span class="th">เพลงพื้นหลัง</span><span class="en">Background music</span> <b class="bgmState"></b></button>
     <button type="button" data-act="rate">⭐ <span class="th">ประเมินความพึงพอใจ</span><span class="en">Rate this app</span></button>
@@ -1098,6 +1123,23 @@ body.phone.typing .wEduRow{display:none}
   <div class="popBody" id="instBody" style="font-size:1.05rem;line-height:1.7"></div>
 </div></div>
 <div id="popStore" hidden>
+  <div class="card" id="lisCard">
+    <p class="lisInfo"><span class="th">ฟังเพลงจากคลังด้วยวงอังกะลุงขนาดใหญ่ 36 ตับ (3 ช่วงเสียง) พร้อมเครื่องประกอบจังหวะ · ล้อ = เสียงสูง รับ = เสียงต่ำ · เลื่อม = เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ</span><span class="en">Listen to any song played by a large 36-frame angklung ensemble (3 octaves) with rhythm instruments · lead = high, answer = low · lem = leader high, follower low</span></p>
+    <div class="songPick"><label for="lisSong"><span class="th">เลือกเพลง</span><span class="en i">Song</span></label><select id="lisSong"></select></div>
+    <div class="lisRow">
+      <label class="sl"><span class="th">หน้าทับ</span><span class="en i">Pattern</span> <select id="lisPat"></select></label>
+      <label class="sl"><span class="th">ความเร็ว</span><span class="en i">Tempo</span> <input type="range" id="lisTempo" min="60" max="300" step="10" value="150"> <span id="lisTempoV">150</span></label>
+    </div>
+    <div class="lisIns">
+      <label class="sl"><input type="checkbox" data-sync="useKlong"><span class="th">กลองแขก</span><span class="en i">Drums</span></label>
+      <label class="sl"><input type="checkbox" data-sync="useChing"><span class="th">ฉิ่ง</span><span class="en i">Ching</span></label>
+      <label class="sl"><input type="checkbox" data-sync="useChab"><span class="th">ฉาบเล็ก</span><span class="en i">Small cymbals</span></label>
+      <label class="sl"><input type="checkbox" data-sync="useMong"><span class="th">โหม่ง</span><span class="en i">Mong</span></label>
+      <label class="sl"><input type="checkbox" data-sync="useKrap"><span class="th">กรับ</span><span class="en i">Krap</span></label>
+    </div>
+    <div class="bar"><button class="btn" id="lisPlay">▶ <span class="th">ฟังเพลง</span><span class="en i">Listen</span></button><button class="btn alt" id="lisStopBtn">■ <span class="th">หยุด</span><span class="en i">Stop</span></button><span class="lisNow" id="lisNow"></span></div>
+    <div class="sheet" id="lisSheet" style="margin-top:8px"></div>
+  </div>
   <div class="card" id="histCard">
     <div class="hsHero"><img id="hsImg" alt="" draggable="false"><div><b class="th">อังกะลุง</b><b class="en">Angklung</b><p class="th">เครื่องดนตรีไม้ไผ่จากเกาะชวา ที่ครูดนตรีไทยนำมาพัฒนาจนเป็นวงดนตรีของโรงเรียนทั่วประเทศ</p><p class="en">A bamboo instrument from Java that a Thai master musician turned into an ensemble played in schools across Thailand.</p></div></div>
     <ol class="hsTL">
@@ -1131,7 +1173,7 @@ body.phone.typing .wEduRow{display:none}
   </div>
   <div class="card" id="helpCard">
     <p class="hint hIntro"><span class="th">แตะหัวข้อเพื่อเปิดอ่านวิธีใช้แต่ละฟังก์ชัน</span><span class="en">Tap a topic to read how each function works.</span></p>
-    <details open><summary>🚀 <span class="th">เริ่มต้นใช้งาน</span><span class="en">Getting started</span></summary><div class="hb"><div class="th"><ul><li>ลงชื่อครั้งแรกครั้งเดียว แอปจะจำไว้ ครั้งต่อไปเข้าใช้ได้ทันที (กด “เปลี่ยนผู้ใช้” ที่หน้าแรกถ้าต้องการเปลี่ยนชื่อ)</li><li>เลือกภาษา <b>ไทย / EN</b> มุมบนขวา</li><li>เลือกโหมด <b>เล่นคนเดียว</b> (14 เสียง) หรือ <b>เล่นเป็นวง</b> (ถือ 2 เสียง)</li><li>ปุ่ม <b>☰</b> มุมล่างขวา = เมนูฟังก์ชันทั้งหมด · ปุ่ม <b>▲▼</b> = เลื่อนหน้าจอ</li><li>ติดตั้งลงเครื่องได้จากเมนู “ติดตั้งแอปลงเครื่อง” ใช้งานได้แม้ไม่มีอินเทอร์เน็ต</li></ul></div><div class="en"><ul><li>Sign in once — the app remembers you (use “Switch user” on the home screen to change).</li><li>Choose <b>ไทย / EN</b> at the top right.</li><li>Pick <b>Solo</b> (14 notes) or <b>Band</b> (hold 2 notes).</li><li><b>☰</b> at the bottom right opens every function · <b>▲▼</b> scrolls the page.</li><li>Install it from “Install the app” in the menu — it then works offline.</li></ul></div></div></details><details><summary>🎵 <span class="th">โหมดเล่นคนเดียว</span><span class="en">Solo mode</span></summary><div class="hb"><div class="th"><ul><li>อังกะลุง 14 ตัว เรียงจากเสียงต่ำ (ซ้ายบน) ไปเสียงสูง (ขวาล่าง)</li><li>เทคนิคการบรรเลงตามท่าทาง: <b>แตะสั้น = กระทบ</b> (เสียงเดียวชัด) · <b>กดค้าง = เขย่า</b> (เสียงกระทบดังทันทีแล้วต่อเป็นเสียงรัว) · <b>ปัดนิ้วบนปุ่ม = สะบัด</b> (เสียงรัวสั้นครั้งเดียว)</li><li>กดหลายนิ้วพร้อมกันได้</li><li>คอมพิวเตอร์: แถวบน <kbd>Q</kbd>–<kbd>U</kbd> = ตัวที่ 1–7 · แถวกลาง <kbd>A</kbd>–<kbd>J</kbd> = ตัวที่ 8–14</li><li><b>แถบจังหวะ</b> เหนือปุ่มอังกะลุง: เลือกหน้าทับ · ▶/■ เริ่ม/หยุด · 🐢 ทอดจบ · − + ความเร็ว · ⋯ ตั้งค่าเพิ่ม กดได้แม้อีกนิ้วกำลังกดโน้ตอยู่</li><li><b>ดัง-เบา</b>: กดบริเวณรูปอังกะลุง = ดังปกติ · กดค่อนลงมาทางชื่อโน้ต = เบาลง (ล่างสุดเบาที่สุด)</li><li>คอมพิวเตอร์: กดแล้วปล่อยเร็ว = กระทบ · กดค้าง = เขย่า · <kbd>Shift</kbd>+แป้น = สะบัด</li><li>คอมพิวเตอร์: <kbd>Space</kbd> = เริ่ม/หยุดกลอง · <kbd>Enter</kbd> = ทอดจบ</li></ul></div><div class="en"><ul><li>14 angklungs from low (top left) to high (bottom right).</li><li>Techniques by gesture: <b>short tap = strike</b> (one clear note) · <b>hold = shake</b> (strike, then a continuous roll) · <b>swipe on a key = flick</b> (one short burst).</li><li>Several fingers can play at once.</li><li>Computer: top row <kbd>Q</kbd>–<kbd>U</kbd> = notes 1–7 · middle row <kbd>A</kbd>–<kbd>J</kbd> = notes 8–14.</li><li><b>Rhythm bar</b> above the keys: pattern · ▶/■ start/stop · 🐢 slow-down ending · − + tempo · ⋯ more. It works even while another finger is holding a note.</li><li><b>Loud / soft</b>: press on the angklung picture = normal · press lower toward the note name = softer (softest at the bottom).</li><li>Computer: quick press = strike · hold = shake · <kbd>Shift</kbd>+key = flick.</li><li>Computer: <kbd>Space</kbd> = start/stop drums · <kbd>Enter</kbd> = slow-down ending.</li></ul></div></div></details><details><summary>👥 <span class="th">โหมดเล่นเป็นวง</span><span class="en">Band mode</span></summary><div class="hb"><div class="th"><ul><li>เลือกอังกะลุง 2 ตัวที่ถือ (มือซ้าย / มือขวา) จากรายการหมายเลข 1–28 หรือแตะชิปสี แล้วกด “บรรเลง”</li><li>คอมพิวเตอร์: <kbd>F</kbd> = มือซ้าย · <kbd>J</kbd> = มือขวา</li><li>ใช้คู่กับ “ห้องวง” เพื่อเล่นพร้อมกันหลายเครื่อง</li></ul></div><div class="en"><ul><li>Choose the 2 angklungs you hold (left / right hand) from the list 1–28 or tap a colour chip, then press “Play”.</li><li>Computer: <kbd>F</kbd> = left hand · <kbd>J</kbd> = right hand.</li><li>Use it with the Band room to play together on many devices.</li></ul></div></div></details><details><summary>⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></summary><div class="hb"><div class="th"><ul><li><b>เสียงไทย</b> (บันไดเสียงไทย 7 เสียงเท่า) หรือ <b>เสียงสากล</b> พร้อมเลือกคีย์</li><li>วิธีกด: ท่าทาง (แตะ = กระทบ · ค้าง = เขย่า · ปัด = สะบัด) หรือ แตะ = สะบัดทุกครั้ง</li><li>เสียงห้อง: เสียงตรง · ห้องเรียน · หอประชุม</li><li>ปรับระดับเสียง 🔊</li></ul></div><div class="en"><ul><li><b>Thai tuning</b> (7 equal steps) or <b>Western tuning</b> with a key.</li><li>Playing: gestures (tap = strike · hold = shake · swipe = flick) or every tap = flick.</li><li>Room sound: Dry · Room · Hall.</li><li>Volume 🔊.</li></ul></div></div></details><details><summary>🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm (drums & ching)</span></summary><div class="hb"><div class="th"><ul><li>เลือกหน้าทับ (ปรบไก่ สองไม้ ลูกหมด ลาว เขมร แขก ฯลฯ) แอปแสดงโน้ตหน้าทับและไฟวิ่งตามห้อง</li><li>เปิด/ปิด กลองแขก หรือ ฉิ่ง แยกกันได้ ปรับความเร็วและระดับเสียง</li><li><b>🐢 ทอดจบ</b> จบให้ครบหน้าทับเสมอ: หน้าทับ 8 ห้อง เล่นจากห้องที่ 1 แล้วทอดห้องที่ 5–8 · หน้าทับ 4 ห้อง เล่นอีก 1 รอบแล้วทอดทั้งรอบถัดไป จบด้วยฉับ + ทั่ม</li><li>ถ้ากดทอดหลังผ่านห้องที่ 1 ไปแล้ว แอปจะเล่นต่อจนครบรอบ แล้วเริ่มทอดในรอบถัดไป</li><li><b>จำนวนรอบหน้าทับ</b> (1 รอบ = หน้าทับ 1 จบ): ใช้เมื่อเพลงไม่มีโน้ตในแอป กลองจะตีครบตามจำนวนรอบแล้วจบพร้อมเพลง (เลือกได้ว่าจะทอดในรอบสุดท้ายหรือไม่) · 0 = ตีต่อเนื่อง</li><li><b>การขึ้น</b>: <b>ขึ้นพร้อมเพลง</b> = กลองเริ่มพร้อมกัน · <b>ขึ้นท้ายหน้าทับ</b> = เครื่องดนตรีขึ้นก่อน 2 ห้อง (แถบจังหวะนับห้องและจังหวะให้ดู) แล้วกลองรับ -โจ๊ะ-ติง | -ติง-ทั่ม ก่อนเข้าหน้าทับเต็ม 2 ห้องที่กลองรับนับเป็นรอบที่ 1</li></ul></div><div class="en"><ul><li>Pick a หน้าทับ pattern (Prop Kai, Song Mai, Luk Mot, Lao, Khmer, Khaek…). The pattern sheet lights up bar by bar.</li><li>Turn drums or ching on/off separately; set tempo and volume.</li><li><b>🐢 Slow-down ending</b> always completes the pattern: an 8-bar pattern plays from bar 1 and slows over bars 5–8; a 4-bar pattern plays one more round and slows over the next round, ending on chap + tum.</li><li>If you press it after bar 1 has passed, the app finishes the current round first.</li><li><b>Rounds</b> (1 round = one full pattern): for songs without notation in the app — the drums play that many rounds and end with the song (optionally slowing on the last round) · 0 = play until stopped.</li><li><b>Entry</b>: <b>Start with the song</b>, or <b>Pickup entry</b> — the melody leads for 2 bars (counted on the rhythm bar), then the drums answer -jo-ting | -ting-tum before the full pattern. The pickup counts as round 1.</li></ul></div></div></details><details><summary>🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลง แอปแสดงโน้ตบรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แล้วกด ▶ เล่น</li><li>ติ๊ก “ให้ฉันเล่นเอง” แอปจะแสดงไฟนำบนปุ่ม แต่ไม่เล่นเสียงให้</li><li><b>พิมพ์โน้ตเอง</b>: แตะช่องห้อง แล้วกดปุ่มโน้ตด้านล่าง ครบ 4 จังหวะจะข้ามไปห้องถัดไปเอง · <b>–</b> = จังหวะว่าง · <b>( )</b> = ช่วงที่เล่นซ้ำ</li></ul></div><div class="en"><ul><li>Choose a song — notation shows 8 bars per line, 4 beats per bar — then press ▶.</li><li>Tick “I’ll play myself” to get guide lights without the app playing.</li><li><b>Write your own</b>: tap a bar, then tap note buttons; after 4 beats it moves to the next bar · <b>–</b> = rest · <b>( )</b> = repeat. You can also type C D E F G A B.</li></ul></div></div></details><details><summary>🎯 <span class="th">ฝึกซ้อมตามจังหวะ</span><span class="en">Practice (play along)</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลงและความเร็ว แอปนับ 1–2–3–4 แล้วตัวโน้ตเลื่อนผ่านเส้นเหนือปุ่มกด ให้กดตอนโน้ตถึงเส้น</li><li>เลือกได้ว่าจะแสดงตัวโน้ตหรือไม่ · ไฟนำบนปุ่ม · กลองแขก–ฉิ่งประกอบ · ทอดตอนจบเพลง</li><li>จบแล้วแอปแสดงคะแนนความแม่นยำ</li><li><b>ช่วงที่ฝึก</b>: เลือกฝึกทั้งเพลง ทีละท่อน หรือกำหนดห้องเอง (เลขห้องดูได้ที่มุมซ้ายบนของห้องแรกแต่ละแถวในโน้ต) ติ๊ก <b>🔁 วนซ้ำ</b> เพื่อเล่นช่วงนั้นซ้ำจนกว่าจะกดหยุด</li></ul></div><div class="en"><ul><li>Pick a song and tempo; after a 1–2–3–4 count-in, notes scroll across the line above the keys — press as each reaches the line.</li><li>Options: show notes, guide lights, drums & ching, slow-down ending.</li><li>Your accuracy score is shown at the end.</li><li><b>Section</b>: practise the whole song, one part, or chosen bars (bar numbers are at the top-left of each row in the notation). Tick <b>🔁 Loop</b> to repeat it until you stop.</li></ul></div></div></details><details><summary>📡 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></summary><div class="hb"><div class="th"><ul><li><b>ครู</b>: กด “สร้างห้อง” ได้รหัส 4 หลักและ QR ให้นักเรียนสแกน แล้วแจกเสียงให้แต่ละคน</li><li><b>นักเรียน</b>: สแกน QR หรือ “เข้าร่วมห้อง” ด้วยรหัส แล้วรอครูเริ่ม ทุกเครื่องนับ 4–3–2–1 พร้อมกัน</li><li>เสียงที่ไม่มีคนถือ เครื่องครูเล่นแทนได้</li><li><b>ล้อ-ขัด</b>: ครูเลือกกลุ่ม ก / ข ให้นักเรียนแต่ละคนได้ในรายชื่อ (แอปแบ่งให้อัตโนมัติ: คนที่ถือเสียงเดียวกันสลับกลุ่มกัน) นักเรียนจะเล่นเฉพาะห้องของกลุ่มตัวเองและห้องทั้งวง ถ้ากลุ่มไหนไม่มีคนถือเสียงนั้น เครื่องครูเล่นแทน</li><li><b>เฉพาะจังหวะ</b>: เครื่องครูตีกลองแขก–ฉิ่ง นักเรียนเล่นเพลงอื่นตามโน้ตของตนเอง กด 🐢 เพื่อทอดจบ</li><li>ครูเลือกช่วงที่ฝึก (ท่อน / ห้อง) ในหน้าฝึกซ้อมก่อนกดเริ่ม ทุกเครื่องจะเล่นช่วงเดียวกัน</li><li>หลังเล่นจบ กด <b>⬇️ ดาวน์โหลดคะแนน (Excel)</b> เพื่อเก็บคะแนนนักเรียนทุกคนทุกรอบเป็นไฟล์</li><li>ทุกเครื่องต้องต่ออินเทอร์เน็ต</li></ul></div><div class="en"><ul><li><b>Teacher</b>: “Create room” gives a 4-digit code and QR; assign notes to each student.</li><li><b>Students</b>: scan the QR or “Join a room” with the code and wait — everyone counts in together.</li><li>The teacher device can play notes nobody holds.</li><li><b>Lead/answer</b>: set group A / B for each student in the member list (auto: students on the same note alternate). Students play only their group's bars and the tutti bars; if a group has nobody on a note, the teacher device plays it.</li><li><b>Rhythm only</b>: the teacher device plays drums & ching while students play any song; press 🐢 to end.</li><li>The teacher's practice section (part / bars) is used for everyone.</li><li>After playing, tap <b>⬇️ Download scores (Excel)</b> to save every student's scores.</li><li>All devices need internet.</li></ul></div></div></details><details><summary>📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></summary><div class="hb"><div class="th"><ul><li>ถ่ายรูปโน้ต หรือเลือกไฟล์ รูปภาพ PDF Word Excel หรือข้อความ</li><li>เลือกว่าเป็น <b>โน้ตเพลง</b> หรือ <b>หน้าทับ</b> แอปอ่านแล้วแสดงให้ตรวจแก้ ห้องที่ผิดจะเป็นสีแดง</li><li>กดบันทึก เพลง/หน้าทับจะอยู่ในรายการเพลง ฝึกซ้อม และห้องวง (เก็บในเครื่องนี้)</li></ul></div><div class="en"><ul><li>Take a photo or pick an image, PDF, Word, Excel or text file.</li><li>Choose <b>melody</b> or <b>drum pattern</b>; check and fix the result — red bars need fixing.</li><li>Save it and it appears in the song, practice and band-room lists (on this device).</li></ul></div></div></details><details><summary>🔤 <span class="th">การอ่านโน้ตในแอป</span><span class="en">Reading the notation</span></summary><div class="hb"><div class="th"><ul><li>ด ร ม ฟ ซ ล ท (ภาษาอังกฤษแสดงเป็น C D E F G A B)</li><li><b>จุดใต้ตัวโน้ต</b> = เสียงต่ำ · <b>จุดบนตัวโน้ต</b> = เสียงสูง</li><li><b>–</b> = จังหวะว่าง · หนึ่งห้องมี 4 จังหวะ · จังหวะตกที่ตัวท้ายของห้อง</li><li><b>ลูกสะบัด</b>: โน้ตตัวเล็กมีเส้นโค้งอยู่เหนือโน้ต = เสียงนำเร็ว ๆ ก่อนตัวตกจังหวะ ตอนฝึกซ้อมแอปเล่นเสียงนำให้ ผู้เล่นกดตัวตกจังหวะ</li><li><b>สะบัด / สะเดาะ</b>: เส้นโค้งคร่อมโน้ต 3 เสียงที่ต่างกัน = <b>สะบัด</b> (เส้นสีส้ม) เส้นโค้งคร่อมโน้ตเสียงเดียวกัน = <b>สะเดาะ</b> (เส้นสีน้ำเงิน) เล่นเร็ว ๆ ให้ตัวสุดท้ายตกจังหวะ ตอนฝึกซ้อมแอปเล่นตัวนำให้ ผู้เล่นกดตัวสุดท้าย · พิมพ์เองได้ด้วยเครื่องหมาย ~ หน้ากลุ่มโน้ต เช่น -~ฟซล หรือ ---~ซซซ</li><li><b>ล้อ-ขัด</b>: ห้องพื้นฟ้า = กลุ่ม ก (ล้อ) · ห้องพื้นเหลือง = กลุ่ม ข (ขัด) · ไม่มีสี = ทั้งวง</li><li><b>ดัง-เบา</b>: ตัวอักษร p (เบา) / f (ดัง) สีส้มที่มุมห้อง มีผลจนกว่าจะเปลี่ยน</li><li>หน้าทับ: ติง · ทั่ม · โจ๊ะ · จ๊ะ · ฉิ่ง ● · ฉับ ✕</li></ul></div><div class="en"><ul><li>Notes ด ร ม ฟ ซ ล ท are shown as C D E F G A B in English.</li><li><b>Dot below</b> = low · <b>dot above</b> = high.</li><li><b>–</b> = rest · 4 beats per bar · the strong beat is the last beat of each bar.</li><li><b>Ornament (ลูกสะบัด)</b>: small notes with an arc above = quick lead-in notes before the beat note; in practice the app plays them and you play the beat note.</li><li><b>Sabat / Sadoh</b>: an arc over three different notes = <b>sabat</b> (orange arc); an arc over the same note repeated = <b>sadoh</b> (blue arc). Play them quickly so the last note lands on the beat; in practice the app plays the lead-in notes and you play the last one. Type ~ before the group, e.g. -~ฟซล or ---~ซซซ.</li><li><b>Lead/answer</b>: blue bars = group A · yellow bars = group B · no colour = everyone.</li><li><b>Dynamics</b>: orange p (soft) / f (loud) in a bar corner, until changed.</li><li>Drum strokes: ting · tum · jo · ja · ching ● · chap ✕</li></ul></div></div></details><details><summary>⭐ <span class="th">อื่น ๆ</span><span class="en">Other</span></summary><div class="hb"><div class="th"><ul><li><b>เพลงพื้นหลัง</b>: เปิด/ปิดได้ที่ปุ่ม ♪ มุมซ้ายบนของหน้าแรก หรือเมนู ☰ → “เพลงพื้นหลัง” เลือกเพลงและความดังได้ใน “ตั้งค่าเสียง” เพลงดังเฉพาะหน้าแรก เมนู คู่มือ และหน้าตั้งค่า และหยุดเองเมื่อเริ่มบรรเลง</li><li><b>เสียงกดปุ่ม</b>: เปิด/ปิด และเลือกแบบเสียงได้ 7 แบบใน “ตั้งค่าเสียง” (เคาะไม้ ฉิ่งเบา อังกะลุงสั้น ป๊อป หยดน้ำ คลิกนุ่ม กลองแขกเบา) เลือกแล้วได้ยินตัวอย่างทันที</li><li><b>ประเมินความพึงพอใจ</b>: ช่วยบอกความเห็นเพื่อพัฒนาแอป</li><li><b>หน้าแรก / เปลี่ยนโหมด</b>: กลับไปเลือกโหมดหรือเปลี่ยนผู้ใช้</li><li>แอปที่ติดตั้งแล้วอัปเดตเองเมื่อเปิดขณะต่ออินเทอร์เน็ต (อาจต้องเปิดใหม่ 1–2 ครั้ง)</li></ul></div><div class="en"><ul><li><b>Background music</b>: turn it on/off with the ♪ button at the top left of the home screen or ☰ → “Background music”; pick the song and volume in Sound settings. It plays only on the home screen, menu, guide and settings, and stops when you start playing.</li><li><b>Button sounds</b>: on/off and 7 styles in Sound settings (you hear a preview when you pick one).</li><li><b>Rate the app</b>: share feedback to improve it.</li><li><b>Home / switch mode</b>: go back to choose a mode or switch user.</li><li>An installed app updates itself when opened online (may need 1–2 restarts).</li></ul></div></div></details>
+    <details open><summary>🚀 <span class="th">เริ่มต้นใช้งาน</span><span class="en">Getting started</span></summary><div class="hb"><div class="th"><ul><li>ลงชื่อครั้งแรกครั้งเดียว แอปจะจำไว้ ครั้งต่อไปเข้าใช้ได้ทันที (กด “เปลี่ยนผู้ใช้” ที่หน้าแรกถ้าต้องการเปลี่ยนชื่อ)</li><li>เลือกภาษา <b>ไทย / EN</b> มุมบนขวา</li><li>เลือกโหมด <b>เล่นคนเดียว</b> (14 เสียง) หรือ <b>เล่นเป็นวง</b> (ถือ 2 เสียง)</li><li>ปุ่ม <b>☰</b> มุมล่างขวา = เมนูฟังก์ชันทั้งหมด · ปุ่ม <b>▲▼</b> = เลื่อนหน้าจอ</li><li>ติดตั้งลงเครื่องได้จากเมนู “ติดตั้งแอปลงเครื่อง” ใช้งานได้แม้ไม่มีอินเทอร์เน็ต</li></ul></div><div class="en"><ul><li>Sign in once — the app remembers you (use “Switch user” on the home screen to change).</li><li>Choose <b>ไทย / EN</b> at the top right.</li><li>Pick <b>Solo</b> (14 notes) or <b>Band</b> (hold 2 notes).</li><li><b>☰</b> at the bottom right opens every function · <b>▲▼</b> scrolls the page.</li><li>Install it from “Install the app” in the menu — it then works offline.</li></ul></div></div></details><details><summary>🎵 <span class="th">โหมดเล่นคนเดียว</span><span class="en">Solo mode</span></summary><div class="hb"><div class="th"><ul><li>อังกะลุง 14 ตัว เรียงจากเสียงต่ำ (ซ้ายบน) ไปเสียงสูง (ขวาล่าง)</li><li>เทคนิคการบรรเลงตามท่าทาง: <b>แตะสั้น = กระทบ</b> (เสียงเดียวชัด) · <b>กดค้าง = เขย่า</b> (เสียงกระทบดังทันทีแล้วต่อเป็นเสียงรัว) · <b>ปัดนิ้วบนปุ่ม = สะบัด</b> (เสียงรัวสั้นครั้งเดียว)</li><li>กดหลายนิ้วพร้อมกันได้</li><li>คอมพิวเตอร์: แถวบน <kbd>Q</kbd>–<kbd>U</kbd> = ตัวที่ 1–7 · แถวกลาง <kbd>A</kbd>–<kbd>J</kbd> = ตัวที่ 8–14</li><li><b>แถบจังหวะ</b> เหนือปุ่มอังกะลุง: เลือกหน้าทับ · ▶/■ เริ่ม/หยุด · 🐢 ทอดจบ · − + ความเร็ว · ⋯ ตั้งค่าเพิ่ม กดได้แม้อีกนิ้วกำลังกดโน้ตอยู่</li><li><b>ดัง-เบา</b>: กดบริเวณรูปอังกะลุง = ดังปกติ · กดค่อนลงมาทางชื่อโน้ต = เบาลง (ล่างสุดเบาที่สุด)</li><li>คอมพิวเตอร์: กดแล้วปล่อยเร็ว = กระทบ · กดค้าง = เขย่า · <kbd>Shift</kbd>+แป้น = สะบัด</li><li>คอมพิวเตอร์: <kbd>Space</kbd> = เริ่ม/หยุดกลอง · <kbd>Enter</kbd> = ทอดจบ</li></ul></div><div class="en"><ul><li>14 angklungs from low (top left) to high (bottom right).</li><li>Techniques by gesture: <b>short tap = strike</b> (one clear note) · <b>hold = shake</b> (strike, then a continuous roll) · <b>swipe on a key = flick</b> (one short burst).</li><li>Several fingers can play at once.</li><li>Computer: top row <kbd>Q</kbd>–<kbd>U</kbd> = notes 1–7 · middle row <kbd>A</kbd>–<kbd>J</kbd> = notes 8–14.</li><li><b>Rhythm bar</b> above the keys: pattern · ▶/■ start/stop · 🐢 slow-down ending · − + tempo · ⋯ more. It works even while another finger is holding a note.</li><li><b>Loud / soft</b>: press on the angklung picture = normal · press lower toward the note name = softer (softest at the bottom).</li><li>Computer: quick press = strike · hold = shake · <kbd>Shift</kbd>+key = flick.</li><li>Computer: <kbd>Space</kbd> = start/stop drums · <kbd>Enter</kbd> = slow-down ending.</li></ul></div></div></details><details><summary>👥 <span class="th">โหมดเล่นเป็นวง</span><span class="en">Band mode</span></summary><div class="hb"><div class="th"><ul><li>เลือกอังกะลุง 2 ตัวที่ถือ (มือซ้าย / มือขวา) จากรายการหมายเลข 1–28 หรือแตะชิปสี แล้วกด “บรรเลง”</li><li>คอมพิวเตอร์: <kbd>F</kbd> = มือซ้าย · <kbd>J</kbd> = มือขวา</li><li>ใช้คู่กับ “ห้องวง” เพื่อเล่นพร้อมกันหลายเครื่อง</li></ul></div><div class="en"><ul><li>Choose the 2 angklungs you hold (left / right hand) from the list 1–28 or tap a colour chip, then press “Play”.</li><li>Computer: <kbd>F</kbd> = left hand · <kbd>J</kbd> = right hand.</li><li>Use it with the Band room to play together on many devices.</li></ul></div></div></details><details><summary>⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></summary><div class="hb"><div class="th"><ul><li><b>เสียงไทย</b> (บันไดเสียงไทย 7 เสียงเท่า) หรือ <b>เสียงสากล</b> พร้อมเลือกคีย์</li><li>วิธีกด: ท่าทาง (แตะ = กระทบ · ค้าง = เขย่า · ปัด = สะบัด) หรือ แตะ = สะบัดทุกครั้ง</li><li>เสียงห้อง: เสียงตรง · ห้องเรียน · หอประชุม</li><li>ปรับระดับเสียง 🔊</li></ul></div><div class="en"><ul><li><b>Thai tuning</b> (7 equal steps) or <b>Western tuning</b> with a key.</li><li>Playing: gestures (tap = strike · hold = shake · swipe = flick) or every tap = flick.</li><li>Room sound: Dry · Room · Hall.</li><li>Volume 🔊.</li></ul></div></div></details><details><summary>🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm (drums & ching)</span></summary><div class="hb"><div class="th"><ul><li>เลือกหน้าทับ (ปรบไก่ สองไม้ ลูกหมด ลาว เขมร แขก ฯลฯ) แอปแสดงโน้ตหน้าทับและไฟวิ่งตามห้อง</li><li>เปิด/ปิด กลองแขก หรือ ฉิ่ง แยกกันได้ ปรับความเร็วและระดับเสียง</li><li><b>🐢 ทอดจบ</b> จบให้ครบหน้าทับเสมอ: หน้าทับ 8 ห้อง เล่นจากห้องที่ 1 แล้วทอดห้องที่ 5–8 · หน้าทับ 4 ห้อง เล่นอีก 1 รอบแล้วทอดทั้งรอบถัดไป จบด้วยฉับ + ทั่ม</li><li>ถ้ากดทอดหลังผ่านห้องที่ 1 ไปแล้ว แอปจะเล่นต่อจนครบรอบ แล้วเริ่มทอดในรอบถัดไป</li><li><b>จำนวนรอบหน้าทับ</b> (1 รอบ = หน้าทับ 1 จบ): ใช้เมื่อเพลงไม่มีโน้ตในแอป กลองจะตีครบตามจำนวนรอบแล้วจบพร้อมเพลง (เลือกได้ว่าจะทอดในรอบสุดท้ายหรือไม่) · 0 = ตีต่อเนื่อง</li><li><b>การขึ้น</b>: <b>ขึ้นพร้อมเพลง</b> = กลองเริ่มพร้อมกัน · <b>ขึ้นท้ายหน้าทับ</b> = เครื่องดนตรีขึ้นก่อน 2 ห้อง (แถบจังหวะนับห้องและจังหวะให้ดู) แล้วกลองรับ -โจ๊ะ-ติง | -ติง-ทั่ม ก่อนเข้าหน้าทับเต็ม 2 ห้องที่กลองรับนับเป็นรอบที่ 1</li></ul></div><div class="en"><ul><li>Pick a หน้าทับ pattern (Prop Kai, Song Mai, Luk Mot, Lao, Khmer, Khaek…). The pattern sheet lights up bar by bar.</li><li>Turn drums or ching on/off separately; set tempo and volume.</li><li><b>🐢 Slow-down ending</b> always completes the pattern: an 8-bar pattern plays from bar 1 and slows over bars 5–8; a 4-bar pattern plays one more round and slows over the next round, ending on chap + tum.</li><li>If you press it after bar 1 has passed, the app finishes the current round first.</li><li><b>Rounds</b> (1 round = one full pattern): for songs without notation in the app — the drums play that many rounds and end with the song (optionally slowing on the last round) · 0 = play until stopped.</li><li><b>Entry</b>: <b>Start with the song</b>, or <b>Pickup entry</b> — the melody leads for 2 bars (counted on the rhythm bar), then the drums answer -jo-ting | -ting-tum before the full pattern. The pickup counts as round 1.</li></ul></div></div></details><details><summary>🎼 <span class="th">ฝึกบรรเลงเพลง</span><span class="en">Song practice</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลง แอปแสดงโน้ตบรรทัดละ 8 ห้อง ห้องละ 4 จังหวะ แล้วกด ▶ เล่น</li><li>ติ๊ก “ให้ฉันเล่นเอง” แอปจะแสดงไฟนำบนปุ่ม แต่ไม่เล่นเสียงให้</li><li><b>พิมพ์โน้ตเอง</b>: แตะช่องห้อง แล้วกดปุ่มโน้ตด้านล่าง ครบ 4 จังหวะจะข้ามไปห้องถัดไปเอง · <b>–</b> = จังหวะว่าง · <b>( )</b> = ช่วงที่เล่นซ้ำ</li></ul></div><div class="en"><ul><li>Choose a song — notation shows 8 bars per line, 4 beats per bar — then press ▶.</li><li>Tick “I’ll play myself” to get guide lights without the app playing.</li><li><b>Write your own</b>: tap a bar, then tap note buttons; after 4 beats it moves to the next bar · <b>–</b> = rest · <b>( )</b> = repeat. You can also type C D E F G A B.</li></ul></div></div></details><details><summary>🎯 <span class="th">ฝึกซ้อมตามจังหวะ</span><span class="en">Practice (play along)</span></summary><div class="hb"><div class="th"><ul><li>เลือกเพลงและความเร็ว แอปนับ 1–2–3–4 แล้วตัวโน้ตเลื่อนผ่านเส้นเหนือปุ่มกด ให้กดตอนโน้ตถึงเส้น</li><li>เลือกได้ว่าจะแสดงตัวโน้ตหรือไม่ · ไฟนำบนปุ่ม · กลองแขก–ฉิ่งประกอบ · ทอดตอนจบเพลง</li><li>จบแล้วแอปแสดงคะแนนความแม่นยำ</li><li><b>ช่วงที่ฝึก</b>: เลือกฝึกทั้งเพลง ทีละท่อน หรือกำหนดห้องเอง (เลขห้องดูได้ที่มุมซ้ายบนของห้องแรกแต่ละแถวในโน้ต) ติ๊ก <b>🔁 วนซ้ำ</b> เพื่อเล่นช่วงนั้นซ้ำจนกว่าจะกดหยุด</li></ul></div><div class="en"><ul><li>Pick a song and tempo; after a 1–2–3–4 count-in, notes scroll across the line above the keys — press as each reaches the line.</li><li>Options: show notes, guide lights, drums & ching, slow-down ending.</li><li>Your accuracy score is shown at the end.</li><li><b>Section</b>: practise the whole song, one part, or chosen bars (bar numbers are at the top-left of each row in the notation). Tick <b>🔁 Loop</b> to repeat it until you stop.</li></ul></div></div></details><details><summary>📡 <span class="th">ห้องวง · เล่นพร้อมกันหลายเครื่อง</span><span class="en">Band room · play together</span></summary><div class="hb"><div class="th"><ul><li><b>ครู</b>: กด “สร้างห้อง” ได้รหัส 4 หลักและ QR ให้นักเรียนสแกน แล้วแจกเสียงให้แต่ละคน</li><li><b>นักเรียน</b>: สแกน QR หรือ “เข้าร่วมห้อง” ด้วยรหัส แล้วรอครูเริ่ม ทุกเครื่องนับ 4–3–2–1 พร้อมกัน</li><li>เสียงที่ไม่มีคนถือ เครื่องครูเล่นแทนได้</li><li><b>ล้อ-ขัด</b>: ครูเลือกกลุ่ม ก / ข ให้นักเรียนแต่ละคนได้ในรายชื่อ (แอปแบ่งให้อัตโนมัติ: คนที่ถือเสียงเดียวกันสลับกลุ่มกัน) นักเรียนจะเล่นเฉพาะห้องของกลุ่มตัวเองและห้องทั้งวง ถ้ากลุ่มไหนไม่มีคนถือเสียงนั้น เครื่องครูเล่นแทน</li><li><b>เฉพาะจังหวะ</b>: เครื่องครูตีกลองแขก–ฉิ่ง นักเรียนเล่นเพลงอื่นตามโน้ตของตนเอง กด 🐢 เพื่อทอดจบ</li><li>ครูเลือกช่วงที่ฝึก (ท่อน / ห้อง) ในหน้าฝึกซ้อมก่อนกดเริ่ม ทุกเครื่องจะเล่นช่วงเดียวกัน</li><li>หลังเล่นจบ กด <b>⬇️ ดาวน์โหลดคะแนน (Excel)</b> เพื่อเก็บคะแนนนักเรียนทุกคนทุกรอบเป็นไฟล์</li><li>ทุกเครื่องต้องต่ออินเทอร์เน็ต</li></ul></div><div class="en"><ul><li><b>Teacher</b>: “Create room” gives a 4-digit code and QR; assign notes to each student.</li><li><b>Students</b>: scan the QR or “Join a room” with the code and wait — everyone counts in together.</li><li>The teacher device can play notes nobody holds.</li><li><b>Lead/answer</b>: set group A / B for each student in the member list (auto: students on the same note alternate). Students play only their group's bars and the tutti bars; if a group has nobody on a note, the teacher device plays it.</li><li><b>Rhythm only</b>: the teacher device plays drums & ching while students play any song; press 🐢 to end.</li><li>The teacher's practice section (part / bars) is used for everyone.</li><li>After playing, tap <b>⬇️ Download scores (Excel)</b> to save every student's scores.</li><li>All devices need internet.</li></ul></div></div></details><details><summary>📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></summary><div class="hb"><div class="th"><ul><li>ถ่ายรูปโน้ต หรือเลือกไฟล์ รูปภาพ PDF Word Excel หรือข้อความ</li><li>เลือกว่าเป็น <b>โน้ตเพลง</b> หรือ <b>หน้าทับ</b> แอปอ่านแล้วแสดงให้ตรวจแก้ ห้องที่ผิดจะเป็นสีแดง</li><li>กดบันทึก เพลง/หน้าทับจะอยู่ในรายการเพลง ฝึกซ้อม และห้องวง (เก็บในเครื่องนี้)</li></ul></div><div class="en"><ul><li>Take a photo or pick an image, PDF, Word, Excel or text file.</li><li>Choose <b>melody</b> or <b>drum pattern</b>; check and fix the result — red bars need fixing.</li><li>Save it and it appears in the song, practice and band-room lists (on this device).</li></ul></div></div></details><details><summary>🔤 <span class="th">การอ่านโน้ตในแอป</span><span class="en">Reading the notation</span></summary><div class="hb"><div class="th"><ul><li>ด ร ม ฟ ซ ล ท (ภาษาอังกฤษแสดงเป็น C D E F G A B)</li><li><b>จุดใต้ตัวโน้ต</b> = เสียงต่ำ · <b>จุดบนตัวโน้ต</b> = เสียงสูง</li><li><b>–</b> = จังหวะว่าง · หนึ่งห้องมี 4 จังหวะ · จังหวะตกที่ตัวท้ายของห้อง</li><li><b>ลูกสะบัด</b>: โน้ตตัวเล็กมีเส้นโค้งอยู่เหนือโน้ต = เสียงนำเร็ว ๆ ก่อนตัวตกจังหวะ ตอนฝึกซ้อมแอปเล่นเสียงนำให้ ผู้เล่นกดตัวตกจังหวะ</li><li><b>ฟังเพลง (วงอังกะลุง 36 ตับ)</b>: เมนู ☰ → ฟังเพลง เลือกเพลงในคลัง แอปบรรเลงด้วยอังกะลุง 3 ช่วงเสียง พร้อมกลองแขก ฉิ่ง ฉาบเล็ก โหม่ง กรับ (เลือกเปิด-ปิดได้) หน้าทับตั้งตามประเภทเพลงให้ก่อน และเปลี่ยนเองได้</li><li><b>แถบโน้ตไหล</b>: เมื่อกดเล่นในฝึกบรรเลงเพลง จะมีแถบด้านบนจอแสดงโน้ตที่กำลังจะมาถึง กดให้ตรงตอนโน้ตถึงเส้นสีแดง</li><li><b>ล้อ-รับ และเลื่อม</b>: ล้อ (กลุ่ม ก) ใช้เสียงสูง รับ (กลุ่ม ข) ใช้เสียงต่ำ · เลื่อม: เครื่องนำเสียงสูงตรงจังหวะ เครื่องตามเสียงต่ำตามหลัง 1 จังหวะ (เขียน ^ หน้าห้อง หรือใส่คำว่า เลื่อม ในหัวข้อท่อน)</li><li><b>สะบัด / สะเดาะ</b>: เส้นโค้งคร่อมโน้ต 3 เสียงที่ต่างกัน = <b>สะบัด</b> (เส้นสีส้ม) เส้นโค้งคร่อมโน้ตเสียงเดียวกัน = <b>สะเดาะ</b> (เส้นสีน้ำเงิน) เล่นเร็ว ๆ ให้ตัวสุดท้ายตกจังหวะ ตอนฝึกซ้อมแอปเล่นตัวนำให้ ผู้เล่นกดตัวสุดท้าย · พิมพ์เองได้ด้วยเครื่องหมาย ~ หน้ากลุ่มโน้ต เช่น -~ฟซล หรือ ---~ซซซ</li><li><b>ล้อ-ขัด</b>: ห้องพื้นฟ้า = กลุ่ม ก (ล้อ) · ห้องพื้นเหลือง = กลุ่ม ข (ขัด) · ไม่มีสี = ทั้งวง</li><li><b>ดัง-เบา</b>: ตัวอักษร p (เบา) / f (ดัง) สีส้มที่มุมห้อง มีผลจนกว่าจะเปลี่ยน</li><li>หน้าทับ: ติง · ทั่ม · โจ๊ะ · จ๊ะ · ฉิ่ง ● · ฉับ ✕</li></ul></div><div class="en"><ul><li>Notes ด ร ม ฟ ซ ล ท are shown as C D E F G A B in English.</li><li><b>Dot below</b> = low · <b>dot above</b> = high.</li><li><b>–</b> = rest · 4 beats per bar · the strong beat is the last beat of each bar.</li><li><b>Ornament (ลูกสะบัด)</b>: small notes with an arc above = quick lead-in notes before the beat note; in practice the app plays them and you play the beat note.</li><li><b>Sabat / Sadoh</b>: an arc over three different notes = <b>sabat</b> (orange arc); an arc over the same note repeated = <b>sadoh</b> (blue arc). Play them quickly so the last note lands on the beat; in practice the app plays the lead-in notes and you play the last one. Type ~ before the group, e.g. -~ฟซล or ---~ซซซ.</li><li><b>Lead/answer</b>: blue bars = group A · yellow bars = group B · no colour = everyone.</li><li><b>Dynamics</b>: orange p (soft) / f (loud) in a bar corner, until changed.</li><li>Drum strokes: ting · tum · jo · ja · ching ● · chap ✕</li></ul></div></div></details><details><summary>⭐ <span class="th">อื่น ๆ</span><span class="en">Other</span></summary><div class="hb"><div class="th"><ul><li><b>เพลงพื้นหลัง</b>: เปิด/ปิดได้ที่ปุ่ม ♪ มุมซ้ายบนของหน้าแรก หรือเมนู ☰ → “เพลงพื้นหลัง” เลือกเพลงและความดังได้ใน “ตั้งค่าเสียง” เพลงดังเฉพาะหน้าแรก เมนู คู่มือ และหน้าตั้งค่า และหยุดเองเมื่อเริ่มบรรเลง</li><li><b>เสียงกดปุ่ม</b>: เปิด/ปิด และเลือกแบบเสียงได้ 7 แบบใน “ตั้งค่าเสียง” (เคาะไม้ ฉิ่งเบา อังกะลุงสั้น ป๊อป หยดน้ำ คลิกนุ่ม กลองแขกเบา) เลือกแล้วได้ยินตัวอย่างทันที</li><li><b>ประเมินความพึงพอใจ</b>: ช่วยบอกความเห็นเพื่อพัฒนาแอป</li><li><b>หน้าแรก / เปลี่ยนโหมด</b>: กลับไปเลือกโหมดหรือเปลี่ยนผู้ใช้</li><li>แอปที่ติดตั้งแล้วอัปเดตเองเมื่อเปิดขณะต่ออินเทอร์เน็ต (อาจต้องเปิดใหม่ 1–2 ครั้ง)</li></ul></div><div class="en"><ul><li><b>Background music</b>: turn it on/off with the ♪ button at the top left of the home screen or ☰ → “Background music”; pick the song and volume in Sound settings. It plays only on the home screen, menu, guide and settings, and stops when you start playing.</li><li><b>Button sounds</b>: on/off and 7 styles in Sound settings (you hear a preview when you pick one).</li><li><b>Rate the app</b>: share feedback to improve it.</li><li><b>Home / switch mode</b>: go back to choose a mode or switch user.</li><li>An installed app updates itself when opened online (may need 1–2 restarts).</li></ul></div></div></details>
   </div>
   <div class="card" id="impCard">
     <div id="impNo" class="rStat" hidden></div>
@@ -1960,6 +2002,26 @@ function chingHit(open,t){
     o.connect(g); g.connect(d); o.start(t); o.stop(t+dec+0.05); });
   slap(t,open?6000:4500,0.8,open?0.03:0.07,(open?0.12:0.3)*v,d,true);
 }
+// ฉาบเล็ก: เปิด = เสียงซ่าแหลม (ตีพร้อมฉิ่ง) · ปิด = เสียงแฉ่บสั้น (ตีพร้อมฉับ)
+function chabHit(open,t){
+  const d=drumOut(), v=0.85+Math.random()*0.15;
+  [[1390,0.07],[2210,0.06],[3170,0.05],[4630,0.04],[6120,0.03]].forEach(([f,a])=>{ const o=ctx.createOscillator(), g=ctx.createGain(); o.type='square'; o.frequency.value=f*(0.99+Math.random()*0.02);
+    const dec=open?0.55:0.08; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(a*v,t+0.002); g.gain.exponentialRampToValueAtTime(0.0001,t+dec);
+    const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1800; o.connect(hp); hp.connect(g); g.connect(d); o.start(t); o.stop(t+dec+0.05); });
+  slap(t,open?7000:5200,0.7,open?0.35:0.06,(open?0.22:0.38)*v,d,true);
+}
+// โหม่ง: เสียงทุ้มกังวาน มีเสียงสั่นระหว่างความถี่ใกล้กัน
+function mongHit(t,amp=1){
+  const d=drumOut(), f0=172;
+  [[1,0.5,3.2],[1.012,0.32,3.0],[2.02,0.12,1.6],[2.76,0.07,1.1],[4.1,0.035,0.6]].forEach(([r,a,dec])=>{ const o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f0*r*1.02,t); o.frequency.exponentialRampToValueAtTime(f0*r,t+0.08);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(a*amp,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+dec); o.connect(g); g.connect(d); o.start(t); o.stop(t+dec+0.05); });
+  membrane(t,260,150,0.08,0.25*amp,d);
+}
+// กรับ: ไม้กระทบกัน เสียงแกร๊ก สั้นและแห้ง
+function krapHit(t){
+  const d=drumOut(), v=0.8+Math.random()*0.2;
+  membrane(t,1550,1150,0.035,0.32*v,d,'triangle'); slap(t,2400,3,0.03,0.5*v,d); slap(t+0.012,2100,3,0.02,0.22*v,d);
+}
 let drumPat=null, drumBoxEls=[], drumRun=null;
 function loadDrum(key){
   drumPat=NATAB[key]; drumSheet.innerHTML=''; drumBoxEls=[];
@@ -1983,6 +2045,7 @@ drumSel.onchange=()=>{ store.set('drumSel',drumSel.value); const was=!!drumRun; 
 loadDrum(drumSel.value);
 drumTempo.value=store.get('drumTempo',160); drumTempoV.textContent=drumTempo.value;
 drumTempo.oninput=()=>{ drumTempoV.textContent=drumTempo.value; store.set('drumTempo',+drumTempo.value); };
+['useChab','useMong','useKrap'].forEach(id=>{ const el=document.getElementById(id); el.checked=store.get(id,true); el.addEventListener('change',()=>{ store.set(id,el.checked); document.querySelectorAll(`[data-sync="${id}"]`).forEach(x=>x.checked=el.checked); }); });
 drumVol.value=store.get('drumVol',0.7);
 drumVol.oninput=()=>{ store.set('drumVol',+drumVol.value); if(drumGain) drumGain.gain.value=+drumVol.value; };
 // ทอดจังหวะ: ช่องท้าย ๆ ยืดยาวขึ้นเรื่อย ๆ จนช้าลงเกือบครึ่ง แล้วจบด้วยฉับ + ทั่ม
@@ -2016,7 +2079,7 @@ function drumStart(rate,at,opt){
       const n=drumPat.slots.length, si=r.si%n, inPick=r.plan&&r.plan.pick&&r.si<r.plan.firstFull, k=inPick?PICK_SLOTS[r.si-r.plan.startSi]:drumPat.slots[si], t=r.next;
       const last = r.times ? r.si>=r.times.length-2 : (r.rit && r.si>=r.rit.end);
       if(last){   // จบเพลง: ฉับ + ทั่ม พร้อมกัน
-        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t);
+        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t); if(useChab.checked) chabHit(false,t); if(useKrap.checked) krapHit(t); if(useMong.checked) mongHit(t,1.1);
         if(r.onHit) r.onHit('chap',t);
         r.done=true; const ms=Math.max(0,(t-ctx.currentTime)*1000);
         r.uiT.push(setTimeout(()=>{ if(r.onEnd) r.onEnd(); if(drumRun===r) drumStop(); },ms+1200)); break;
@@ -2024,6 +2087,9 @@ function drumStart(rate,at,opt){
       if(k!=='-' && useKlong.checked) drumHit(k,t);
       if(drumPat.slots2&&!inPick){ const k2=drumPat.slots2[si]; if(k2&&k2!=='-'&&useKlong.checked) drumHit(k2,t+0.004); }
       const c=chingAt(si); if(c && useChing.checked) chingHit(c==='ching',t);
+      if(c && useChab.checked) chabHit(c==='ching',t+0.003);
+      if(c && useKrap.checked) krapHit(t+0.002);
+      if(useMong.checked && !inPick && si===n-1) mongHit(t+0.004);   // โหม่งตกท้ายหน้าทับทุกรอบ
       if(c && r.onHit) r.onHit(c,t);
       if(si%4===0){ const bi=si/4, ms=Math.max(0,(t-ctx.currentTime)*1000);
         r.uiT.push(setTimeout(()=>{ drumBoxEls.forEach(x=>x.classList.remove('now')); drumBoxEls[bi]&&drumBoxEls[bi].classList.add('now'); },ms)); }
@@ -2449,10 +2515,11 @@ const NOTE_CH='ดรมฟซลท';
 const DYN={pp:0.35,p:0.5,mp:0.68,mf:0.85,f:1,ff:1.15};
 function parseSheet(text){
   const boxes=[];
-  let label=null, grp=null, vel=1;
+  let label=null, grp=null, vel=1, secLem=false;
   text.replace(/\(:/g,'(').replace(/:\)/g,')').replace(/[–—]/g,'-').split(/\n/).forEach((line,li)=>{
-    if(/^\s*#/.test(line)){ label=line.replace(/^\s*#\s*/,'').trim(); return; }
+    if(/^\s*#/.test(line)){ label=line.replace(/^\s*#\s*/,'').trim(); secLem=/เลื่อม/.test(label); return; }
     line.split('|').map(x=>x.trim()).filter(x=>x).forEach(raw=>{
+      let lem=false; raw=raw.replace(/^([\s(<\[]*)\^/,(m,a)=>{ lem=true; return a; });   // ^ = บรรเลงเลื่อม
       raw=raw.replace(/^(pp|mp|mf|ff|p|f)([(<\[]+)/,'$2$1');   // เขียน p ก่อนวงเล็บก็ได้
       const lead=(raw.match(/^[\s(<\[]*/)||[''])[0], trail=(raw.match(/[\s)>\]]*$/)||[''])[0];
       const open=lead.includes('('), close=trail.includes(')');
@@ -2492,7 +2559,7 @@ function parseSheet(text){
       });
       if(gOpen) grp=gOpen;
       if(!slots.length && !open && !close){ if(gClose) grp=null; return; }
-      boxes.push({shown, slots, line:li, open, close, label, grp, vel, dyn, orn:Object.keys(orn).length?orn:null, tech:Object.keys(tech).length?tech:null, arcs:arcs.length?arcs:null, disp:arcs.length?disp:null}); label=null;
+      boxes.push({shown, slots, line:li, open, close, label, grp, vel, dyn, orn:Object.keys(orn).length?orn:null, tech:Object.keys(tech).length?tech:null, lem:lem||secLem, arcs:arcs.length?arcs:null, disp:arcs.length?disp:null}); label=null;
       if(gClose) grp=null;
     });
   });
@@ -2524,28 +2591,29 @@ function renderSheet8(boxes,el){
     const i=r[k]; if(i===undefined) return `<div class="sb empty"></div>`;
     const b=boxes[i], sl=b.slots.slice(0,4); while(sl.length<4) sl.unshift(null);
     const pad=4-Math.min(4,b.slots.length);
-    const head=`<div class="sb${b.open?' ro':''}${b.close?' rc':''}${b.grp?' g-'+b.grp:''}${b.orn&&!b.arcs?' hasOrn':''}${b.arcs?' hasArc':''}" data-i="${i}">${k===0?`<i class="bn">${i+1}</i>`:''}${b.dyn?`<i class="dyn">${b.dyn}</i>`:''}`;
+    const head=`<div class="sb${b.open?' ro':''}${b.close?' rc':''}${b.grp?' g-'+b.grp:''}${b.orn&&!b.arcs?' hasOrn':''}${b.arcs?' hasArc':''}${b.lem?' lem':''}" data-i="${i}">${k===0?`<i class="bn">${i+1}</i>`:''}${b.dyn?`<i class="dyn">${b.dyn}</i>`:''}`;
     if(b.arcs){   // เส้นโค้ง: แสดงโน้ตตามตำแหน่งที่เขียน แล้ววาดเส้นโค้งคร่อมกลุ่ม
       const dp=b.disp.slice(0,4); const pd=4-dp.length; while(dp.length<4) dp.unshift(null);
       return head+dp.map(c=>c===null?'<span class="s r">-</span>':`<span class="s${c.length>1?' sm':''}">${c.map(noteSpan).join('')}</span>`).join('')
         +b.arcs.map(a=>`<i class="arc ${a.kind}" style="right:${(3-(a.to+pd))*25+1}%;width:${(a.to-a.from+1)*25-3}%" title="${a.kind==='sadoh'?L('สะเดาะ','Sadoh (repeated)'):L('สะบัด','Sabat (flick)')}"></i>`).join('')+'</div>'; }
     return head+`${sl.map((st,k)=>{ const og=b.orn&&b.orn[k-pad];
       return st===null?'<span class="s r">-</span>':`<span class="s${og?' so':''}">${og?`<span class="orn">${og.map(noteSpan).join('')}</span>`:''}${noteSpan(st)}</span>`; }).join('')}</div>`; }).join('')}</div>`).join('');
+  if(boxes.some(b=>b.lem)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="lgLem">${L('เลื่อม: เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ ตามหลัง 1 จังหวะ','Lem: leader plays high, follower plays low one beat later')}</span></div>`);
   if(boxes.some(b=>b.arcs)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="lgArc"><i style="border-color:#f95738"></i>${L('สะบัด (เส้นโค้งบนโน้ตต่างเสียง)','Sabat (arc over different notes)')}</span><span class="lgArc"><i style="border-color:#0d3b66"></i>${L('สะเดาะ (เส้นโค้งบนโน้ตเสียงเดียวกัน)','Sadoh (arc over the same note)')}</span></div>`);
-  if(boxes.some(b=>b.grp)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="ga">${L('กลุ่ม ก · ล้อ','Group A · lead')}</span><span class="gb">${L('กลุ่ม ข · ขัด','Group B · answer')}</span><span>${L('ไม่มีสี = ทั้งวง','No colour = everyone')}</span></div>`);
+  if(boxes.some(b=>b.grp)) el.insertAdjacentHTML('afterbegin',`<div class="gLegend"><span class="ga">${L('กลุ่ม ก · ล้อ (เสียงสูง)','Group A · lead (high)')}</span><span class="gb">${L('กลุ่ม ข · รับ (เสียงต่ำ)','Group B · answer (low)')}</span><span>${L('ไม่มีสี = ทั้งวง','No colour = everyone')}</span></div>`);
   el.querySelectorAll('.sb[data-i]').forEach(d=>els[+d.dataset.i]=d);
   return els;
 }
 // ---------- ตัวแก้ไขโน้ตแบบตาราง 8 ห้อง ----------
-const OK_BOX=/^[(<\[]*(pp|mp|mf|ff|p|f)?([ดรมฟซลท][ํฺุ̣]?|-|\{([ดรมฟซลท][ํฺุ̣]?){2,4}\}|[~⌒]([ดรมฟซลท][ํฺุ̣]?){2,4})*[)>\]]*$/;
-function boxSlots(t){ if(/[~⌒]/.test(t)){ const o=(t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/[~⌒]([ดรมฟซลท][ํฺุ̣]?)+/g,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; return o<4?4:o+1; } return (t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; }
+const OK_BOX=/^\^?[(<\[]*(pp|mp|mf|ff|p|f)?([ดรมฟซลท][ํฺุ̣]?|-|\{([ดรมฟซลท][ํฺุ̣]?){2,4}\}|[~⌒]([ดรมฟซลท][ํฺุ̣]?){2,4})*[)>\]]*$/;
+function boxSlots(t){ t=t.replace(/^\^/,''); if(/[~⌒]/.test(t)){ const o=(t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/[~⌒]([ดรมฟซลท][ํฺุ̣]?)+/g,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; return o<4?4:o+1; } return (t.replace(/ล้อ/g,'--').replace(/[()<>\[\]]/g,'').replace(/^(pp|mp|mf|ff|p|f)/,'').replace(/\{[^}]*\}/g,'ส').match(/[ดรมฟซลทส][ํฺุ̣]?|-/g)||[]).length; }
 function makeGrid(host,text,onChange){
   let rows=[], lastIn=null;
   host.innerHTML=`<div class="g8"></div>
     <div class="gPal">${'ดรมฟซลท'.split('').map(n=>`<button type="button" data-k="${n}" style="color:${NOTES['ดรมฟซลท'.indexOf(n)].c}">${NN(NOTES['ดรมฟซลท'.indexOf(n)])}</button>`).join('')}
       <button type="button" class="mk" data-k="ํ" title="เสียงสูง">◌ํ</button><button type="button" class="mk" data-k="ฺ" title="เสียงต่ำ">◌ฺ</button>
       <button type="button" class="mk" data-k="-">–</button><button type="button" class="ac" data-k="(">(</button><button type="button" class="ac" data-k=")">)</button>
-      <button type="button" class="ac" data-k="{" title="ลูกสะบัด: เริ่ม">{</button><button type="button" class="ac" data-k="}" title="ลูกสะบัด: จบ">}</button><button type="button" class="ac" data-k="~" title="เส้นโค้ง: สะบัด (ต่างเสียง) / สะเดาะ (เสียงเดียวกัน) · กดก่อนพิมพ์กลุ่มโน้ต">⌒</button>
+      <button type="button" class="ac" data-k="{" title="ลูกสะบัด: เริ่ม">{</button><button type="button" class="ac" data-k="}" title="ลูกสะบัด: จบ">}</button><button type="button" class="ac" data-k="^" title="เลื่อม: เครื่องนำเสียงสูง เครื่องตามเสียงต่ำ · กดก่อนพิมพ์ห้อง">^</button><button type="button" class="ac" data-k="~" title="เส้นโค้ง: สะบัด (ต่างเสียง) / สะเดาะ (เสียงเดียวกัน) · กดก่อนพิมพ์กลุ่มโน้ต">⌒</button>
       <button type="button" class="ac" data-k="<" title="กลุ่ม ก (ล้อ)">&lt;</button><button type="button" class="ac" data-k=">" title="กลุ่ม ก จบ">&gt;</button>
       <button type="button" class="ac" data-k="[" title="กลุ่ม ข (ขัด)">[</button><button type="button" class="ac" data-k="]" title="กลุ่ม ข จบ">]</button>
       <button type="button" class="ac" data-k="p" title="เบา">p</button><button type="button" class="ac" data-k="f" title="ดัง">f</button>
@@ -2587,17 +2655,22 @@ function loadSong(song){
   curSong=song; stopSong();
   const boxes=parseSheet(song.text); song.boxes=boxes;
   boxEls=renderSheet8(boxes,sheet);
+  if(!song.custom && song.name!=='โน้ตที่พิมพ์เอง' && window.drumSel){ const pk=defPat(song); if(NATAB[pk] && drumSel.value!==pk){ drumSel.value=pk; store.set('drumSel',pk); if(!drumRun) loadDrum(pk); } }
   score.value=song.text; if(window.ownGrid) ownGrid.set(song.text);
 }
-const SONG_CATS=[['folk','เพลงทั่วไป · General'],['ak','วงอังกะลุง (ศิลปหัตถกรรม) · Angklung ensemble (contest)'],['solo','ทำนองหลัก เดี่ยวดนตรีไทย (ศิลปหัตถกรรม) · Thai solo main melodies (contest)'],['string','วงเครื่องสาย (ศิลปหัตถกรรม) · String ensemble (contest)'],['khlui','ขลุ่ยเพียงออหมู่ (ศิลปหัตถกรรม) · Khlui ensemble (contest)'],['mine','เพลงที่นำเข้าเอง · My imported songs']];
-function fillSongs(sel,opt={}){
-  SONG_CATS.forEach(([k,lab])=>{
-    const items=SONGS.map((sg,i)=>[sg,i]).filter(([sg])=>sg && (sg.custom?'mine':(sg.cat||'folk'))===k && !(opt.noCustom&&sg.custom));
-    if(!items.length) return;
-    const g=document.createElement('optgroup'); g.dataset.lab=lab; g.label=pair(lab);
-    items.forEach(([sg,i])=>{ const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); if(opt.th) o.dataset.th=sg.name; g.appendChild(o); });
-    sel.appendChild(g); });
+function songRank(sg){ const t=(sg.name||'').split(' · ')[0];
+  if(/^โหมโรง/.test(t)) return 4; if(/เถา/.test(t)) return 3; if(/สามชั้น/.test(t)) return 2; if(/สองชั้น/.test(t)) return 1; return 0; }
+function songOrder(opt={}){
+  const items=SONGS.map((sg,i)=>[sg,i]).filter(([sg])=>sg && !(opt.noCustom&&sg.custom));
+  return items.sort((x,y)=>(x[0].custom?1:0)-(y[0].custom?1:0) || songRank(x[0])-songRank(y[0]) || x[0].name.localeCompare(y[0].name,'th'));
 }
+function fillSongs(sel,opt={}){
+  songOrder(opt).forEach(([sg,i])=>{ const o=document.createElement('option'); o.value=i; o.textContent=(sg.custom?'':'🎵 ')+pair(sg.name); if(opt.th) o.dataset.th=sg.name; sel.appendChild(o); });
+}
+// หน้าทับตั้งต้นตามประเภทเพลง (เลือกเปลี่ยนเองได้)
+function defPat(sg){ if(!sg) return 'prob2'; if(sg.pat && NATAB[sg.pat]) return sg.pat;
+  const t=(sg.name||'').split(' · ')[0];
+  if(/ชั้นเดียว/.test(t)) return 'prob1'; if(/สองชั้น/.test(t)) return 'prob2'; if(/สามชั้น|เถา|โหมโรง/.test(t)) return 'prob3'; return 'prob2'; }
 fillSongs(songSel);
 const ownOpt=document.createElement('option'); ownOpt.value='own'; ownOpt.textContent='✏️ '+L('โน้ตที่พิมพ์เอง','My notation'); songSel.appendChild(ownOpt);
 let ownText=store.get('ownSong','---- | ---ล | --ซล | ดํรํ-ดํ');
@@ -2613,6 +2686,21 @@ useOwn.onclick=()=>{ ownText=score.value; store.set('ownSong',ownText); songSel.
 tempo.value=store.get('tempo2',150); tempoV.textContent=tempo.value;
 tempo.oninput=()=>{tempoV.textContent=tempo.value; store.set('tempo2',+tempo.value);};
 let timers=[], songVoices=[];
+// แปลงห้องเพลงเป็นเหตุการณ์ตามเวลา (หน่วย = ช่อง) แล้วใส่เทคนิค
+//  ล้อ (กลุ่ม ก) = เสียงสูง · รับ (กลุ่ม ข) = เสียงต่ำ · เลื่อม = เครื่องนำเสียงสูงตรงจังหวะ เครื่องตามเสียงต่ำตามหลัง 1 ช่อง
+function songEvents(boxes,lo,hi){
+  const order=playOrder(boxes), raw=[], bxT=[]; let t=0;
+  order.forEach(bi=>{ const b=boxes[bi]; bxT.push({t,bi});
+    b.slots.forEach((st,k)=>{ if(st!==null) raw.push({t, st, vel:b.vel||1, orn:b.orn&&b.orn[k], tech:b.tech&&b.tech[k], grp:b.grp, lem:b.lem}); t++; });
+    if(b.slots.length<4) t+=4-b.slots.length; });
+  const up=x=>x+7<=hi?x+7:x, dn=x=>x-7>=lo?x-7:x, ev=[];
+  raw.forEach((e,k)=>{ const d=Math.min(2,((k+1<raw.length?raw[k+1].t:t)-e.t));
+    let st=e.st; if(e.grp==='a') st=up(st); else if(e.grp==='b') st=dn(st);
+    if(e.lem){ ev.push({...e,st:up(e.st),d:Math.min(d,1)}); ev.push({t:e.t+1,st:dn(e.st),vel:(e.vel||1)*0.85,d:Math.min(Math.max(d-1,0.6),1.4),follow:true}); }
+    else ev.push({...e,st,d}); });
+  ev.sort((x,y)=>x.t-y.t);
+  return {ev,bxT,total:t};
+}
 // โน้ตเพลงตั้งเวลาด้วยนาฬิกาเสียง จึงตรงจังหวะกับกลองแขกพอดี
 function ornNotes(steps,shift,ts,slotSec,amp=1,els,kind){
   const g=kind==='sadoh'?Math.max(0.04,Math.min(0.065,slotSec/5)):kind==='sabat'?Math.max(0.05,Math.min(0.09,slotSec/3.5)):Math.max(0.045,Math.min(0.085,slotSec/4)), now=ctx.currentTime;
@@ -2627,6 +2715,25 @@ function songNote(a,ts,te,els,amp=1){
   timers.push(setTimeout(()=>els.forEach(e=>e.classList.add('play')),Math.max(0,(ts-now)*1000)));
   timers.push(setTimeout(()=>els.forEach(e=>e.classList.remove('play')),Math.max(0,(te-now)*1000)));
 }
+const FLOW={el:null,raf:0};
+function flowShow(ev,T0,slotMs,song){
+  if(!FLOW.el){ const d=document.createElement('div'); d.id='flow'; d.innerHTML='<div class="flTrack"></div><div class="flHead"></div><button type="button" class="flX" aria-label="หยุด / Stop">✕</button><div class="flHint"></div>'; document.body.appendChild(d); FLOW.el=d;
+    d.querySelector('.flX').onclick=()=>stopSong(); }
+  const PX=Math.max(34,Math.min(56,innerWidth/18)), tr=FLOW.el.querySelector('.flTrack');
+  FLOW.el.style.setProperty('--px',PX+'px');
+  const sh=song.shift||0;
+  tr.innerHTML=ev.filter(e=>!e.follow).map(e=>{ const a=AK[fitStep(e.st+sh)+7]; return `<span class="fn${e.grp?' g-'+e.grp:''}" style="left:${e.t*PX}px;--c:${a.c};color:${a.c}">${a.html}</span>`; }).join('');
+  FLOW.el.querySelector('.flHint').textContent=L('โน้ตไหลเข้าหาเส้น · กดตอนโน้ตถึงเส้น','Notes flow to the line · play when they reach it');
+  FLOW.el.classList.add('on'); document.body.classList.add('flowOn'); if(window.fitSoon) fitSoon();
+  const head=Math.min(140,innerWidth*0.22), notes=[...tr.children];
+  cancelAnimationFrame(FLOW.raf); let hi=0;
+  const tick=()=>{ const ms=(ctx.currentTime-T0)*1000, x=head-ms/slotMs*PX; tr.style.transform=`translateX(${x}px)`;
+    const cur=ms/slotMs; while(hi<notes.length && parseFloat(notes[hi].style.left)/PX<cur-0.6){ notes[hi].classList.remove('now'); hi++; }
+    for(let j=hi;j<Math.min(notes.length,hi+3);j++){ const nt=parseFloat(notes[j].style.left)/PX; notes[j].classList.toggle('now',Math.abs(nt-cur)<0.6); }
+    FLOW.raf=requestAnimationFrame(tick); };
+  tick();
+}
+function flowHide(){ if(!FLOW.el) return; cancelAnimationFrame(FLOW.raf); FLOW.el.classList.remove('on'); document.body.classList.remove('flowOn'); if(window.fitSoon) fitSoon(); }
 function stopSong(){
   timers.forEach(x=>{ clearTimeout(x); clearInterval(x); }); timers=[];
   songVoices.forEach(v=>{ try{ const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,0.03); v.src.stop(t+0.2);}catch(e){} }); songVoices=[];
@@ -2634,21 +2741,16 @@ function stopSong(){
   slotCards.forEach(c=>c.classList.remove('cue')); soloEls.forEach(c=>c.classList.remove('cue'));
   boxEls.forEach(b=>b.classList.remove('now'));
   if(drumRun && drumRun.rate) drumStop();
+  flowHide();
 }
 playScore.onclick=()=>{
   if(!curSong) return;
   initAudio(); ctx.resume(); stopSong(); loadAngklung();
   const T0=ctx.currentTime+0.15, T0ms=performance.now()+150;
-  const slotMs=60000/ +tempo.value, boxes=curSong.boxes, order=playOrder(boxes);
-  // รวมเป็นเหตุการณ์ตามเวลา
-  const ev=[], bxT=[]; let t=0;
-  order.forEach(bi=>{
-    const b=boxes[bi]; bxT.push({t,bi});
-    b.slots.forEach((st,k)=>{ if(st!==null) ev.push({t, st, vel:b.vel||1, orn:b.orn&&b.orn[k], tech:b.tech&&b.tech[k]}); t++; });
-    if(b.slots.length<4) t+=4-b.slots.length;
-  });
-  const total=t;
-  if(drumWithSong.checked){ if(curSong.pat && NATAB[curSong.pat] && drumSel.value!==curSong.pat){ drumSel.value=curSong.pat; loadDrum(curSong.pat); } drumStart(+tempo.value,T0,{noPlan:true}); }
+  const slotMs=60000/ +tempo.value, boxes=curSong.boxes, sh=curSong.shift||0;
+  const {ev,bxT,total}=songEvents(boxes,-7-sh,6-sh);
+  flowShow(ev,T0,slotMs,curSong);
+  if(drumWithSong.checked){ loadDrum(drumSel.value); drumStart(+tempo.value,T0,{noPlan:true}); }
   const song=curSong, mine=leaveMine.checked; let k=0, kb=0, ended=false;
   const sched=()=>{
     const horizon=(ctx.currentTime-T0)*1000+1500;     // ตั้งล่วงหน้า 1.5 วินาที
@@ -2656,9 +2758,9 @@ playScore.onclick=()=>{
     while(kb<bxT.length && bxT[kb].t*slotMs<horizon){ const {t:bt,bi}=bxT[kb++];
       timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); boxEls[bi]&&boxEls[bi].classList.add('now'); boxEls[bi]&&boxEls[bi].scrollIntoView({block:'nearest'}); }, off(bt*slotMs))); }
     while(k<ev.length && ev[k].t*slotMs<horizon){
-      const e=ev[k], a=AK[fitStep(e.st+song.shift)+7];
-      const gap=(k+1<ev.length? ev[k+1].t : total)-e.t; k++;
-      const t0=e.t*slotMs, t1=t0+Math.min(gap,2)*slotMs*0.9;
+      const e=ev[k], a=AK[fitStep(e.st+song.shift)+7]; k++;
+      const t0=e.t*slotMs, t1=t0+e.d*slotMs*0.9;
+      if(e.follow){ songNote(a,T0+t0/1000,T0+t1/1000,(playMode==='solo'?[soloEls[a.idx]]:(rackEls[a.idx]||[])),e.vel); continue; }
       const cueEls = playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s]);
       if(cueEls.length){
         timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.add('cue')), off(t0-slotMs*0.3)));
@@ -2743,7 +2845,7 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
   const setCard=tuneSeg.closest('.card'), drumCard=document.querySelector('.drumCard'), songCard=scoreBox.closest('.card');
   [setCard,drumCard,songCard].forEach(c=>popStore.appendChild(c)); popStore.appendChild(pracCard); popStore.appendChild(roomCard); popStore.appendChild(impCard);
   scoreBox.open=true;
-  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']},room:{c:roomCard,t:['👥 ห้องวง · เล่นพร้อมกัน','👥 Band room · play together']},imp:{c:impCard,t:['📥 นำเข้าโน้ต','📥 Import notation']},help:{c:helpCard,t:['📖 คู่มือการใช้งาน','📖 User guide']},hist:{c:histCard,t:['📜 ประวัติอังกะลุง','📜 Angklung history']}};
+  const POPS={set:{c:setCard,t:['⚙️ ตั้งค่าเสียง','⚙️ Sound settings']},drum:{c:drumCard,t:['🥁 เครื่องประกอบจังหวะ · กลองแขกและฉิ่ง','🥁 Rhythm · Klong Khaek & Ching']},song:{c:songCard,t:['🎼 ฝึกบรรเลงเพลง','🎼 Song practice']},lis:{c:lisCard,t:['🎧 ฟังเพลง · วงอังกะลุง 36 ตับ','🎧 Listen · 36-frame angklung ensemble']},prac:{c:pracCard,t:['🎯 ฝึกซ้อมตามจังหวะ','🎯 Practice (play along)']},room:{c:roomCard,t:['👥 ห้องวง · เล่นพร้อมกัน','👥 Band room · play together']},imp:{c:impCard,t:['📥 นำเข้าโน้ต','📥 Import notation']},help:{c:helpCard,t:['📖 คู่มือการใช้งาน','📖 User guide']},hist:{c:histCard,t:['📜 ประวัติอังกะลุง','📜 Angklung history']}};
   let cur=null;
   window.openPop=k=>{ closePop(); const p=POPS[k]; cur=p; popTitle.textContent=L(p.t[0],p.t[1]); popBody.appendChild(p.c); pop.hidden=false; fabMenu.hidden=true; menuFab.textContent='☰'; fab.classList.remove('menuOpen'); };
   window.closePop=()=>{ if(cur){ popStore.appendChild(cur.c); cur=null; } pop.hidden=true; };
@@ -2759,8 +2861,8 @@ if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
   playScore.addEventListener('click',()=>setTimeout(closePop,120));
   drumPlay.addEventListener('click',()=>setTimeout(closePop,120));
   // ปุ่มหยุดลอย: ขึ้นเมื่อกลองหรือเพลงกำลังเล่น
-  stopFab.onclick=()=>{ if(window.ROOM&&ROOM.role==='host'){ roomStopAll(); return; } stopSong(); drumStop(); if(window.pracStop) pracStop(); };
-  setInterval(()=>{ stopFab.hidden=!(drumRun || timers.length || (window.P&&P.run)); },300);
+  stopFab.onclick=()=>{ if(window.ROOM&&ROOM.role==='host'){ roomStopAll(); return; } if(window.lisStop) lisStop(); stopSong(); drumStop(); if(window.pracStop) pracStop(); };
+  setInterval(()=>{ stopFab.hidden=!(drumRun || timers.length || (window.P&&P.run) || (window.LIS&&LIS.run)); },300);
   // ปุ่มเลื่อนหน้าจอ: แตะ = ขึ้นบนสุด/ลงล่าง · กดค้างแล้วลากขึ้น–ลง = เลื่อนตามนิ้ว
   let sy=null, moved=0, lastY=0;
   scrollFab.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); sy=e.clientY; lastY=e.clientY; moved=0; scrollFab.setPointerCapture(e.pointerId); scrollFab.classList.add('drag'); });
@@ -2830,11 +2932,61 @@ function fitKeys(){
     stage.classList.toggle('bandPortrait',portrait);
   }
 }
-let fitT=0; const fitSoon=()=>{ clearTimeout(fitT); fitT=setTimeout(fitKeys,80); };
+let fitT=0; const fitSoon=window.fitSoon=()=>{ clearTimeout(fitT); fitT=setTimeout(fitKeys,80); };
 addEventListener('resize',fitSoon); addEventListener('orientationchange',()=>setTimeout(fitKeys,250));
 new MutationObserver(fitSoon).observe(document.body,{attributes:true,attributeFilter:['class']});
 setTimeout(fitKeys,300);
 
+
+// ---------- ฟังเพลง: วงอังกะลุงขนาดใหญ่ 36 ตับ (3 ช่วงเสียง: ต่ำ ฺ · กลาง · สูง ํ) ----------
+const LIS={run:false,timers:[],voices:[],iv:0,els:[]};
+function a3(st){ while(st<-7) st+=7; while(st>13) st-=7; const d=((st%7)+7)%7, o=Math.floor(st/7); return {step:-7+d+7*o}; }
+function lisVoice(st,ts,te,amp){
+  const a=a3(st);
+  [[0,0.75,1],[0.009,0.42,1.0035],[0.016,0.25,0.9975]].forEach(([dt,g,r])=>{ const v=akVoice(a,ts+dt,true,amp*g); if(!v) return; v.src.playbackRate.value*=r;
+    v.g.gain.setValueAtTime(AK_GAIN*amp*g,te); v.g.gain.setTargetAtTime(0,te,0.07); v.src.stop(te+0.6); LIS.voices.push(v); });
+}
+function lisOrn(steps,ts,slotSec,amp,kind){ const g=kind==='sadoh'?Math.max(0.04,Math.min(0.065,slotSec/5)):Math.max(0.05,Math.min(0.09,slotSec/3.5));
+  steps.forEach((st,j)=>{ const t=ts-(steps.length-j)*g; if(t>ctx.currentTime) hitVoice(a3(st),t,amp*0.8); }); }
+function lisCur(){ return SONGS[+lisSong.value]; }
+function lisLoad(){ const sg=lisCur(); if(!sg) return; store.set('lisSong',lisSong.value); lisPat.value=defPat(sg); const bx=parseSheet(sg.text); sg.boxes=bx; let lab=''; bx.forEach(b=>{ if(b.label) lab=b.label; b.secLab=lab; }); LIS.els=renderSheet8(bx,lisSheet); }
+function lisStop(){ if(!LIS.run && !LIS.voices.length) return; LIS.run=false; clearInterval(LIS.iv); LIS.timers.forEach(clearTimeout); LIS.timers=[];
+  LIS.voices.forEach(v=>{ try{ const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,0.04); v.src.stop(t+0.3);}catch(e){} }); LIS.voices=[];
+  LIS.els.forEach(x=>x&&x.classList.remove('now')); lisNow.textContent=''; if(drumRun) drumStop(); lisPlay.classList.remove('on'); }
+function lisStart(){
+  const sg=lisCur(); if(!sg) return;
+  initAudio(); ctx.resume(); loadAngklung(); stopSong(); if(window.pracStop && window.P && P.run) pracStop(); lisStop(); bgmHalt&&bgmHalt(true);
+  const bx=sg.boxes||parseSheet(sg.text), slotMs=60000/ +lisTempo.value, T0=ctx.currentTime+0.25;
+  const {ev,bxT,total}=songEvents(bx,-7,13);   // 3 ช่วงเสียง: ล้อ/เครื่องนำขึ้นเสียงสูง รับ/เครื่องตามลงเสียงต่ำ
+  if(NATAB[lisPat.value]){ drumSel.value=lisPat.value; loadDrum(lisPat.value); }
+  drumStart(+lisTempo.value,T0,{noPlan:true});
+  LIS.run=true; lisPlay.classList.add('on'); let k=0,kb=0;
+  const sched=()=>{ if(!LIS.run) return;
+    const now=(ctx.currentTime-T0)*1000, horizon=now+1500, off=ms=>Math.max(0,ms-now);
+    while(kb<bxT.length && bxT[kb].t*slotMs<horizon){ const {t,bi}=bxT[kb++]; const b=bx[bi];
+      LIS.timers.push(setTimeout(()=>{ LIS.els.forEach(x=>x&&x.classList.remove('now')); const el=LIS.els[bi]; if(el){ el.classList.add('now'); el.scrollIntoView({block:'nearest'}); }
+        lisNow.textContent=(b.secLab?b.secLab+' · ':'')+L('ห้องที่ ','Bar ')+(bi+1)+(b.lem?' · '+L('เลื่อม','lem'):'')+(b.grp==='a'?' · '+L('ล้อ (สูง)','lead (high)'):b.grp==='b'?' · '+L('รับ (ต่ำ)','answer (low)'):''); },off(t*slotMs))); }
+    while(k<ev.length && ev[k].t*slotMs<horizon){ const e=ev[k++], ts=T0+e.t*slotMs/1000, te=ts+e.d*slotMs/1000*0.92;
+      if(e.orn) lisOrn(e.orn,ts,slotMs/1000,e.vel,e.tech);
+      lisVoice(e.st,ts,te,(e.vel||1)*(e.follow?0.85:1)); }
+    if(LIS.voices.length>120) LIS.voices.splice(0,LIS.voices.length-120);
+    if(k>=ev.length && kb>=bxT.length){ clearInterval(LIS.iv);
+      LIS.timers.push(setTimeout(()=>{ if(drumRun) drumStop(); const t=ctx.currentTime+0.02;   // ลงจบ: ฉับ + ทั่ม + โหม่ง
+        if(useChing.checked) chingHit(false,t); if(useKlong.checked) drumHit('ทั่ม',t); if(useChab.checked) chabHit(false,t); if(useMong.checked) mongHit(t,1.2);
+        setTimeout(()=>{ LIS.run=false; lisPlay.classList.remove('on'); LIS.els.forEach(x=>x&&x.classList.remove('now')); lisNow.textContent=L('จบเพลง','End'); },1500); },off(total*slotMs))); } };
+  sched(); LIS.iv=setInterval(sched,250);
+}
+fillSongs(lisSong,{noCustom:false});
+Object.keys(NATAB).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=L(NATAB[k].name,NATAB[k].en); lisPat.appendChild(o); });
+lisSong.value=store.get('lisSong',lisSong.options[0]&&lisSong.options[0].value); if(!lisSong.value && lisSong.options[0]) lisSong.value=lisSong.options[0].value;
+lisTempo.value=store.get('lisTempo',150); lisTempoV.textContent=lisTempo.value;
+lisTempo.oninput=()=>{ lisTempoV.textContent=lisTempo.value; store.set('lisTempo',+lisTempo.value); };
+lisSong.onchange=()=>{ lisStop(); lisLoad(); };
+lisPlay.onclick=lisStart; lisStopBtn.onclick=lisStop;
+document.querySelectorAll('[data-sync]').forEach(x=>{ const src=document.getElementById(x.dataset.sync); x.checked=src.checked;
+  x.addEventListener('change',()=>{ src.checked=x.checked; src.dispatchEvent(new Event('change')); }); });
+['useKlong','useChing'].forEach(id=>document.getElementById(id).addEventListener('change',e=>document.querySelectorAll(`[data-sync="${id}"]`).forEach(x=>x.checked=e.target.checked)));
+lisLoad();
 // ---------- ฝึกซ้อมตามจังหวะ: ตัวโน้ตเลื่อนผ่านเส้นจังหวะเหนือปุ่มกด แล้วตรวจว่ากดตรงหรือไม่ ----------
 const P={run:false};
 fillSongs(pSong);
@@ -3468,10 +3620,11 @@ const ICO={
   install:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M12 8v6M9.5 11.5 12 14l2.5-2.5M10.5 18.5h3"/></svg>',
   bgm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/><path d="M3 3l18 18" class="bgmSlash"/></svg>',
   hist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/><path d="M3.5 12H2M4 7 2.8 6.2"/></svg>',
+  lis:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>',
   help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>',
   drum:`<img src="${KLONG_IMG}" alt="">`, ching:`<img src="${CHING_IMG}" alt="">`
 };
-const MENU_ICON={bgm:'bgm',help:'help',hist:'hist',set:'set',drum:'drum',prac:'prac',room:'room',imp:'imp',song:'song',rate:'rate',home:'home',install:'install'};
+const MENU_ICON={lis:'lis',bgm:'bgm',help:'help',hist:'hist',set:'set',drum:'drum',prac:'prac',room:'room',imp:'imp',song:'song',rate:'rate',home:'home',install:'install'};
 document.querySelectorAll('.fabMenu button').forEach(b=>{
   const k=MENU_ICON[b.dataset.pop||b.dataset.act]; if(!k) return;
   const t=b.firstChild; if(t&&t.nodeType===3) t.textContent=t.textContent.replace(/^[\s\S]*?(?=\S)/,'').replace(/^\S+\s*/,'');
@@ -3479,7 +3632,7 @@ document.querySelectorAll('.fabMenu button').forEach(b=>{
 });
 document.querySelectorAll('.ico-klong').forEach(e=>e.style.backgroundImage=`url(${KLONG_IMG})`);
 // หัวป็อบอัพ: ใช้ไอคอนชุดเดียวกัน ตัดอีโมจิหน้าชื่อออก
-(function(){ const _open=window.openPop; window.openPop=k=>{ _open(k); const key={help:'help',hist:'hist',set:'set',drum:'drum',song:'song',prac:'prac',room:'room',imp:'imp'}[k];
+(function(){ const _open=window.openPop; window.openPop=k=>{ _open(k); const key={lis:'lis',help:'help',hist:'hist',set:'set',drum:'drum',song:'song',prac:'prac',room:'room',imp:'imp'}[k];
   if(key){ popTitle.innerHTML=`<span class="mi">${ICO[key]}</span>`+popTitle.textContent.replace(/^\S+\s/,''); } }; })();
 
 // ไอคอนหน้าแรก/หัวเรื่อง
@@ -3615,7 +3768,7 @@ function bgmNote(a,ts,te){
 }
 function bgmAllowed(){
   if(!bgmOn.checked) return false;
-  if(active.size || drumRun || document.body.classList.contains('practicing') || (window.ROOM&&ROOM.playing)) return false;
+  if(active.size || drumRun || (window.LIS&&LIS.run) || document.body.classList.contains('practicing') || (window.ROOM&&ROOM.playing)) return false;
   const ov=document.getElementById('startOv'); if(ov && getComputedStyle(ov).display!=='none' && !ov.hidden) return true;
   if(!fabMenu.hidden) return true;
   if(!pop.hidden && (popBody.contains(helpCard) || popBody.contains(histCard) || popBody.contains(tuneSeg))) return true;
