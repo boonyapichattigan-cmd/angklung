@@ -1981,7 +1981,8 @@ const NATAB={
   song1: {name:'หน้าทับสองไม้ ชั้นเดียว', en:'Song Mai · Chan Diao', ching:2,
           boxes:['ติง-โจ๊ะจ๊ะ','ติงติง-ทั่ม']},
   // กลองแขกคู่: ตัวผู้ (boxes) และตัวเมีย (boxes2) ตีสอดรับกัน
-  lukmot:{name:'หน้าทับลูกหมด (กลองแขกคู่)', en:'Luk Mot · Klong Khaek pair', ching:4,
+  lukmot:{name:'หน้าทับลูกหมด (กลองแขกคู่)', en:'Luk Mot · Klong Khaek pair', ching:2,   // ลูกหมดเป็นชั้นเดียว ฉิ่งชั้นเดียว
+
           boxes: ['----','ติงโจ๊ะ-ติง','-ติง-โจ๊ะ','ติงโจ๊ะ-ติง','-โจ๊ะ--','ติงโจ๊ะ-ติง','-ติง-โจ๊ะ','ติงโจ๊ะ-ติง'],   // ตัวผู้
           boxes2:['----','-ทั่ม--','ทั่ม--ทั่ม','--จ๊ะ-','---จ๊ะ','-ทั่ม--','ทั่ม--ทั่ม','--จ๊ะ-']},          // ตัวเมีย
   // หน้าทับชวา: ขณะตีทั่มให้ตีจ๊ะพร้อมกัน (boxes2)
@@ -2131,9 +2132,12 @@ function drumPlan(){
 }
 // แผนเปลี่ยนหน้าทับตามท่อน (เพลงเถา / เพลงหลายอัตรา): ใช้เมื่อหน้าทับที่เลือกตรงกับค่าเริ่มต้นของเพลง (ถ้าเลือกเองจะใช้ตามที่เลือกตลอดเพลง)
 function secPlan(boxes,order,base,sg){
-  const fam=(String(base).match(/^(prob|song)[123]$/)||[])[1]; if(!fam || !sg || base!==defPat(sg)) return null;
-  const rateOf=l=>/ลูกหมด/.test(l)?'lukmot':/สามชั้น/.test(l)?3:/สองชั้น/.test(l)?2:/ชั้นเดียว/.test(l)?1:null;
-  const cur=[]; let c=null; boxes.forEach((b,i)=>{ if(b.label&&b.label!=='กลับต้น'){ const r=rateOf(b.label); if(r!==null) c=r==='lukmot'?'lukmot':fam+r; } cur[i]=c; });
+  const fam=(String(base).match(/^(prob|song)[123]$/)||[])[1], map=sg&&sg.secPat; if((!fam&&!map) || !sg || base!==defPat(sg)) return null;
+  const rateOf=l=>/ลูกหมด/.test(l)?'ลูกหมด':/สามชั้น/.test(l)?'สามชั้น':/สองชั้น/.test(l)?'สองชั้น':/ชั้นเดียว/.test(l)?'ชั้นเดียว':null;
+  const NUM={'สามชั้น':3,'สองชั้น':2,'ชั้นเดียว':1};
+  // หน้าทับประจำท่อนของเพลง (secPat) ก่อน ไม่มีจึงใช้ตระกูลเดียวกับหน้าทับหลัก เช่น ปรบไก่ 3 → 2 → 1
+  const patOf=r=>map&&map[r]?map[r]:r==='ลูกหมด'?'lukmot':fam?fam+NUM[r]:null;
+  const cur=[]; let c=null; boxes.forEach((b,i)=>{ if(b.label&&b.label!=='กลับต้น'){ const r=rateOf(b.label); if(r!==null){ const k=patOf(r); if(k) c=k; } } cur[i]=c; });
   const out=[]; order.forEach((bi,j)=>{ const k=cur[bi]; if(k&&NATAB[k]&&(!out.length||out[out.length-1].k!==k)) out.push({si:j*4,k}); });
   return new Set(out.map(x=>x.k)).size>=2 || (out.length && out[0].k!==base) ? out : null;
 }
@@ -2439,7 +2443,7 @@ const SONGS=[
 -ร-ซ | -ล-ท | ลทรํท | ลซ-ล | -ท-ล | ซม-ซ | -รํ-ท | -ล-ซ
 ---ม | -มมม | -ร-ม | -ซ-ล | -ท-รํ | -ท-ล | ---ซ | ---ม
 ---- | ---ร | มรทฺร | -ม-ซ | -ร-ม | -ล-ซ | -ฟ-ม | รทฺรม)`},
- {cat:'solo', name:'ซุ้มลาวแพน · Sum Lao Phaen', shift:-7, pat:'lukmot', text:
+ {cat:'solo', name:'ซุ้มลาวแพน · Sum Lao Phaen', shift:-7, pat:'lukmot', secPat:{'ชั้นเดียว':'lukmot','สองชั้น':'laoSM2'}, text:
 `# ชั้นเดียว
 ---ลฺ | --ดร | ดรฟร | -ด-ด | ---- | ---- | -ร-ร | --ฟซ
 ---ซ | ---ซ | ---ซ | ---ซ | ---ดํ | --ซล | --ซล | ดํลซฟ
