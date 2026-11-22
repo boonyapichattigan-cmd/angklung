@@ -2141,10 +2141,17 @@ function secPlan(boxes,order,base,sg){
   const out=[]; order.forEach((bi,j)=>{ const k=cur[bi]; if(k&&NATAB[k]&&(!out.length||out[out.length-1].k!==k)) out.push({si:j*4,k}); });
   return new Set(out.map(x=>x.k)).size>=2 || (out.length && out[0].k!==base) ? out : null;
 }
+// ห้องที่เครื่องประกอบจังหวะเริ่มเข้า (sg.entry เช่น ซุ้มลาวแพนเข้าห้องที่ 5) · หน้าทับเริ่มต้นรอบที่ห้องนั้น
+function entryPlan(boxes,order,base,sg){
+  const secs=secPlan(boxes,order,base,sg), e=(sg&&sg.entry>1&&order[0]===0)?(sg.entry-1)*4:0;
+  if(!e) return {secs,startSi:0};
+  const s2=(secs||[{si:0,k:base}]).map(x=>x.si<e?{si:e,k:x.k}:x).filter((x,i,a)=>!(a[i+1]&&a[i+1].si===x.si));
+  return {secs:s2,startSi:e};
+}
 function drumStart(rate,at,opt){
   opt=opt||{};
   drumOut(); if(ctx.state!=='running') ctx.resume(); drumStop();
-  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[], times:opt.times||null, onHit:opt.onHit||null, onEnd:opt.onEnd||null, rit:null, done:false, tail:!!opt.tail, secs:opt.secs?opt.secs.slice():null, base:0, endSi:opt.endSi||0};
+  const r={si:0, next:at||ctx.currentTime+0.08, rate:rate||null, uiT:[], times:opt.times||null, onHit:opt.onHit||null, onEnd:opt.onEnd||null, rit:null, done:false, tail:!!opt.tail, secs:opt.secs?opt.secs.slice():null, base:0, endSi:opt.endSi||0, startSi:opt.startSi||0};
   const plan=(!opt.times&&!opt.noPlan)?drumPlan():null;
   if(plan){ r.plan=plan; r.si=plan.startSi; if(plan.rit) r.rit={...plan.rit};
     if(plan.pick){ r.leadT0=r.next; r.leadBeat=60/(rate||+drumTempo.value); r.next+=8*r.leadBeat; } }
@@ -2152,6 +2159,7 @@ function drumStart(rate,at,opt){
   r.timer=setInterval(()=>{
     const base=60/(r.rate||+drumTempo.value), ahead=ctx.currentTime+0.15;
     while(!r.done && r.next<ahead){
+      if(r.si<r.startSi){ r.si++; r.next=r.times?r.times[r.si]:r.next+base; continue; }   // ยังไม่ถึงห้องที่เครื่องประกอบจังหวะเข้า
       // เพลงเถา: เปลี่ยนหน้าทับเมื่อถึงท่อนใหม่ (เริ่มหน้าทับใหม่ตั้งแต่ห้องแรกของท่อน)
       while(r.secs && r.secs.length && r.si>=r.secs[0].si){ const x=r.secs.shift(); if(NATAB[x.k] && drumPat!==NATAB[x.k]) loadDrum(x.k); r.base=x.si; }
       const rel=r.si-r.base, n=drumPat.slots.length, si=rel%n, inPick=r.plan&&r.plan.pick&&r.si<r.plan.firstFull, t=r.next;
@@ -2443,7 +2451,7 @@ const SONGS=[
 -ร-ซ | -ล-ท | ลทรํท | ลซ-ล | -ท-ล | ซม-ซ | -รํ-ท | -ล-ซ
 ---ม | -มมม | -ร-ม | -ซ-ล | -ท-รํ | -ท-ล | ---ซ | ---ม
 ---- | ---ร | มรทฺร | -ม-ซ | -ร-ม | -ล-ซ | -ฟ-ม | รทฺรม)`},
- {cat:'solo', name:'ซุ้มลาวแพน · Sum Lao Phaen', shift:-7, pat:'lukmot', secPat:{'ชั้นเดียว':'lukmot','สองชั้น':'laoSM2'}, text:
+ {cat:'solo', name:'ซุ้มลาวแพน · Sum Lao Phaen', shift:-7, pat:'lukmot', secPat:{'ชั้นเดียว':'lukmot','สองชั้น':'laoSM2'}, entry:5, text:
 `# ชั้นเดียว
 ---ลฺ | --ดร | ดรฟร | -ด-ด | ---- | ---- | -ร-ร | --ฟซ
 ---ซ | ---ซ | ---ซ | ---ซ | ---ดํ | --ซล | --ซล | ดํลซฟ
@@ -2860,7 +2868,7 @@ playScore.onclick=()=>{
   const slotMs=60000/ +tempo.value, boxes=curSong.boxes, sh=curSong.shift||0;
   const {ev,bxT,total}=songEvents(boxes,-7-sh,6-sh);
   flowShow(ev,T0,slotMs,curSong);
-  if(drumWithSong.checked){ loadDrum(drumSel.value); drumStart(+tempo.value,T0,{noPlan:true,endSi:total,secs:secPlan(boxes,bxT.map(x=>x.bi),drumSel.value,curSong)}); }
+  if(drumWithSong.checked){ loadDrum(drumSel.value); const ep=entryPlan(boxes,bxT.map(x=>x.bi),drumSel.value,curSong); drumStart(+tempo.value,T0,{noPlan:true,endSi:total,secs:ep.secs,startSi:ep.startSi}); }
   const song=curSong, mine=leaveMine.checked; let k=0, kb=0, ended=false;
   const sched=()=>{
     const horizon=(ctx.currentTime-T0)*1000+1500;     // ตั้งล่วงหน้า 1.5 วินาที
@@ -3072,8 +3080,8 @@ function lisStart(){
   // เพลงเถา / เพลงที่มีหลายอัตรา: เปลี่ยนหน้าทับตามท่อน (สามชั้น → สองชั้น → ชั้นเดียว · ลูกหมด) ตามแบบแผน
   if(NATAB[lisPat.value]) loadDrum(lisPat.value);
   // เล่นวน: ขึ้นท้ายหน้าทับเฉพาะรอบแรก รอบต่อไปบรรเลงต่อเนื่อง หน้าทับเริ่มรอบใหม่พร้อมห้องแรกของเพลง
-  const plan=secPlan(bx,bxT.map(x=>x.bi),lisPat.value,sg)||[{si:0,k:lisPat.value}];
-  drumStart(+lisTempo.value,T0,{noPlan:true,tail:true,secs:plan,endSi:total});   // ขึ้นท้ายหน้าทับ ตามห้องเพลง
+  const plan=secPlan(bx,bxT.map(x=>x.bi),lisPat.value,sg)||[{si:0,k:lisPat.value}], ep=entryPlan(bx,bxT.map(x=>x.bi),lisPat.value,sg);
+  drumStart(+lisTempo.value,T0,{noPlan:true,tail:!ep.startSi,secs:ep.startSi?ep.secs:plan,startSi:ep.startSi,endSi:total});   // ขึ้นท้ายหน้าทับ ตามห้องเพลง
   LIS.run=true; lisPlay.classList.add('on'); let k=0,kb=0,it=0,ended=false;
   const sched=()=>{ if(!LIS.run) return;
     const base=it*total, now=(ctx.currentTime-T0)*1000, horizon=now+1500, off=ms=>Math.max(0,ms-now);
@@ -3192,7 +3200,7 @@ function pracRun(opt){
     win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:times[cells.length],onFinish:opt.onFinish,drumOn:!!opt.drum});
   pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
   if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
-  if(opt.drum){ if(song.pat && NATAB[song.pat] && drumSel.value!==song.pat){ drumSel.value=song.pat; loadDrum(song.pat); } else loadDrum(drumSel.value); drumStart(tempoV,T0,{times,secs:secPlan(boxes,order,drumSel.value,song)}); }
+  if(opt.drum){ if(song.pat && NATAB[song.pat] && drumSel.value!==song.pat){ drumSel.value=song.pat; loadDrum(song.pat); } else loadDrum(drumSel.value); const ep=entryPlan(boxes,order,drumSel.value,song); drumStart(tempoV,T0,{times,secs:ep.secs,startSi:ep.startSi}); }
   ev.forEach(e=>{ e.t=times[e.i]; e.te=e.t+(times[Math.min(e.i+e.len,cells.length)]-e.t)*0.9; });
   let pk=0; P.voices=[];
   const psched=()=>{
