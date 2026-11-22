@@ -777,7 +777,8 @@ body.wland .wnote{display:none}
   body.wland .wbtn small{display:none}
 }
 
-.wHero .glow{z-index:0}
+.wHero .glow{z-index:0;width:min(60%,46vh,380px);pointer-events:none}
+.wHero::after{pointer-events:none}
 .wHero{width:100%}
 .wHero::after{content:"";position:absolute;z-index:0;left:50%;bottom:1%;width:74%;height:7%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(13,59,102,.22) 0%,rgba(13,59,102,0) 70%);animation:shad 3.2s ease-in-out infinite}
 .wHero .wPhone{position:absolute;z-index:1;left:44%;bottom:7%;height:58%;width:auto;max-width:56%;object-fit:contain;object-position:left bottom;transform-origin:30% 100%;filter:drop-shadow(0 12px 16px rgba(13,59,102,.28));pointer-events:none;opacity:0;transition:opacity .6s;animation:phoneFloat 3.2s ease-in-out infinite;animation-delay:-1.6s}
