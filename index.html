@@ -894,6 +894,13 @@ body.phone:not(.land) .wActs > *{flex:1 1 0;justify-content:center;padding:10px 
 body.wland .wbox > .langSw{left:68px !important;right:auto !important;top:14px !important}
 body.phone.land .wbox > .langSw button{padding:5px 10px;font-size:.85rem}
 body.wland .wEdu{justify-content:flex-start}
+
+/* หน้าต่างป๊อปอัป: พื้นหลังทึบและเบลอ ไม่ให้ปุ่มโน้ตด้านหลังซ้อนเป็นภาพสะท้อน · เนื้อหาไม่ล้นขอบขวา */
+.pop{background:rgba(8,30,52,.62) !important;backdrop-filter:blur(10px) saturate(.6) !important;-webkit-backdrop-filter:blur(10px) saturate(.6) !important}
+.popBody > .card{min-width:0;max-width:100%;box-sizing:border-box}
+.popBody .mel8,.popBody .sheet{max-width:100%;overflow-x:auto;box-sizing:border-box}
+#lisCard .lisRow > *{min-width:0;max-width:100%}
+#lisCard .lisRow select{max-width:100%}
 </style>
 </head>
 <body>
@@ -2930,7 +2937,7 @@ function applyLang(l){
   document.querySelectorAll('#sel0 option,#sel1 option').forEach(o=>{ if(o.dataset.th) o.textContent=L(o.dataset.th,o.dataset.en); });
   [...drumSel.options].forEach(o=>o.textContent=(NATAB[o.value].custom?'':'')+L(NATAB[o.value].name,NATAB[o.value].en));
   if(window.lisPat) [...lisPat.options].forEach(o=>{ if(NATAB[o.value]) o.textContent=L(NATAB[o.value].name,NATAB[o.value].en); });
-  [songSel,pSong].forEach(sel=>[...sel.options].forEach(o=>{ const sg=SONGS[+o.value]; o.textContent = o.value==='own' ? '✏️ '+L('โน้ตที่พิมพ์เอง','My notation') : (sg&&sg.custom?'':'🎵 ')+pair(sg?sg.name:''); }));
+  [songSel,pSong,...(window.lisSong?[lisSong]:[])].forEach(sel=>[...sel.options].forEach(o=>{ const sg=SONGS[+o.value]; o.textContent = o.value==='own' ? '✏️ '+L('โน้ตที่พิมพ์เอง','My notation') : (sg&&sg.custom?'':'🎵 ')+pair(sg?sg.name:''); }));
   document.querySelectorAll('optgroup[data-lab]').forEach(g=>g.label=pair(g.dataset.lab));
   setRegHead(); if(user && user.name) showModes(); updModeLabel(); if(window.ritText) ritText();
   detect.last=null; detect(); regErr.textContent=''; sErr.textContent='';
