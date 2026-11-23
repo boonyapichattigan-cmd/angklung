@@ -1004,10 +1004,10 @@ body.noLane #pStrip,body.noLane .phead{visibility:hidden}
 
 /* ---------- บุคคลทั่วไป ---------- */
 #modeStep.role-st .forPb,#modeStep.role-tc .forPb,#modeStep.role-pb .forSt,#modeStep.role-pb .forTc{display:none !important}
-#whoBtns .wbtn[data-role=public]{grid-column:1/-1;min-height:0;flex-direction:row;justify-content:center;gap:12px;padding:12px;background:linear-gradient(140deg,#1b8a7a,#0f6b5e)}
-#whoBtns .wbtn[data-role=public] .wi svg{width:32px;height:32px}
-#whoBtns .wbtn[data-role=public] small{display:none}
-@media (min-width:760px){ #whoBtns{grid-template-columns:repeat(3,1fr)} #whoBtns .wbtn[data-role=public]{grid-column:auto;flex-direction:column;gap:2px;padding:16px 10px} #whoBtns .wbtn[data-role=public] small{display:block} }
+#roleBtns .wbtn[data-role=public]{grid-column:1/-1;min-height:0;flex-direction:row;justify-content:center;gap:12px;padding:12px;background:linear-gradient(140deg,#1b8a7a,#0f6b5e)}
+#roleBtns .wbtn[data-role=public] .wi svg{width:32px;height:32px}
+#roleBtns .wbtn[data-role=public] small{display:none}
+@media (min-width:760px){ #roleBtns{grid-template-columns:repeat(3,1fr)} #roleBtns .wbtn[data-role=public]{grid-column:auto;flex-direction:column;gap:2px;padding:16px 10px} #roleBtns .wbtn[data-role=public] small{display:block} }
 .forPb .wbtn[data-mode=plis]{background:linear-gradient(140deg,#1b8a7a,#0f6b5e)}
 .forPb .wbtn[data-mode=band]{background:linear-gradient(140deg,#f95738,#d63e22)}
 .forPb .wbtn[data-mode=phist]{background:linear-gradient(140deg,#c98a12,#a86d05)}
@@ -1081,6 +1081,11 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
 .regForm .f-inNote{display:none;margin:0 0 8px;font-size:.85rem;font-weight:600;color:#0d3b66;background:#eef4fb;border-radius:10px;padding:6px 10px}
 .regForm.st-in .f-inNote,.regForm.tc-in .f-inNote{display:block}
 .regForm.st-in .f-stin{margin-top:0}
+
+#roleBtns.in .rOut,#roleBtns.out .rIn{display:none !important}
+#whoBtns .wbtn{min-height:120px}
+.regForm.pb.pb-in .f-school,.regForm.pb.pb-in .f-prov,.regForm.pb.pb-in #provOtherL{display:none !important}
+.regForm.pb.pb-in .f-inNote{display:block}
 </style>
 </head>
 <body>
@@ -1112,17 +1117,17 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
     </div>
     <!-- ขั้นที่ 1: ลงชื่อ -->
     <div id="regStep">
-      <p class="wq" id="regQ"><span class="th">ลงชื่อก่อนใช้งาน · เลือกโหมด</span><span class="en">Sign in · choose your mode</span></p>
+      <p class="wq" id="regQ"><span class="th">ลงชื่อก่อนใช้งาน · ท่านเป็นบุคลากร</span><span class="en">Sign in · you are from</span></p>
       <div class="wbtns" id="whoBtns">
-        <button class="wbtn" data-role="student"><span class="wi" data-i="student"></span><b><span class="th">โหมดนักเรียน</span><span class="en">Student mode</span></b><small class="th"><span class="nw">เล่นเดี่ยว</span> <span class="nw">เล่นเป็นวง</span> <span class="nw">ฝึกเพลง</span> <span class="nw">เข้าห้องวงของครู</span></small><small class="en">Solo, ensemble, practice &amp; join the teacher’s room</small></button>
-        <button class="wbtn" data-role="teacher"><span class="wi" data-i="teacher"></span><b><span class="th">โหมดครู</span><span class="en">Teacher mode</span></b><small class="th"><span class="nw">เปิดห้องวง</span> <span class="nw">ทบทวนสัญลักษณ์</span> <span class="nw">ฝึกอ่านโน้ต</span> <span class="nw">ฝึกซ้อมทีละวรรค</span></small><small class="en">Open a band room, review symbols, reading &amp; phrase drills</small></button>
-        <button class="wbtn" data-role="public"><span class="wi" data-i="people"></span><b><span class="th">บุคคลทั่วไป</span><span class="en">General public</span></b><small class="th"><span class="nw">ฟังเพลงไทย</span> <span class="nw">ลองบรรเลงอังกะลุง</span> <span class="nw">เล่นกับเพื่อน</span></small><small class="en">Listen to Thai music &amp; try playing the angklung</small></button>
+        <button class="wbtn" data-org="in"><span class="wi" data-i="school"></span><b><span class="th">บุคลากรภายใน</span><span class="en">Our school</span></b><small class="th"><span class="nw">โรงเรียนบดินทรเดชา</span> <span class="nw">(สิงห์ สิงหเสนี)</span> <span class="nw">สมุทรปราการ</span></small><small class="en">Bodindecha (Sing Singhaseni) Samutprakan School</small></button>
+        <button class="wbtn" data-org="out"><span class="wi" data-i="globe"></span><b><span class="th">บุคลากรภายนอก</span><span class="en">Outside our school</span></b><small class="th"><span class="nw">โรงเรียนอื่น</span> <span class="nw">หน่วยงานอื่น</span> <span class="nw">และผู้สนใจทั่วไป</span></small><small class="en">Other schools, organisations &amp; everyone</small></button>
       </div>
       <div id="orgStep" hidden>
         <p class="wq" id="orgQ"></p>
-        <div class="wbtns" id="orgBtns">
-          <button class="wbtn" data-org="in"><span class="wi" data-i="school"></span><b><span class="th">ในโรงเรียน</span><span class="en">Our school</span></b><small class="th"><span class="nw">โรงเรียนบดินทรเดชา</span> <span class="nw">(สิงห์ สิงหเสนี)</span> <span class="nw">สมุทรปราการ</span></small><small class="en">Bodindecha (Sing Singhaseni) Samutprakan School</small></button>
-          <button class="wbtn" data-org="out"><span class="wi" data-i="globe"></span><b><span class="th nw">บุคคลภายนอก</span><span class="en">Guest</span></b><small class="th"><span class="nw">โรงเรียนอื่น</span> <span class="nw">หน่วยงานอื่น</span> <span class="nw">หรือผู้สนใจ</span></small><small class="en">Other schools, organisations &amp; everyone</small></button>
+        <div class="wbtns" id="roleBtns">
+          <button class="wbtn" data-role="student"><span class="wi" data-i="student"></span><b><span class="th">นักเรียน</span><span class="en">Student</span></b><small class="th rIn">ม.1–ม.6 · โหมดนักเรียน</small><small class="th rOut">นักเรียนโรงเรียนอื่น · โหมดนักเรียน</small><small class="en">Student mode</small></button>
+          <button class="wbtn" data-role="teacher"><span class="wi" data-i="teacher"></span><b><span class="th">ครู · บุคลากรทางการศึกษา</span><span class="en">Teacher / educator</span></b><small class="th">โหมดครู · เปิดห้องวง ฝึกอ่านโน้ต ฝึกทีละวรรค</small><small class="en">Teacher mode</small></button>
+          <button class="wbtn" data-role="public"><span class="wi" data-i="people"></span><b><span class="th">บุคคลทั่วไป</span><span class="en">General public</span></b><small class="th rIn">เจ้าหน้าที่ ผู้ปกครอง · ฟังเพลง ลองบรรเลง</small><small class="th rOut">ผู้สนใจทั่วไป · ฟังเพลง ลองบรรเลง</small><small class="en">Listen &amp; try playing</small></button>
         </div>
         <p class="orgBackP"><button type="button" class="linkBtn" id="orgBack">← <span class="th">ย้อนกลับ</span><span class="en">Back</span></button></p>
       </div>
@@ -1146,13 +1151,13 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
         <label class="f-tcin"><span class="th">ตำแหน่ง <i class="req">*</i></span><span class="en i">Position *</span><select id="fTPos"><option value="">เลือกตำแหน่ง / Select</option><option>ผู้อำนวยการ</option><option>รองผู้อำนวยการ</option><option>ครู</option><option>ครูผู้ช่วย</option><option>พนักงานราชการ</option><option>ครูอัตราจ้าง</option><option>บุคลากรทางการศึกษา</option><option>อื่น ๆ</option></select></label>
         <label class="f-tcin"><span class="th">กลุ่มสาระการเรียนรู้ / งาน</span><span class="en i">Department</span><select id="fDept"><option value="">เลือก / Select</option><option>ศิลปะ</option><option>ภาษาไทย</option><option>คณิตศาสตร์</option><option>วิทยาศาสตร์และเทคโนโลยี</option><option>สังคมศึกษา ศาสนา และวัฒนธรรม</option><option>สุขศึกษาและพลศึกษา</option><option>การงานอาชีพ</option><option>ภาษาต่างประเทศ</option><option>กิจกรรมพัฒนาผู้เรียน</option><option>ผู้บริหาร</option><option>อื่น ๆ</option></select></label>
         <div class="f-out">
-          <label class="f-pb"><span class="th">สถานะ / อาชีพ <i class="req">*</i></span><span class="en i">Status / occupation *</span><select id="fPbPos"><option value="">เลือก / Select</option><option>ประชาชนทั่วไป</option><option>ผู้ปกครอง</option><option>นักเรียน / นักศึกษา</option><option>ข้าราชการ / พนักงานรัฐ</option><option>พนักงานเอกชน / ธุรกิจส่วนตัว</option><option>นักดนตรี / ผู้สนใจดนตรีไทย</option><option value="other">อื่น ๆ (ระบุ) / Other</option></select></label>
+          <label class="f-pb"><span class="th">สถานะ / อาชีพ <i class="req">*</i></span><span class="en i">Status / occupation *</span><select id="fPbPos"><option value="">เลือก / Select</option><option>ประชาชนทั่วไป</option><option>ผู้ปกครอง</option><option>เจ้าหน้าที่ / ลูกจ้างของโรงเรียน</option><option>นักเรียน / นักศึกษา</option><option>ข้าราชการ / พนักงานรัฐ</option><option>พนักงานเอกชน / ธุรกิจส่วนตัว</option><option>นักดนตรี / ผู้สนใจดนตรีไทย</option><option value="other">อื่น ๆ (ระบุ) / Other</option></select></label>
           <label class="f-pb" id="pbOtherL" hidden><span class="th">ระบุสถานะ / อาชีพ <i class="req">*</i></span><span class="en i">Specify *</span><input id="fPbOther"></label>
           <label class="f-stout"><span class="th">ระดับชั้น</span><span class="en i">Grade</span><select id="fGrade"><option value="">เลือกระดับชั้น / Select</option><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option><option>ม.1</option><option>ม.2</option><option>ม.3</option><option>ม.4</option><option>ม.5</option><option>ม.6</option><option>ปวช.</option><option>ปวส.</option><option>อุดมศึกษา</option><option>อื่น ๆ</option></select></label>
           <label class="f-tcout"><span class="th">ตำแหน่ง</span><span class="en i">Position</span><select id="fPos"><option value="">เลือกตำแหน่ง / Select</option><option value="ครู">ครู / Teacher</option><option value="ผู้บริหาร">ผู้บริหาร / Administrator</option><option value="ศึกษานิเทศก์">ศึกษานิเทศก์ / Supervisor</option><option value="อาจารย์">อาจารย์มหาวิทยาลัย / Lecturer</option><option value="นักศึกษาครู">นักศึกษาครู / Student teacher</option><option value="other">อื่น ๆ (ระบุ) / Other (please specify)</option></select></label>
           <label id="posOtherL" class="f-tcout" hidden><span class="th">ระบุตำแหน่ง</span><span class="en i">Specify position</span><input id="fPosOther" placeholder="เช่น นักศึกษา ศึกษานิเทศก์ / e.g. University student"></label>
           <label class="f-school"><span class="th">โรงเรียน / หน่วยงาน / สังกัด <i class="req">*</i></span><span class="en i">School / Organization *</span><input id="fSchool" placeholder="เช่น โรงเรียน… / สพม.… / ถ้าไม่มีพิมพ์ ไม่มี"></label>
-          <label><span class="th">จังหวัด</span><span class="en i">Province / Country</span><select id="fProvSel"><option value="">เลือกจังหวัด / Select</option><option>กรุงเทพมหานคร</option><option>กระบี่</option><option>กาญจนบุรี</option><option>กาฬสินธุ์</option><option>กำแพงเพชร</option><option>ขอนแก่น</option><option>จันทบุรี</option><option>ฉะเชิงเทรา</option><option>ชลบุรี</option><option>ชัยนาท</option><option>ชัยภูมิ</option><option>ชุมพร</option><option>เชียงราย</option><option>เชียงใหม่</option><option>ตรัง</option><option>ตราด</option><option>ตาก</option><option>นครนายก</option><option>นครปฐม</option><option>นครพนม</option><option>นครราชสีมา</option><option>นครศรีธรรมราช</option><option>นครสวรรค์</option><option>นนทบุรี</option><option>นราธิวาส</option><option>น่าน</option><option>บึงกาฬ</option><option>บุรีรัมย์</option><option>ปทุมธานี</option><option>ประจวบคีรีขันธ์</option><option>ปราจีนบุรี</option><option>ปัตตานี</option><option>พระนครศรีอยุธยา</option><option>พะเยา</option><option>พังงา</option><option>พัทลุง</option><option>พิจิตร</option><option>พิษณุโลก</option><option>เพชรบุรี</option><option>เพชรบูรณ์</option><option>แพร่</option><option>ภูเก็ต</option><option>มหาสารคาม</option><option>มุกดาหาร</option><option>แม่ฮ่องสอน</option><option>ยโสธร</option><option>ยะลา</option><option>ร้อยเอ็ด</option><option>ระนอง</option><option>ระยอง</option><option>ราชบุรี</option><option>ลพบุรี</option><option>ลำปาง</option><option>ลำพูน</option><option>เลย</option><option>ศรีสะเกษ</option><option>สกลนคร</option><option>สงขลา</option><option>สตูล</option><option>สมุทรปราการ</option><option>สมุทรสงคราม</option><option>สมุทรสาคร</option><option>สระแก้ว</option><option>สระบุรี</option><option>สิงห์บุรี</option><option>สุโขทัย</option><option>สุพรรณบุรี</option><option>สุราษฎร์ธานี</option><option>สุรินทร์</option><option>หนองคาย</option><option>หนองบัวลำภู</option><option>อ่างทอง</option><option>อำนาจเจริญ</option><option>อุดรธานี</option><option>อุตรดิตถ์</option><option>อุทัยธานี</option><option>อุบลราชธานี</option><option value="other">อื่น ๆ / ต่างประเทศ (ระบุ) — Other / Abroad</option></select></label>
+          <label class="f-prov"><span class="th">จังหวัด</span><span class="en i">Province / Country</span><select id="fProvSel"><option value="">เลือกจังหวัด / Select</option><option>กรุงเทพมหานคร</option><option>กระบี่</option><option>กาญจนบุรี</option><option>กาฬสินธุ์</option><option>กำแพงเพชร</option><option>ขอนแก่น</option><option>จันทบุรี</option><option>ฉะเชิงเทรา</option><option>ชลบุรี</option><option>ชัยนาท</option><option>ชัยภูมิ</option><option>ชุมพร</option><option>เชียงราย</option><option>เชียงใหม่</option><option>ตรัง</option><option>ตราด</option><option>ตาก</option><option>นครนายก</option><option>นครปฐม</option><option>นครพนม</option><option>นครราชสีมา</option><option>นครศรีธรรมราช</option><option>นครสวรรค์</option><option>นนทบุรี</option><option>นราธิวาส</option><option>น่าน</option><option>บึงกาฬ</option><option>บุรีรัมย์</option><option>ปทุมธานี</option><option>ประจวบคีรีขันธ์</option><option>ปราจีนบุรี</option><option>ปัตตานี</option><option>พระนครศรีอยุธยา</option><option>พะเยา</option><option>พังงา</option><option>พัทลุง</option><option>พิจิตร</option><option>พิษณุโลก</option><option>เพชรบุรี</option><option>เพชรบูรณ์</option><option>แพร่</option><option>ภูเก็ต</option><option>มหาสารคาม</option><option>มุกดาหาร</option><option>แม่ฮ่องสอน</option><option>ยโสธร</option><option>ยะลา</option><option>ร้อยเอ็ด</option><option>ระนอง</option><option>ระยอง</option><option>ราชบุรี</option><option>ลพบุรี</option><option>ลำปาง</option><option>ลำพูน</option><option>เลย</option><option>ศรีสะเกษ</option><option>สกลนคร</option><option>สงขลา</option><option>สตูล</option><option>สมุทรปราการ</option><option>สมุทรสงคราม</option><option>สมุทรสาคร</option><option>สระแก้ว</option><option>สระบุรี</option><option>สิงห์บุรี</option><option>สุโขทัย</option><option>สุพรรณบุรี</option><option>สุราษฎร์ธานี</option><option>สุรินทร์</option><option>หนองคาย</option><option>หนองบัวลำภู</option><option>อ่างทอง</option><option>อำนาจเจริญ</option><option>อุดรธานี</option><option>อุตรดิตถ์</option><option>อุทัยธานี</option><option>อุบลราชธานี</option><option value="other">อื่น ๆ / ต่างประเทศ (ระบุ) — Other / Abroad</option></select></label>
           <label id="provOtherL" hidden><span class="th">ระบุจังหวัด / ประเทศ</span><span class="en i">Specify city / country</span><input id="fProvOther" placeholder="เช่น โตเกียว ญี่ปุ่น / e.g. Tokyo, Japan"></label>
         </div>
         <p class="regErr" id="regErr"></p>
@@ -2071,7 +2076,7 @@ const MODE_NAME={solo:'เล่นคนเดียว',band:'เล่นเ�
 // ประเภทผู้ใช้: โหมด (นักเรียน/ครู) × สังกัด (ในโรงเรียน/บุคคลภายนอก)
 function normUser(u){ if(u && !u.role){ u.role=u.pos==='ประชาชน'?'public':(u.type==='student'||u.pos==='นักเรียน')?'student':'teacher'; u.org=u.type==='student'?'in':'out'; } return u; }
 const escH=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function userKind(u){ u=normUser(u||{}); if(u.role==='public') return 'บุคคลทั่วไป'; return u.org==='in' ? (u.role==='teacher'?'ครูบดินทรเดชา':'นักเรียนบดินทรเดชา') : (u.role==='teacher'?'ครู/บุคลากรภายนอก':'นักเรียนภายนอก'); }
+function userKind(u){ u=normUser(u||{}); if(u.role==='public') return u.org==='in'?'บุคคลทั่วไปในบดินทรเดชา':'บุคคลทั่วไป'; return u.org==='in' ? (u.role==='teacher'?'ครูบดินทรเดชา':'นักเรียนบดินทรเดชา') : (u.role==='teacher'?'ครู/บุคลากรภายนอก':'นักเรียนภายนอก'); }
 // สร้างลิงก์ส่งคำตอบอัตโนมัติจากลิงก์กรอกล่วงหน้า (ค่าตามลำดับช่อง entry ในลิงก์)
 // URL เว็บแอป Apps Script (ลงท้าย /exec) — ถ้าใส่ไว้ จะบันทึกผ่านหน้านี้ซึ่งขึ้นแวบเดียวแล้วปิดเอง แทนหน้า Google Form
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_rjnDAPrDLXRVaghWxxnhheQmhJVM-LpNzAmKS8lcxvJuP8iKMirG3EQcklmm90Wp/exec';
@@ -2121,7 +2126,7 @@ const regKey=()=>regRole==='public'?'pb':(regRole==='teacher'?'tc':'st')+'-'+reg
 function setRegHead(){ const k=regKey();
   regHead.textContent = k==='st-in' ? L('🎒 โหมดนักเรียน · '+SCHOOL_NAME,'🎒 Student · Bodindecha (Sing Singhaseni) Samutprakan School')
     : k==='tc-in' ? L('👩‍🏫 โหมดครู · ครู'+SCHOOL_NAME,'👩‍🏫 Teacher · Bodindecha (Sing Singhaseni) Samutprakan School')
-    : k==='pb' ? L('🌏 บุคคลทั่วไป · ยินดีต้อนรับ','🌏 General public · welcome')
+    : k==='pb' ? (regOrg==='in'?L('🌏 บุคคลทั่วไป · '+SCHOOL_NAME,'🌏 General public · Bodindecha (Sing Singhaseni) Samutprakan School'):L('🌏 บุคคลทั่วไป · บุคลากรภายนอก','🌏 General public · outside our school'))
     : k==='st-out' ? L('🎒 โหมดนักเรียน · บุคคลภายนอก','🎒 Student · guest') : L('👩‍🏫 โหมดครู · บุคคลภายนอก','👩‍🏫 Teacher · guest'); }
 const REG_V=2;   // รุ่นแบบลงชื่อ: เปลี่ยนเลขนี้เมื่อต้องการให้ทุกคนลงชื่อใหม่
 let user=normUser(store.get('user',null));
@@ -2132,7 +2137,7 @@ function showReg(){ regStep.hidden=false; modeStep.hidden=true; regForm.hidden=t
 function showModes(){
   regStep.hidden=true; modeStep.hidden=false;
   normUser(user); const tc=user.role==='teacher', pb=user.role==='public';
-  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(user.disp||user.name)+escH(pb?` · ${user.prov}`:user.org==='in'
+  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(user.disp||user.name)+escH(pb?(user.org==='in'?` · ${user.pos||''}`:` · ${user.prov}`):user.org==='in'
     ? (tc?` · ${user.pos||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+user.dept:''}`:` · ${user.cls} ${L('เลขที่','No.')} ${user.no}`)
     : ` · ${tc?(user.pos||''):L('นักเรียน','Student')+' '+(user.cls||'')} · ${user.school} · ${user.prov}`);
   modeStep.className=tc?'role-tc':pb?'role-pb':'role-st';
@@ -2150,19 +2155,18 @@ function showModes(){
 }
 function regClear(){ regForm.querySelectorAll('input').forEach(x=>x.value=''); regForm.querySelectorAll('select').forEach(x=>x.selectedIndex=0); ['posOtherL','provOtherL','preOtherL','pbOtherL'].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden=true; }); regErr.textContent=''; }
 whoBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
-  regClear(); regRole=b.dataset.role; whoBtns.hidden=true; regQ.hidden=true;
-  if(regRole==='public'){ regOrg='out'; regForm.hidden=false; regForm.className='regForm pb'; setRegHead(); regErr.textContent=''; fPre.focus(); return; }
-  orgStep.hidden=false;
-  orgQ.innerHTML=regRole==='teacher'?L('👩‍🏫 โหมดครู · ท่านเป็นครูของ','👩‍🏫 Teacher mode · you teach at'):L('🎒 โหมดนักเรียน · คุณเป็นนักเรียนของ','🎒 Student mode · you study at');
+  regClear(); regOrg=b.dataset.org; whoBtns.hidden=true; regQ.hidden=true; orgStep.hidden=false;
+  roleBtns.className='wbtns '+regOrg;
+  orgQ.innerHTML=regOrg==='in'?L('🏫 บุคลากรภายในโรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ · ท่านเป็น','🏫 Our school · you are a'):L('🌏 บุคลากรภายนอก · ท่านเป็น','🌏 Outside our school · you are a');
 });
-orgBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
-  regOrg=b.dataset.org; orgStep.hidden=true; regForm.hidden=false;
-  regForm.className='regForm '+regKey();
+roleBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
+  regRole=b.dataset.role; orgStep.hidden=true; regForm.hidden=false;
+  regForm.className='regForm '+regKey()+(regRole==='public'?' pb-'+regOrg:'');
   setRegHead();
   regErr.textContent=''; fPre.focus();
 });
 orgBack.onclick=showReg;
-regBack.onclick=()=>{ if(regRole==='public'){ showReg(); return; } regForm.hidden=true; orgStep.hidden=false; };
+regBack.onclick=()=>{ regForm.hidden=true; orgStep.hidden=false; };
 function readReg(){
   const k=regKey(), pre=fPre.value==='other'?fPreOther.value.trim():fPre.value, first=fFirst.value.trim(), last=fLast.value.trim();
   if(!fPre.value) return {err:'กรุณาเลือกคำนำหน้า · Please choose a title'};
@@ -2183,6 +2187,8 @@ function readReg(){
     if(!no) return {err:'กรุณากรอกเลขที่ · Please enter your number'};
     return {...base,type:'student',role:'student',org:'in',cls:`${lv}/${rm}`,no,school:SCHOOL_NAME,prov:'สมุทรปราการ',pos:'นักเรียน'};
   }
+  if(k==='pb' && regOrg==='in'){ if(!fPbPos.value) return {err:'กรุณาเลือกสถานะหรืออาชีพ · Please select your status / occupation'}; const ps=fPbPos.value==='other'?fPbOther.value.trim():fPbPos.value; if(!ps) return {err:'กรุณาระบุสถานะหรืออาชีพ · Please specify your status / occupation'};
+    return {...base,type:'guest',role:'public',org:'in',pos:ps,cls:ps,school:SCHOOL_NAME,prov:'สมุทรปราการ'}; }
   const sc=fSchool.value.trim();
   let pos;
   if(k==='pb'){ if(!fPbPos.value) return {err:'กรุณาเลือกสถานะหรืออาชีพ · Please select your status / occupation'}; pos=fPbPos.value==='other'?fPbOther.value.trim():fPbPos.value; if(!pos) return {err:'กรุณาระบุสถานะหรืออาชีพ · Please specify your status / occupation'}; }
@@ -2191,7 +2197,7 @@ function readReg(){
   if(!sc) return {err:'กรุณากรอกโรงเรียน หน่วยงาน หรือสังกัด (ถ้าไม่มีพิมพ์ ไม่มี) · Please enter your school / organisation (type “none” if none)'};
   if(!fProvSel.value) return {err:'กรุณาเลือกจังหวัด · Please select a province'};
   if(!pv) return {err:'กรุณาระบุจังหวัดหรือประเทศ · Please specify your city / country'};
-  if(k==='pb') return {...base,type:'guest',role:'public',org:'out',pos,cls:pos,school:sc,prov:pv};
+  if(k==='pb') return {...base,type:'guest',role:'public',org:'out',pos,cls:pos,school:sc,prov:pv};   // (บุคคลทั่วไปในโรงเรียน ตรวจไว้ก่อนหน้า)
   return k==='st-out' ? {...base,type:'guest',role:'student',org:'out',pos,cls:fGrade.value,school:sc,prov:pv} : {...base,type:'guest',role:'teacher',org:'out',pos,school:sc,prov:pv};
 }
 regForm.addEventListener('input',()=>{ regErr.textContent=''; });
@@ -3954,8 +3960,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23h';
+const APP_VER='2026.11.23i';
 const CHANGELOG=[
+  {v:'2026.11.23i',d:['23 พ.ย. 2569','23 Nov 2026'],th:['หน้าแรกใหม่: เลือก <b>บุคลากรภายใน</b> (โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ) หรือ <b>บุคลากรภายนอก</b> ก่อน แล้วจึงเลือก นักเรียน · ครู/บุคลากรทางการศึกษา · บุคคลทั่วไป'],
+   en:['New home screen: choose <b>Our school</b> or <b>Outside our school</b> first, then Student · Teacher/educator · General public']},
   {v:'2026.11.23h',d:['23 พ.ย. 2569','23 Nov 2026'],th:['บันทึกการเข้าใช้และคะแนนส่ง คำนำหน้า ชื่อจริง นามสกุล และชื่อที่แสดง แยกเป็นคนละคอลัมน์ใน Google Sheet'],en:['Sign-in and score records now send title, first name, last name and display name as separate columns in Google Sheets']},
   {v:'2026.11.23g',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบลงชื่อใหม่: เลือกคำนำหน้า กรอกชื่อจริง นามสกุล และชื่อที่ต้องการให้แสดงในแอป (ไม่กรอกจะใช้ชื่อจริง)','ลงชื่อครั้งแรกต้องกรอกตำแหน่ง โรงเรียน/หน่วยงาน และจังหวัดให้ครบ · <b>ทุกคนลงชื่อใหม่ 1 ครั้ง</b>'],
    en:['New sign-in form: title, first name, last name and the name shown in the app (first name if left blank)','Position, school/organisation and province are required on first sign-in · <b>everyone signs in again once</b>']},
