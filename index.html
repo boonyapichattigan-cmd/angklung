@@ -1313,6 +1313,7 @@ body.lang-th .regForm .nmEn,body.lang-en .regForm .nmTh{display:none}
           </div>
           <label class="sl keyPick">🎹 <span class="th">คีย์</span><span class="en i">Key</span> <select id="keySel"></select></label>
           <label class="sl">🔊 <input type="range" id="vol" min="0" max="1.5" step="0.01" value="1"></label>
+          <label class="sl loudL" title="ดันความดังเฉลี่ยขึ้น เน้นย่านเสียงที่ลำโพงมือถือเล่นได้ดี และยืดหางเสียง · Louder average level for small speakers"><input type="checkbox" id="loudOn"><span class="th">📢 เสียงดัง (ลำโพงมือถือ)</span><span class="en i">📢 Loud (phone speaker)</span></label>
         </div>
         <div class="bgmBox">
           <label class="sl"><input type="checkbox" id="uiSnd"><span class="th">เสียงกดปุ่ม</span><span class="en i">Button sounds</span></label>
@@ -1745,6 +1746,16 @@ function applyFx(v){
   if(p.sec) fxConv.buffer=makeIR(p.sec,p.damp);
   fxWet.gain.setTargetAtTime(p.wet,t,0.05); fxDry.gain.setTargetAtTime(p.dry,t,0.05);
 }
+// โหมดเสียงดัง (ลำโพงมือถือ): บีบเสียงให้ความดังเฉลี่ยสูงขึ้น เน้นย่าน 2–3 kHz ที่ลำโพงเล็กเล่นได้ดี ตัดเสียงทุ้มที่ลำโพงเล่นไม่ได้ และยืดหางเสียงแต่ละครั้ง
+const AUD={};
+let LOUD=false;
+function applyLoud(){
+  const {comp,trim,harsh,hp}=AUD; if(!comp) return; const t=ctx.currentTime;
+  if(LOUD){ comp.threshold.setValueAtTime(-32,t); comp.knee.setValueAtTime(8,t); comp.ratio.setValueAtTime(6,t); comp.attack.setValueAtTime(0.003,t); comp.release.setValueAtTime(0.2,t);
+    trim.gain.setValueAtTime(3.4,t); harsh.frequency.setValueAtTime(2600,t); harsh.Q.setValueAtTime(0.8,t); harsh.gain.setValueAtTime(4,t); hp.frequency.setValueAtTime(170,t); }
+  else { comp.threshold.setValueAtTime(-16,t); comp.knee.setValueAtTime(14,t); comp.ratio.setValueAtTime(3,t); comp.attack.setValueAtTime(0.012,t); comp.release.setValueAtTime(0.3,t);
+    trim.gain.setValueAtTime(1.9,t); harsh.frequency.setValueAtTime(3400,t); harsh.Q.setValueAtTime(1.4,t); harsh.gain.setValueAtTime(-2.5,t); hp.frequency.setValueAtTime(90,t); }
+}
 function initAudio(){
   if(ctx) return;
   ctx = new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
@@ -1752,9 +1763,9 @@ function initAudio(){
   comp.threshold.value=-16; comp.knee.value=14; comp.ratio.value=3; comp.attack.value=0.012; comp.release.value=0.3;
   master = ctx.createGain(); master.gain.value = +vol.value;
   // แต่งเสียง: ตัดเสียงอื้อต่ำ · ลดเสียงแหลมบาดหู · เพิ่มความใสเล็กน้อย · เติมเสียงก้องห้อง
-  const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=90; hp.Q.value=0.7;
+  const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=90; hp.Q.value=0.7; AUD.hp=hp; AUD.comp=comp;
   const body=ctx.createBiquadFilter(); body.type='peaking'; body.frequency.value=320; body.Q.value=0.9; body.gain.value=1;
-  const harsh=ctx.createBiquadFilter(); harsh.type='peaking'; harsh.frequency.value=3400; harsh.Q.value=1.4; harsh.gain.value=-2.5;
+  const harsh=ctx.createBiquadFilter(); harsh.type='peaking'; harsh.frequency.value=3400; harsh.Q.value=1.4; harsh.gain.value=-2.5; AUD.harsh=harsh;
   const air=ctx.createBiquadFilter(); air.type='highshelf'; air.frequency.value=7000; air.gain.value=1.5;
   const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=13000; lp.Q.value=0.5;
   master.connect(hp); hp.connect(body); body.connect(harsh); harsh.connect(air); air.connect(lp);
@@ -1767,8 +1778,8 @@ function initAudio(){
   // ลิมิตเตอร์ท้ายสาย: กันเสียงรวมเกิน 0 dB (เสียงแตก) ตอนโน้ตถี่ + กลอง
   const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-1.5; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.001; lim.release.value=0.1;
   const trim=ctx.createGain(); trim.gain.value=1.9;   // ดังขึ้นราว 7 dB · ลิมิตเตอร์กันเสียงแตก
-  comp.connect(trim); trim.connect(lim); lim.connect(ctx.destination);
-  applyFx(fx);
+  comp.connect(trim); trim.connect(lim); lim.connect(ctx.destination); AUD.trim=trim;
+  applyFx(fx); applyLoud();
   setTimeout(()=>{ loadAngklung(); loadSamples(); },0);
 }
 let noiseBuf;
@@ -1889,11 +1900,11 @@ function hitVoice(a,t,amp=1){
   const f=freqOf(a), sm=pickAk(f);
   if(!sm){ strike(a,t,0.6*amp); return null; }
   const H=sm.hits, i=Math.floor(Math.random()*H.length), h=H[i], rate=f/sm.f0;
-  let nx=H.find(x=>x>h+0.03); const L=Math.max(0.045,Math.min(0.11,((nx||h+0.09)-h)/rate));
+  let nx=H.find(x=>x>h+0.03); const L=Math.max(LOUD?0.08:0.045,Math.min(LOUD?0.17:0.11,((nx||h+0.09)-h)/rate)*(LOUD?1.5:1));
   const src=ctx.createBufferSource(); src.buffer=sm.buf; src.playbackRate.value=rate;
   const g=ctx.createGain(), G=AK_GAIN*amp;
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(G,t+0.002);
-  g.gain.setValueAtTime(G,t+L*0.8); g.gain.setTargetAtTime(0.0001,t+L*0.8,0.045);
+  g.gain.setValueAtTime(G,t+L*0.8); g.gain.setTargetAtTime(0.0001,t+L*0.8,LOUD?0.075:0.045);
   const pan=ctx.createStereoPanner?ctx.createStereoPanner():null;
   if(pan){ pan.pan.value=(Math.random()-.5)*0.4; src.connect(g); g.connect(pan); pan.connect(master); } else { src.connect(g); g.connect(master); }
   src.start(t,h); src.stop(t+L+0.4);
@@ -2124,6 +2135,8 @@ seg('modeSeg',mode,v=>{mode=v;store.set('mode',v);});
 seg('fxSeg',fx,v=>{store.set('fx',v);applyFx(v);});
 if(!store.get('volUp',false)){ store.set('volUp',true); if(+store.get('vol',0.75)<1) store.set('vol',1); if(+store.get('drumVol',0.7)<0.9) store.set('drumVol',0.9); }
 vol.value=store.get('vol',1);
+LOUD=!!store.get('loud',matchMedia('(pointer:coarse)').matches); loudOn.checked=LOUD;
+loudOn.addEventListener('change',()=>{ LOUD=loudOn.checked; store.set('loud',LOUD); applyLoud(); });
 vol.addEventListener('input',()=>{ let sl=false; try{ sl=!!ROOM.silent; }catch(e){} if(master) master.gain.value=sl?0:+vol.value; store.set('vol',+vol.value); });
 wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHelpBtn'); if(hb) hb.onclick=()=>openPop('help'); } { const hp=document.getElementById('hpImg'); if(hp) hp.src=AKREAL_IMG; const hc=document.getElementById('histCard');
   if(hc){ const sel=n=>{ hc.querySelectorAll('.hpM,.hpList li').forEach(e=>e.classList.toggle('on',e.dataset.n===n)); };
@@ -4050,8 +4063,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23r';
+const APP_VER='2026.11.23s';
 const CHANGELOG=[
+  {v:'2026.11.23s',d:['23 พ.ย. 2569','23 Nov 2026'],th:['โหมด <b>📢 เสียงดัง (ลำโพงมือถือ)</b> ในแผงตั้งค่าเสียง: ความดังเฉลี่ยสูงขึ้น เน้นย่านเสียงที่ลำโพงมือถือเล่นได้ดี และหางเสียงยาวขึ้น (เปิดให้อัตโนมัติบนมือถือและแท็บเล็ต ปิดได้)'],
+   en:['<b>📢 Loud (phone speaker)</b> mode in the sound settings: higher average level, tuned for small speakers, with a longer ring (on by default on phones and tablets; can be turned off)']},
   {v:'2026.11.23r',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ห้องวงใช้คำว่า <b>ผู้นำวง</b> (ผู้เปิดห้อง) และ <b>สมาชิก</b> ทุกโหมด เพราะผู้เปิดห้องอาจเป็นครู นักเรียนที่ซ้อมรวมกันเอง หรือบุคคลทั่วไป','ทุกโหมดเปิดห้องวงได้ ผู้นำวงเท่านั้นที่ควบคุมวงได้ (เลือกเพลง เริ่ม–หยุด ล็อกการกด ปิดเสียงสมาชิก ปิดห้อง) สมาชิกเห็นชื่อผู้นำวงในห้อง'],
    en:['The band room now says <b>band leader</b> (who opened it) and <b>members</b> in every mode — the leader may be a teacher, students rehearsing on their own, or anyone','Every mode can open a band room; only the leader controls it (song, start/stop, lock, silence members, close). Members see the leader’s name']},
   {v:'2026.11.23q',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ห้องวง: ปุ่ม <b>🔇 ปิดเสียงเครื่องนักเรียน</b> นักเรียนยังกดบรรเลงได้ แต่เสียงจะดังรวมที่เครื่องครูเครื่องเดียว (ต่อลำโพงที่เครื่องครูได้)'],
