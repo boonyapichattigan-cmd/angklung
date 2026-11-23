@@ -957,6 +957,7 @@ h1,h2,h3,.wtitle,.popHead b,.wbtn b{text-wrap:balance}
 .whoami .roleTag.tc{background:#d63e22}
 body:not(.teacher) .fabMenu .tOnly{display:none !important}
 body.teacher .fabMenu .sOnlyRoom{display:none !important}
+body.public .rmSt,body:not(.public) .rmPb{display:none !important}
 .fabMenu .tHead{font-size:.72rem;font-weight:800;color:#d63e22;letter-spacing:.04em;padding:6px 12px 2px;text-transform:uppercase}
 /* ห้องวง: นักเรียนเลือกเสียงเอง */
 .rPickH{font-weight:700;margin:10px 0 4px}
@@ -1299,7 +1300,7 @@ body.noLane #pStrip,body.noLane .phead{visibility:hidden}
     <button type="button" data-pop="set">⚙️ <span class="th">ตั้งค่าเสียง</span><span class="en">Sound settings</span></button>
     <button type="button" data-pop="drum">🥁 <span class="th">เครื่องประกอบจังหวะ</span><span class="en">Rhythm</span></button>
     <button type="button" data-pop="prac">🎯 <span class="th">ฝึกซ้อม (ตามจังหวะ)</span><span class="en">Practice (play along)</span></button>
-    <button type="button" data-pop="room" class="sOnlyRoom">👥 <span class="th">ห้องวง · เข้าร่วมวงของครู</span><span class="en">Band room · join the teacher</span></button>
+    <button type="button" data-pop="room" class="sOnlyRoom">👥 <span class="th"><span class="rmSt">ห้องวง · เข้าร่วมวงของครู</span><span class="rmPb">ห้องวง · เปิดวงหรือเข้าร่วมวงกับเพื่อน</span></span><span class="en"><span class="rmSt">Band room · join the teacher</span><span class="rmPb">Band room · open or join a band with friends</span></span></button>
     <button type="button" data-pop="help">📖 <span class="th">คู่มือการใช้งาน</span><span class="en">User guide</span></button>
     <button type="button" data-pop="hist">📜 <span class="th">ประวัติอังกะลุง</span><span class="en">Angklung history</span></button>
     <button type="button" data-pop="imp">📥 <span class="th">นำเข้าโน้ต (ถ่ายรูป / ไฟล์)</span><span class="en">Import notation (photo / file)</span></button>
@@ -3845,8 +3846,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23b';
+const APP_VER='2026.11.23c';
 const CHANGELOG=[
+  {v:'2026.11.23c',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ห้องวงในโหมดบุคคลทั่วไป: เปิดวงเป็น <b>ผู้นำวง</b> ชวนเพื่อนสแกนเข้ามาเล่นได้ หรือเข้าร่วมวงด้วยรหัส 4 หลัก','ปรับข้อความในห้องวงให้ตรงกับโหมดที่เลือก (ครู–นักเรียน / ผู้นำวง–สมาชิก)'],
+   en:['Band room in General public mode: open a band as the <b>band leader</b> and invite friends, or join with a 4-digit code','Band-room wording now matches your mode (teacher–students / leader–members)']},
   {v:'2026.11.23b',d:['23 พ.ย. 2569','23 Nov 2026'],th:['เพิ่ม <b>โหมดบุคคลทั่วไป</b> สำหรับผู้ที่ไม่ใช่นักเรียนหรือครู: ฟังเพลง ลองบรรเลง เล่นกับเพื่อน และรู้จักอังกะลุง','เพิ่มป็อปอัพ <b>มีอะไรใหม่</b> แจ้งทุกครั้งที่แอปอัปเดต (เปิดดูย้อนหลังได้จากเมนู ☰)','ถ้าเปิดแอปค้างไว้ระหว่างที่มีเวอร์ชันใหม่ จะมีแถบให้แตะเพื่ออัปเดต'],
    en:['New <b>General public</b> mode for everyone else: listen, try playing, play with friends and learn about the angklung','New <b>What’s new</b> pop-up after every update (reopen it any time from the ☰ menu)','If the app is left open when a new version comes out, a bar appears — tap it to update']},
   {v:'2026.11.23a',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แยก <b>โหมดนักเรียน</b> และ <b>โหมดครู</b> ลงชื่อแยกในโรงเรียนและบุคคลภายนอก','โหมดครู: เปิดห้องวงให้นักเรียนสแกนเข้ามาเลือกเสียงเอง','โหมดครู: ทบทวนสัญลักษณ์ บัตรคำทายสัญลักษณ์ และฝึกอ่านโน้ตแบบนำอ่านทีละห้อง','โหมดครู: ฝึกซ้อมทีละวรรค กำหนดรอบ เปิด/ปิดเสียงอังกะลุง กลองแขก–ฉิ่ง แถบโน้ต และไฟนำได้'],
@@ -3912,17 +3915,25 @@ function peerOpts(){ let q; try{ q=new URLSearchParams(location.search); }catch(
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const noteName=i=>L(AK[i].n,AK[i].e)+(AK[i].oct===-1?L(' ต่ำ',' low'):'');
 
+// คำเรียกตามโหมดที่เลือก: โหมดครู/นักเรียน = ครู–นักเรียน · บุคคลทั่วไป = ผู้นำวง–สมาชิก
+function rw(){ const b=document.body.classList, pb=b.contains('public');
+  return {pb, tc:b.contains('teacher'),
+    lead:pb?L('ผู้นำวง','the band leader'):L('ครู','the teacher'),
+    leadDev:pb?L('เครื่องผู้นำวง','leader’s device'):L('เครื่องครู','teacher’s device'),
+    mem:pb?L('สมาชิก','members'):L('นักเรียน','students'),
+    mate:pb?L('สมาชิกในวง','band members'):L('เพื่อน','classmates')}; }
 function roomRender(){
+  const W=rw();
   if(!STANDALONE){
     roomBody.innerHTML=`<p>${L('การเล่นพร้อมกันหลายเครื่องใช้ได้ในเว็บแอปเท่านั้น','Playing together works in the web app only')}</p>
       <p><a class="btn" href="${WEBAPP_URL}" target="_blank" rel="noopener">🌐 ${L('เปิดเว็บแอปอังกะลุงมือถือ','Open the Mobile Angklung web app')}</a></p>`; return;
   }
   if(!ROOM.role){
     roomBody.innerHTML=`<div class="rBig">
-      <p class="hint" style="margin:0">${L('ครูสร้างห้อง แล้วให้นักเรียนสแกน QR หรือกรอกรหัส 4 หลัก ทุกเครื่องจะบรรเลงเพลงเดียวกันพร้อมกัน แต่ละคนถืออังกะลุง 2 เสียง','The teacher creates a room; students scan the QR or enter the 4-digit code. Every device plays the same song together, each student holding 2 notes.')}</p>
+      <p class="hint" style="margin:0">${W.pb?L('ผู้นำวงเปิดวง แล้วให้เพื่อนสแกน QR หรือกรอกรหัส 4 หลัก ทุกเครื่องจะบรรเลงเพลงเดียวกันพร้อมกัน แต่ละคนเลือกถืออังกะลุง 2 เสียง','The band leader opens a band; friends scan the QR or enter the 4-digit code. Every device plays the same song together, each person holding 2 notes.'):W.tc?L('ครูเปิดห้องวง แล้วให้นักเรียนสแกน QR หรือกรอกรหัส 4 หลัก ทุกเครื่องจะบรรเลงเพลงเดียวกันพร้อมกัน นักเรียนเลือกถืออังกะลุง 2 เสียง','Open a band room; students scan the QR or enter the 4-digit code. Every device plays the same song together, each student holding 2 notes.'):L('ครูเปิดห้องวง แล้วให้นักเรียนสแกน QR หรือกรอกรหัส 4 หลัก ทุกเครื่องจะบรรเลงเพลงเดียวกันพร้อมกัน แต่ละคนถืออังกะลุง 2 เสียง','Your teacher opens a band room; scan the QR or enter the 4-digit code. Every device plays the same song together, each student holding 2 notes.')}</p>
       <div class="rChoice">
-        ${document.body.classList.contains('teacher')?`<button type="button" id="rHost">🧑‍🏫 ${L('เปิดห้องวง','Open a band room')}<small>${L('นักเรียนสแกน QR แล้วเลือกเสียงเอง','students scan the QR and pick notes')}</small></button>`:''}
-        <button type="button" class="alt" id="rJoinBtn">🙋 ${L('เข้าร่วมห้อง','Join a room')}<small>${document.body.classList.contains('teacher')?L('เข้าห้องของครูท่านอื่น','join another teacher’s room'):L('กรอกรหัส 4 หลักจากครู','enter the teacher’s 4-digit code')}</small></button>
+        ${W.tc?`<button type="button" id="rHost">🧑‍🏫 ${L('เปิดห้องวง','Open a band room')}<small>${L('นักเรียนสแกน QR แล้วเลือกเสียงเอง','students scan the QR and pick notes')}</small></button>`:W.pb?`<button type="button" id="rHost">🎶 ${L('เปิดวง','Open a band')}<small>${L('เป็นผู้นำวง ชวนเพื่อนสแกนเข้ามาเล่น','be the leader, invite friends to scan in')}</small></button>`:''}
+        <button type="button" class="alt" id="rJoinBtn">🙋 ${L('เข้าร่วมวง','Join a band')}<small>${W.tc?L('เข้าห้องของครูท่านอื่น','join another teacher’s room'):W.pb?L('กรอกรหัส 4 หลักจากผู้นำวง','enter the leader’s 4-digit code'):L('กรอกรหัส 4 หลักจากครู','enter the teacher’s 4-digit code')}</small></button>
       </div>
       <div class="rJoin"><input id="rCodeIn" inputmode="numeric" maxlength="4" placeholder="0000" value="${esc(pendingRoom||'')}"></div>
       <div id="rMsg"></div></div>`;
@@ -3934,20 +3945,20 @@ function roomRender(){
     const tk=ROOM.taken||[], pk=ROOM.pick||(ROOM.pick=[null,null]);
     const grid=h=>AK.map(a=>`<button type="button" data-h="${h}" data-i="${a.idx}" class="${pk[h]===a.idx?'on':''}" style="--c:${a.c}" title="${esc(noteName(a.idx))}"><span class="nt" style="color:${a.c}">${a.html}</span><small>${a.oct===-1?L('ต่ำ','low'):L('กลาง','mid')} · 👥${tk[a.idx]||0}</small></button>`).join('');
     roomBody.innerHTML=`<div class="rStat">✅ ${L('อยู่ในห้อง','In room')} <b>${ROOM.code}</b> · ${L('เลือกอังกะลุง 2 ตัวที่คุณจะถือ (เลือกเสียงเดียวกันได้)','Choose the 2 angklungs you will hold (the same note is allowed)')}</div>
-      <p class="hint" style="margin:4px 0 0">${L('ตัวเลข 👥 = จำนวนเพื่อนที่ถือเสียงนั้นแล้ว ควรเลือกเสียงที่ยังไม่มีคนถือก่อน','👥 = classmates already holding that note — pick uncovered notes first')}</p>
+      <p class="hint" style="margin:4px 0 0">${L('ตัวเลข 👥 = จำนวน'+W.mate+'ที่ถือเสียงนั้นแล้ว ควรเลือกเสียงที่ยังไม่มีคนถือก่อน','👥 = '+W.mate+' already holding that note — pick uncovered notes first')}</p>
       <div class="rPickH">✋ ${L('มือซ้าย','Left hand')}${pk[0]!=null?' · <b>'+esc(noteName(pk[0]))+'</b>':''}</div><div class="rPickG">${grid(0)}</div>
       <div class="rPickH">🤚 ${L('มือขวา','Right hand')}${pk[1]!=null?' · <b>'+esc(noteName(pk[1]))+'</b>':''}</div><div class="rPickG">${grid(1)}</div>
       <div id="rMsg"></div>
       <div class="rRow"><button type="button" class="rBtn g" id="rChoose">✅ ${L('ยืนยันเสียงที่เลือก','Confirm my notes')}</button><button type="button" class="rBtn x" id="rLeave">🚪 ${L('ออกจากห้อง','Leave room')}</button></div>`;
     roomBody.querySelectorAll('.rPickG button').forEach(b=>b.onclick=()=>{ pk[+b.dataset.h]=+b.dataset.i; if(pk[1]==null && +b.dataset.h===0){ const i=+b.dataset.i; pk[1]=i<7?i+7:i-7; } roomRender(); });
     rChoose.onclick=()=>{ if(pk[0]==null||pk[1]==null){ roomStatus(L('กรุณาเลือกเสียงทั้งมือซ้ายและมือขวา','Please choose a note for each hand'),true); return; }
-      try{ ROOM.conn.send({t:'choose',notes:[pk[0],pk[1]]}); }catch(e){} roomStatus(L('ส่งแล้ว รอครูยืนยัน…','Sent — waiting for the teacher…')); };
+      try{ ROOM.conn.send({t:'choose',notes:[pk[0],pk[1]]}); }catch(e){} roomStatus(L('ส่งแล้ว รอ'+W.lead+'ยืนยัน…','Sent — waiting for '+W.lead+'…')); };
     rLeave.onclick=roomLeave; return;
   }
   if(ROOM.role==='member'){
     const m=ROOM.notes;
-    roomBody.innerHTML=`<div class="rStat ${ROOM.err?'err':''}">${ROOM.err?esc(ROOM.err):(ROOM.connected?`✅ ${L('อยู่ในห้อง','In room')} <b>${ROOM.code}</b> · ${m?L('คุณถือ','You hold')+' <b>'+noteName(m[0])+' + '+noteName(m[1])+'</b>':L('รอครูแจกเสียง…','Waiting for notes…')}`:L('กำลังเชื่อมต่อห้อง…','Connecting…'))}</div>
-      <p class="hint">${L('รอครูกดเริ่ม แถบโน้ตจะนับ 4–3–2–1 แล้วเริ่มพร้อมกันทุกเครื่อง','Wait for the teacher to start — everyone counts in 4–3–2–1 together.')}</p>
+    roomBody.innerHTML=`<div class="rStat ${ROOM.err?'err':''}">${ROOM.err?esc(ROOM.err):(ROOM.connected?`✅ ${L('อยู่ในห้อง','In room')} <b>${ROOM.code}</b> · ${m?L('คุณถือ','You hold')+' <b>'+noteName(m[0])+' + '+noteName(m[1])+'</b>':L('รอ'+W.lead+'แจกเสียง…','Waiting for notes…')}`:L('กำลังเชื่อมต่อห้อง…','Connecting…'))}</div>
+      <p class="hint">${L('รอ'+W.lead+'กดเริ่ม แถบโน้ตจะนับ 4–3–2–1 แล้วเริ่มพร้อมกันทุกเครื่อง','Wait for '+W.lead+' to start — everyone counts in 4–3–2–1 together.')}</p>
       <div class="rRow"><button type="button" class="rBtn x" id="rLeave">🚪 ${L('ออกจากห้อง','Leave room')}</button></div>`;
     rLeave.onclick=roomLeave; return;
   }
@@ -3958,18 +3969,18 @@ function roomRender(){
   const opts=sel=>AK.map(a=>`<option value="${a.idx}"${a.idx===sel?' selected':''}>${noteName(a.idx)}</option>`).join('');
   const link=WEBAPP_URL+'?room='+ROOM.code;
   roomBody.innerHTML=`<div class="rCode"><div class="qr" id="rQR"></div><div><div class="hint" style="margin:0">${L('รหัสห้อง','Room code')}</div><div class="num">${ROOM.code}</div><div class="lnk">${esc(link)}</div></div></div>
-    <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${ROOM.mode==='beat'?'':missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ (เครื่องครูเล่นแทน)','Uncovered notes (teacher device plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ 14 เสียง','all 14 notes covered')}</div>
+    <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${ROOM.mode==='beat'?'':missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ ('+W.leadDev+'เล่นแทน)','Uncovered notes ('+W.leadDev+' plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ 14 เสียง','all 14 notes covered')}</div>
     <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.name)}<small style="font-weight:400;color:#4f6a85"> ${esc(x.info||'')}</small></b>
       ${x.notes?`<select data-k="0">${opts(x.notes[0])}</select><select data-k="1">${opts(x.notes[1])}</select>
       <select class="gSel" data-g="1" title="${L('กลุ่มล้อ-รับ','Lo/rap group')}"><option value="a"${x.grp!=='b'?' selected':''}>${L('กลุ่ม ก','Grp A')}</option><option value="b"${x.grp==='b'?' selected':''}>${L('กลุ่ม ข','Grp B')}</option></select>`:`<span class="wait">⏳ ${L('กำลังเลือกเสียง…','choosing notes…')}</span> <button type="button" class="rBtn x rGive" style="padding:4px 10px;font-size:.85rem">${L('แจกให้','Assign')}</button>`}
-      <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มีนักเรียนเข้าห้อง','No students yet')}</p>`}</div>
+      <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มี'+W.mem+'เข้าห้อง','No '+W.mem+' yet')}</p>`}</div>
     ${(ROOM.hist||[]).length?`<div class="rDl"><button type="button" class="btn alt" id="rCsv">⬇️ ${L('ดาวน์โหลดคะแนน (Excel)','Download scores (Excel)')} · ${ROOM.hist.length} ${L('รายการ','rows')}</button></div>`:''}
-    <label class="sl" style="margin:2px 0 6px"><input type="checkbox" id="rSelf"${ROOM.selfPick!==false?' checked':''}> 🙋 ${L('ให้นักเรียนเลือกเสียงเองเมื่อเข้าห้อง','Students choose their own notes when they join')}</label>
+    <label class="sl" style="margin:2px 0 6px"><input type="checkbox" id="rSelf"${ROOM.selfPick!==false?' checked':''}> 🙋 ${L('ให้'+W.mem+'เลือกเสียงเองเมื่อเข้าห้อง','Let '+W.mem+' choose their own notes when they join')}</label>
     <div class="seg rModeSeg" id="rModeSeg" style="margin:4px 0 8px">
       <button type="button" data-v="song" class="${ROOM.mode==='beat'?'':'on'}">🎵 ${L('เพลงในแอป','App song')}</button>
       <button type="button" data-v="beat" class="${ROOM.mode==='beat'?'on':''}">🥁 ${L('เฉพาะจังหวะ (เพลงอื่น)','Rhythm only (any song)')}</button></div>
     ${ROOM.mode==='beat'?`
-    <p class="hint" style="margin:0 0 6px">${L('เครื่องครูตีกลองแขก–ฉิ่งให้ทั้งวง นักเรียนบรรเลงเพลงอะไรก็ได้ตามโน้ตของตนเอง จอนักเรียนแสดงจังหวะฉิ่ง–ฉับให้เห็นพร้อมกัน','The teacher device plays Klong Khaek & Ching for everyone; students play any song from their own sheets while their screens flash the ching beat.')}</p>
+    <p class="hint" style="margin:0 0 6px">${L(W.leadDev+'ตีกลองแขก–ฉิ่งให้ทั้งวง '+W.mem+'บรรเลงเพลงอะไรก็ได้ตามโน้ตของตนเอง จอของ'+W.mem+'แสดงจังหวะฉิ่ง–ฉับให้เห็นพร้อมกัน','The '+W.leadDev+' plays Klong Khaek & Ching for everyone; '+W.mem+' play any song from their own sheets while their screens flash the ching beat.')}</p>
     <div class="songPick"><label>${L('หน้าทับ','Pattern')}</label><select id="rPat">${[...drumSel.options].map(o=>`<option value="${o.value}"${o.value===drumSel.value?' selected':''}>${o.textContent}</option>`).join('')}</select></div>
     <div class="bar" style="margin-top:8px"><label class="sl">${L('ความเร็ว','Tempo')} <input type="range" id="rDTempo" min="60" max="320" step="10" value="${drumTempo.value}"> <span id="rDTempoV">${drumTempo.value}</span></label></div>
     <div class="pOpts"><label class="sl"><input type="checkbox" id="rKlong"${useKlong.checked?' checked':''}> ${L('กลองแขก','Klong Khaek')}</label>
@@ -3981,14 +3992,14 @@ function roomRender(){
       <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>`:`
     <div class="songPick"><label>${L('เพลง','Song')}</label><select id="rSong">${[...pSong.options].map(o=>`<option value="${o.value}"${o.value===pSong.value?' selected':''}>${o.textContent}</option>`).join('')}</select></div>
     <div class="bar" style="margin-top:8px"><label class="sl">${L('ความเร็ว','Tempo')} <input type="range" id="rTempo" min="40" max="240" step="5" value="${pTempo.value}"> <span id="rTempoV">${pTempo.value}</span></label></div>
-    <div class="pOpts"><label class="sl"><input type="checkbox" id="rShow"${pShow.checked?' checked':''}> ${L('นักเรียนเห็นตัวโน้ต','Students see notes')}</label>
-      <label class="sl"><input type="checkbox" id="rDrum"${pDrum.checked?' checked':''}> ${L('กลองแขก–ฉิ่ง (เครื่องครู)','Klong Khaek & Ching (teacher device)')}</label>
-      <label class="sl"><input type="checkbox" id="rFill" checked> ${L('เครื่องครูเล่นเสียงที่ไม่มีคนถือ','Teacher device plays uncovered notes')}</label>
+    <div class="pOpts"><label class="sl"><input type="checkbox" id="rShow"${pShow.checked?' checked':''}> ${L(W.mem+'เห็นตัวโน้ต','Notes shown to '+W.mem)}</label>
+      <label class="sl"><input type="checkbox" id="rDrum"${pDrum.checked?' checked':''}> ${L('กลองแขก–ฉิ่ง ('+W.leadDev+')','Klong Khaek & Ching ('+W.leadDev+')')}</label>
+      <label class="sl"><input type="checkbox" id="rFill" checked> ${L(W.leadDev+'เล่นเสียงที่ไม่มีคนถือ','The '+W.leadDev+' plays uncovered notes')}</label>
       <label class="sl">🐢 ${L('ตอนจบเพลง','Song ending')} <select class="ritSel"><option value="0">ไม่ทอด · No slow-down</option><option value="1">ทอด 1 ห้อง · 1 bar</option><option value="2">ทอด 2 ห้อง · 2 bars</option><option value="4">ทอด 4 ห้อง · 4 bars</option></select></label></div>
     <div class="rRow">
       <button type="button" class="rBtn g" id="rStart">▶ ${L('เริ่มบรรเลงพร้อมกัน','Start together')}</button>
       <button type="button" class="rBtn" id="rStopB">■ ${L('หยุด','Stop')}</button></div>`}
-    <div class="rRow"><button type="button" class="rBtn x" id="rRepick">🙋 ${L('ให้นักเรียนเลือกเสียงใหม่','Let students pick again')}</button><button type="button" class="rBtn x" id="rDeal">🔀 ${L('ครูแจกเสียงให้','Teacher deals notes')}</button>
+    <div class="rRow"><button type="button" class="rBtn x" id="rRepick">🙋 ${L('ให้'+W.mem+'เลือกเสียงใหม่','Let '+W.mem+' pick again')}</button><button type="button" class="rBtn x" id="rDeal">🔀 ${L(W.pb?'ผู้นำวงแจกเสียงให้':'ครูแจกเสียงให้',W.pb?'Leader deals notes':'Teacher deals notes')}</button>
       <button type="button" class="rBtn x" id="rClose">🚪 ${L('ปิดห้อง','Close room')}</button></div>`;
   needQR().then(()=>{ const q=document.getElementById('rQR'); if(q&&!q.firstChild) new QRCode(q,{text:link,width:240,height:240,correctLevel:QRCode.CorrectLevel.M}); }).catch(()=>{});
   syncRitSel();
@@ -4127,7 +4138,7 @@ async function roomJoin(code){
   peer.on('open',()=>{
     const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn;
     conn.on('open',()=>{ clearTimeout(to); ROOM.connected=true; ROOM.err=null;
-      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),info:u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
+      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
       clockSync(); roomRender(); });
     conn.on('data',memberData);
     conn.on('close',()=>{ if(ROOM.role==='member'){ ROOM.connected=false; ROOM.err=L('หลุดจากห้อง','Disconnected from the room'); pracStop(true); memberWait(); roomRender(); } });
@@ -4152,17 +4163,17 @@ function memberData(d){
     return; }
   if(d.t==='beat'){ memberBeat(d); return; }
   if(d.t==='tick'){ const ms=d.at-ROOM.offset-performance.now(); setTimeout(()=>memberTick(d.k),Math.max(0,ms)); return; }
-  if(d.t==='rit'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('🐢 ครูกำลังทอดจังหวะ เตรียมจบเพลง','🐢 Slowing down — get ready to end'); return; }
+  if(d.t==='rit'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('🐢 '+rw().lead+'กำลังทอดจังหวะ เตรียมจบเพลง','🐢 Slowing down — get ready to end'); return; }
   if(d.t==='end'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('จบเพลง 👏','The end 👏'); const i=document.getElementById('bInd'); if(i) i.textContent='🎶'; return; }
   if(d.t==='stop'){ pracStop(true); memberWait(); return; }
-  if(d.t==='closed'){ pracStop(); ROOM.err=L('ครูปิดห้องแล้ว','The teacher closed the room'); ROOM.connected=false; memberWait(); roomRender(); }
+  if(d.t==='closed'){ pracStop(); ROOM.err=L(rw().lead+'ปิดห้องแล้ว','The room was closed'); ROOM.connected=false; memberWait(); roomRender(); }
 }
 function memberWait(){
   if(ROOM.role!=='member') return;
   pAgain.hidden=true;
   prac.hidden=false; document.body.classList.add('practicing');
   pTitle.textContent='👥 '+L('ห้อง','Room')+' '+ROOM.code+(ROOM.notes?' · '+L('ถือ','holding')+' '+noteName(ROOM.notes[0])+' + '+noteName(ROOM.notes[1]):'')+(ROOM.grp?' · '+(ROOM.grp==='b'?L('กลุ่ม ข','Group B'):L('กลุ่ม ก','Group A')):'');
-  pScore.textContent=''; pStrip.innerHTML=''; pCnt.innerHTML=`<div>⏳<small>${ROOM.err?esc(ROOM.err):L('รอครูเริ่มเพลง…','Waiting for the teacher to start…')}</small></div>`; pCnt.classList.add('on');
+  pScore.textContent=''; pStrip.innerHTML=''; pCnt.innerHTML=`<div>⏳<small>${ROOM.err?esc(ROOM.err):L('รอ'+rw().lead+'เริ่มเพลง…','Waiting for '+rw().lead+' to start…')}</small></div>`; pCnt.classList.add('on');
   setTimeout(fitKeys,50);
 }
 function memberBeat(d){
