@@ -2109,10 +2109,12 @@ function submitLink(prefill, vals){
 }
 function logScore(r){
   if(!SCRIPT_URL || !user || !r.total) return;
-  const vals=[userKind(user), user.name, user.cls||'-', user.no||'-', r.song, r.sec, r.tempo, r.hit, r.total, Math.round(r.hit*100/r.total)+'%', r.mode];
+  const vals=[userKind(user), user.name, user.cls||'-', user.no||'-', r.song, r.sec, r.tempo, r.hit, r.total, Math.round(r.hit*100/r.total)+'%', r.mode, ...nameParts(user)];
   const url=SCRIPT_URL+'?k=score'+vals.map((v,i)=>'&v'+(i+1)+'='+encodeURIComponent(v==null||v===''?'-':String(v))).join('');
   try{ fetch(url,{mode:'no-cors',keepalive:true}).catch(()=>{}); }catch(_){}
 }
+// แยก คำนำหน้า · ชื่อจริง · นามสกุล · ชื่อที่แสดง ส่งต่อท้าย (Apps Script แยกเป็นคอลัมน์)
+function nameParts(u){ u=u||{}; return [u.pre||'',u.first||'',u.last||'',u.disp||'']; }
 function userVals(u){ return [userKind(u), u.name, u.cls||'-', u.no||'-', u.school, u.prov, u.pos]; }
 let regRole='student', regOrg='in';
 const regKey=()=>regRole==='public'?'pb':(regRole==='teacher'?'tc':'st')+'-'+regOrg;
@@ -2142,7 +2144,7 @@ function showModes(){
   logNote.hidden=!FORM_PREFILL || logged;
   document.querySelectorAll('.wbtn[data-mode]').forEach(b=>{
     if(logged){ b.removeAttribute('href'); return; }
-    const l=submitLink(FORM_PREFILL,[...userVals(user),(isNewUser?'ลงชื่อใหม่ · ':'เข้าใช้ · ')+MODE_NAME[b.dataset.mode]]);
+    const l=submitLink(FORM_PREFILL,[...userVals(user),(isNewUser?'ลงชื่อใหม่ · ':'เข้าใช้ · ')+MODE_NAME[b.dataset.mode],...nameParts(user)]);
     if(l) b.href=l; else b.removeAttribute('href');
   });
 }
@@ -3952,8 +3954,9 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23g';
+const APP_VER='2026.11.23h';
 const CHANGELOG=[
+  {v:'2026.11.23h',d:['23 พ.ย. 2569','23 Nov 2026'],th:['บันทึกการเข้าใช้และคะแนนส่ง คำนำหน้า ชื่อจริง นามสกุล และชื่อที่แสดง แยกเป็นคนละคอลัมน์ใน Google Sheet'],en:['Sign-in and score records now send title, first name, last name and display name as separate columns in Google Sheets']},
   {v:'2026.11.23g',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบลงชื่อใหม่: เลือกคำนำหน้า กรอกชื่อจริง นามสกุล และชื่อที่ต้องการให้แสดงในแอป (ไม่กรอกจะใช้ชื่อจริง)','ลงชื่อครั้งแรกต้องกรอกตำแหน่ง โรงเรียน/หน่วยงาน และจังหวัดให้ครบ · <b>ทุกคนลงชื่อใหม่ 1 ครั้ง</b>'],
    en:['New sign-in form: title, first name, last name and the name shown in the app (first name if left blank)','Position, school/organisation and province are required on first sign-in · <b>everyone signs in again once</b>']},
   {v:'2026.11.23f',d:['23 พ.ย. 2569','23 Nov 2026'],th:['เข้าห้องวง: กด <b>สแกน QR</b> ในแอป หรือกรอกรหัสห้อง หรือสแกน QR ด้วยกล้องโทรศัพท์/LINE แล้วแตะ “เข้าห้องวงเลย” ครั้งเดียว','ครูแจกเสียงเป็นคู่เสียงติดกัน ดฺรฺ รฺมฺ … ลท ทดํ เมื่อแจกแล้วนักเรียนเปลี่ยนหรือแลกเสียงเองไม่ได้','ห้องวง: กำหนดจำนวนรอบ นำเข้าโน้ตเพลง นับสัญญาณ 4–3–2–1 ที่ทุกเครื่องก่อนบรรเลง','เสียงที่นักเรียนกดดังที่เครื่องนักเรียน และดังรวมทุกเสียงที่เครื่องครูด้วย'],
