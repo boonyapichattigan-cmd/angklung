@@ -1087,7 +1087,8 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
 .regForm.pb.pb-in .f-school,.regForm.pb.pb-in .f-prov,.regForm.pb.pb-in #provOtherL{display:none !important}
 .regForm.pb.pb-in .f-inNote{display:block}
 
-.regForm .nmEn{background:#f4f8fc;border-radius:12px;padding:6px 10px 2px;margin-bottom:8px}
+.regForm .nmEn{margin:0}
+body.lang-th .regForm .nmEn,body.lang-en .regForm .nmTh{display:none}
 .regForm .nmEnH{margin:0 0 4px;font-weight:700;font-size:.9rem;color:#0d3b66}
 .regForm .nmEnH small{font-weight:500;color:#4f6a85}
 </style>
@@ -1141,14 +1142,14 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
           <label><span class="th">คำนำหน้า <i class="req">*</i></span><span class="en i">Title *</span><select id="fPre"><option value="">เลือก / Select</option><option value="เด็กชาย">เด็กชาย / Master</option><option value="เด็กหญิง">เด็กหญิง / Miss (girl)</option><option value="นาย">นาย / Mr.</option><option value="นาง">นาง / Mrs.</option><option value="นางสาว">นางสาว / Ms.</option><option value="ว่าที่ร้อยตรี">ว่าที่ร้อยตรี / Acting Sub Lt.</option><option value="ว่าที่ร้อยตรีหญิง">ว่าที่ร้อยตรีหญิง / Acting Sub Lt. (f)</option><option value="ดร.">ดร. / Dr.</option><option value="other">อื่น ๆ (ระบุ) / Other</option></select></label>
           <label id="preOtherL" hidden><span class="th">ระบุคำนำหน้า <i class="req">*</i></span><span class="en i">Specify title *</span><input id="fPreOther" placeholder="เช่น ผศ. / e.g. Asst. Prof."></label>
         </div>
-        <div class="nmTwo">
+        <div class="nmTwo nmTh">
           <label><span class="th">ชื่อจริง <i class="req">*</i></span><span class="en i">First name in Thai (optional)</span><input id="fFirst" autocomplete="given-name" placeholder="เช่น สมชาย / e.g. John"></label>
           <label><span class="th">นามสกุล <i class="req">*</i></span><span class="en i">Last name in Thai (optional)</span><input id="fLast" autocomplete="family-name" placeholder="เช่น ใจดี / e.g. Smith"></label>
         </div>
         <div class="nmEn">
-          <p class="nmEnH"><span class="th">ชื่อภาษาอังกฤษ <small>(แสดงในเวอร์ชันภาษาอังกฤษ · ไม่บังคับ)</small></span><span class="en">Name in English <i class="req">*</i></span></p>
-          <div class="nmTwo"><label><span class="th">ชื่อ (อังกฤษ)</span><span class="en i">First name</span><input id="fEnFirst" autocomplete="given-name" placeholder="e.g. Somchai" lang="en"></label>
-          <label><span class="th">นามสกุล (อังกฤษ)</span><span class="en i">Last name</span><input id="fEnLast" autocomplete="family-name" placeholder="e.g. Jaidee" lang="en"></label></div>
+          
+          <div class="nmTwo"><label><span class="th">ชื่อ (อังกฤษ)</span><span class="en i">First name <i class="req">*</i></span><input id="fEnFirst" autocomplete="given-name" placeholder="e.g. Somchai" lang="en"></label>
+          <label><span class="th">นามสกุล (อังกฤษ)</span><span class="en i">Last name <i class="req">*</i></span><input id="fEnLast" autocomplete="family-name" placeholder="e.g. Jaidee" lang="en"></label></div>
         </div>
         <label><span class="th">ชื่อที่แสดงในแอป</span><span class="en i">Display name in the app</span><input id="fDisp" autocomplete="nickname" placeholder="ไม่กรอกจะใช้ชื่อจริง / blank = first name"><small class="th fNote">ไม่บังคับ ถ้าไม่กรอกจะใช้ชื่อจริง</small><small class="en fNote">Optional — your first name is used if left blank</small></label>
         <p class="f-inNote">🏫 <span class="th">โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ · จังหวัดสมุทรปราการ</span><span class="en">Bodindecha (Sing Singhaseni) Samutprakan School · Samut Prakan</span></p>
@@ -4003,8 +4004,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23k';
+const APP_VER='2026.11.23l';
 const CHANGELOG=[
+  {v:'2026.11.23l',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบฟอร์มลงชื่อกระชับขึ้น: เวอร์ชันไทยกรอกเฉพาะชื่อภาษาไทย เวอร์ชันอังกฤษกรอกเฉพาะชื่อภาษาอังกฤษ'],
+   en:['Simpler sign-in form: the Thai version asks for the Thai name only, the English version for the English name only']},
   {v:'2026.11.23k',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบฟอร์มลงชื่อแสดงภาษาเดียวตามเวอร์ชัน: เวอร์ชันไทยแสดงเฉพาะภาษาไทย เวอร์ชันอังกฤษแสดงเฉพาะภาษาอังกฤษ (รวมถึงตัวเลือกตำแหน่ง กลุ่มสาระ ระดับชั้น และจังหวัด)'],
    en:['The sign-in form now shows one language only: Thai in the Thai version, English in the English version (including positions, departments, grades and provinces)']},
   {v:'2026.11.23j',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ลงชื่อครั้งเดียว ใช้ได้ทั้ง 2 ภาษา: เพิ่มช่อง <b>ชื่อภาษาอังกฤษ</b> แอปแสดงชื่อไทยในเวอร์ชันภาษาไทย และชื่ออังกฤษในเวอร์ชันภาษาอังกฤษ','<b>เสียงดนตรีดังขึ้น</b> (อังกะลุง กลองแขก ฉิ่ง) และเร่งระดับเสียงได้มากกว่าเดิมในตั้งค่าเสียง'],
