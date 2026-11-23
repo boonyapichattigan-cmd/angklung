@@ -1016,7 +1016,6 @@ body.noLane #pStrip,body.noLane .phead{visibility:hidden}
 .regForm.pb .nmFull{display:none !important}
 .regForm.pb .nmPb{display:inline}
 .regForm.pb .f-out{display:block}
-.regForm.pb .f-school{display:none}
 /* มีอะไรใหม่ */
 .wNewsP{text-align:center;margin:8px 0 0}
 .newsPop .popBox{max-width:560px}
@@ -1069,6 +1068,19 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
 .joinNowW{grid-template-columns:1fr !important;margin-bottom:10px}
 .joinNowW[hidden]{display:none !important}
 .wbtn.joinNow{background:linear-gradient(140deg,#1b8a7a,#0f6b5e) !important;min-height:0 !important;flex-direction:row;gap:12px;padding:14px}
+
+/* ลงชื่อ: คำนำหน้า ชื่อ นามสกุล ชื่อที่แสดง */
+.regForm .nmRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.regForm .nmTwo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.regForm .req{color:#d63e22;font-style:normal}
+.regForm .fNote{display:block;font-weight:500;font-size:.75rem;color:#4f6a85;margin-top:2px}
+.regForm .f-pb{display:none}
+.regForm.pb .f-pb{display:block}
+.regForm.pb .f-school{display:block !important}
+#preOtherL[hidden],#pbOtherL[hidden]{display:none !important}
+.regForm .f-inNote{display:none;margin:0 0 8px;font-size:.85rem;font-weight:600;color:#0d3b66;background:#eef4fb;border-radius:10px;padding:6px 10px}
+.regForm.st-in .f-inNote,.regForm.tc-in .f-inNote{display:block}
+.regForm.st-in .f-stin{margin-top:0}
 </style>
 </head>
 <body>
@@ -1116,18 +1128,30 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
       </div>
       <form id="regForm" class="regForm" hidden onsubmit="return false">
         <p class="regHead" id="regHead"></p>
-        <label><span class="th nmFull">ชื่อ–นามสกุล</span><span class="th nmPb">ชื่อ หรือ ชื่อเล่น</span><span class="en i nmFull">Full name</span><span class="en i nmPb">Name or nickname</span><input id="fName" autocomplete="name" placeholder="เช่น เด็กชายสมชาย ใจดี / e.g. John Smith"></label>
+        <div class="nmRow">
+          <label><span class="th">คำนำหน้า <i class="req">*</i></span><span class="en i">Title *</span><select id="fPre"><option value="">เลือก / Select</option><option value="เด็กชาย">เด็กชาย / Master</option><option value="เด็กหญิง">เด็กหญิง / Miss (girl)</option><option value="นาย">นาย / Mr.</option><option value="นาง">นาง / Mrs.</option><option value="นางสาว">นางสาว / Ms.</option><option value="ว่าที่ร้อยตรี">ว่าที่ร้อยตรี / Acting Sub Lt.</option><option value="ว่าที่ร้อยตรีหญิง">ว่าที่ร้อยตรีหญิง / Acting Sub Lt. (f)</option><option value="ดร.">ดร. / Dr.</option><option value="other">อื่น ๆ (ระบุ) / Other</option></select></label>
+          <label id="preOtherL" hidden><span class="th">ระบุคำนำหน้า <i class="req">*</i></span><span class="en i">Specify title *</span><input id="fPreOther" placeholder="เช่น ผศ. / e.g. Asst. Prof."></label>
+        </div>
+        <div class="nmTwo">
+          <label><span class="th">ชื่อจริง <i class="req">*</i></span><span class="en i">First name *</span><input id="fFirst" autocomplete="given-name" placeholder="เช่น สมชาย / e.g. John"></label>
+          <label><span class="th">นามสกุล <i class="req">*</i></span><span class="en i">Last name *</span><input id="fLast" autocomplete="family-name" placeholder="เช่น ใจดี / e.g. Smith"></label>
+        </div>
+        <label><span class="th">ชื่อที่แสดงในแอป</span><span class="en i">Display name in the app</span><input id="fDisp" autocomplete="nickname" placeholder="ไม่กรอกจะใช้ชื่อจริง / blank = first name"><small class="th fNote">ไม่บังคับ ถ้าไม่กรอกจะใช้ชื่อจริง</small><small class="en fNote">Optional — your first name is used if left blank</small></label>
+        <p class="f-inNote">🏫 <span class="th">โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ · จังหวัดสมุทรปราการ</span><span class="en">Bodindecha (Sing Singhaseni) Samutprakan School · Samut Prakan</span></p>
         <div class="f-stin two">
           <label><span class="th">ชั้น</span><span class="en i">Grade</span><select id="fLevel"><option value="">เลือก / Select</option><option>ม.1</option><option>ม.2</option><option>ม.3</option><option>ม.4</option><option>ม.5</option><option>ม.6</option></select></label>
           <label><span class="th">ห้อง</span><span class="en i">Room</span><input id="fRoom" inputmode="numeric" placeholder="เช่น 5"></label>
           <label><span class="th">เลขที่</span><span class="en i">No.</span><input id="fNo" inputmode="numeric" placeholder="เช่น 12"></label>
         </div>
+        <label class="f-tcin"><span class="th">ตำแหน่ง <i class="req">*</i></span><span class="en i">Position *</span><select id="fTPos"><option value="">เลือกตำแหน่ง / Select</option><option>ผู้อำนวยการ</option><option>รองผู้อำนวยการ</option><option>ครู</option><option>ครูผู้ช่วย</option><option>พนักงานราชการ</option><option>ครูอัตราจ้าง</option><option>บุคลากรทางการศึกษา</option><option>อื่น ๆ</option></select></label>
         <label class="f-tcin"><span class="th">กลุ่มสาระการเรียนรู้ / งาน</span><span class="en i">Department</span><select id="fDept"><option value="">เลือก / Select</option><option>ศิลปะ</option><option>ภาษาไทย</option><option>คณิตศาสตร์</option><option>วิทยาศาสตร์และเทคโนโลยี</option><option>สังคมศึกษา ศาสนา และวัฒนธรรม</option><option>สุขศึกษาและพลศึกษา</option><option>การงานอาชีพ</option><option>ภาษาต่างประเทศ</option><option>กิจกรรมพัฒนาผู้เรียน</option><option>ผู้บริหาร</option><option>อื่น ๆ</option></select></label>
         <div class="f-out">
+          <label class="f-pb"><span class="th">สถานะ / อาชีพ <i class="req">*</i></span><span class="en i">Status / occupation *</span><select id="fPbPos"><option value="">เลือก / Select</option><option>ประชาชนทั่วไป</option><option>ผู้ปกครอง</option><option>นักเรียน / นักศึกษา</option><option>ข้าราชการ / พนักงานรัฐ</option><option>พนักงานเอกชน / ธุรกิจส่วนตัว</option><option>นักดนตรี / ผู้สนใจดนตรีไทย</option><option value="other">อื่น ๆ (ระบุ) / Other</option></select></label>
+          <label class="f-pb" id="pbOtherL" hidden><span class="th">ระบุสถานะ / อาชีพ <i class="req">*</i></span><span class="en i">Specify *</span><input id="fPbOther"></label>
           <label class="f-stout"><span class="th">ระดับชั้น</span><span class="en i">Grade</span><select id="fGrade"><option value="">เลือกระดับชั้น / Select</option><option>ป.1</option><option>ป.2</option><option>ป.3</option><option>ป.4</option><option>ป.5</option><option>ป.6</option><option>ม.1</option><option>ม.2</option><option>ม.3</option><option>ม.4</option><option>ม.5</option><option>ม.6</option><option>ปวช.</option><option>ปวส.</option><option>อุดมศึกษา</option><option>อื่น ๆ</option></select></label>
           <label class="f-tcout"><span class="th">ตำแหน่ง</span><span class="en i">Position</span><select id="fPos"><option value="">เลือกตำแหน่ง / Select</option><option value="ครู">ครู / Teacher</option><option value="ผู้บริหาร">ผู้บริหาร / Administrator</option><option value="ศึกษานิเทศก์">ศึกษานิเทศก์ / Supervisor</option><option value="อาจารย์">อาจารย์มหาวิทยาลัย / Lecturer</option><option value="นักศึกษาครู">นักศึกษาครู / Student teacher</option><option value="other">อื่น ๆ (ระบุ) / Other (please specify)</option></select></label>
           <label id="posOtherL" class="f-tcout" hidden><span class="th">ระบุตำแหน่ง</span><span class="en i">Specify position</span><input id="fPosOther" placeholder="เช่น นักศึกษา ศึกษานิเทศก์ / e.g. University student"></label>
-          <label class="f-school"><span class="th">โรงเรียน / สังกัด</span><span class="en i">School / Organization</span><input id="fSchool" placeholder="เช่น โรงเรียน… / สพม.… / e.g. ABC School"></label>
+          <label class="f-school"><span class="th">โรงเรียน / หน่วยงาน / สังกัด <i class="req">*</i></span><span class="en i">School / Organization *</span><input id="fSchool" placeholder="เช่น โรงเรียน… / สพม.… / ถ้าไม่มีพิมพ์ ไม่มี"></label>
           <label><span class="th">จังหวัด</span><span class="en i">Province / Country</span><select id="fProvSel"><option value="">เลือกจังหวัด / Select</option><option>กรุงเทพมหานคร</option><option>กระบี่</option><option>กาญจนบุรี</option><option>กาฬสินธุ์</option><option>กำแพงเพชร</option><option>ขอนแก่น</option><option>จันทบุรี</option><option>ฉะเชิงเทรา</option><option>ชลบุรี</option><option>ชัยนาท</option><option>ชัยภูมิ</option><option>ชุมพร</option><option>เชียงราย</option><option>เชียงใหม่</option><option>ตรัง</option><option>ตราด</option><option>ตาก</option><option>นครนายก</option><option>นครปฐม</option><option>นครพนม</option><option>นครราชสีมา</option><option>นครศรีธรรมราช</option><option>นครสวรรค์</option><option>นนทบุรี</option><option>นราธิวาส</option><option>น่าน</option><option>บึงกาฬ</option><option>บุรีรัมย์</option><option>ปทุมธานี</option><option>ประจวบคีรีขันธ์</option><option>ปราจีนบุรี</option><option>ปัตตานี</option><option>พระนครศรีอยุธยา</option><option>พะเยา</option><option>พังงา</option><option>พัทลุง</option><option>พิจิตร</option><option>พิษณุโลก</option><option>เพชรบุรี</option><option>เพชรบูรณ์</option><option>แพร่</option><option>ภูเก็ต</option><option>มหาสารคาม</option><option>มุกดาหาร</option><option>แม่ฮ่องสอน</option><option>ยโสธร</option><option>ยะลา</option><option>ร้อยเอ็ด</option><option>ระนอง</option><option>ระยอง</option><option>ราชบุรี</option><option>ลพบุรี</option><option>ลำปาง</option><option>ลำพูน</option><option>เลย</option><option>ศรีสะเกษ</option><option>สกลนคร</option><option>สงขลา</option><option>สตูล</option><option>สมุทรปราการ</option><option>สมุทรสงคราม</option><option>สมุทรสาคร</option><option>สระแก้ว</option><option>สระบุรี</option><option>สิงห์บุรี</option><option>สุโขทัย</option><option>สุพรรณบุรี</option><option>สุราษฎร์ธานี</option><option>สุรินทร์</option><option>หนองคาย</option><option>หนองบัวลำภู</option><option>อ่างทอง</option><option>อำนาจเจริญ</option><option>อุดรธานี</option><option>อุตรดิตถ์</option><option>อุทัยธานี</option><option>อุบลราชธานี</option><option value="other">อื่น ๆ / ต่างประเทศ (ระบุ) — Other / Abroad</option></select></label>
           <label id="provOtherL" hidden><span class="th">ระบุจังหวัด / ประเทศ</span><span class="en i">Specify city / country</span><input id="fProvOther" placeholder="เช่น โตเกียว ญี่ปุ่น / e.g. Tokyo, Japan"></label>
         </div>
@@ -2097,15 +2121,17 @@ function setRegHead(){ const k=regKey();
     : k==='tc-in' ? L('👩‍🏫 โหมดครู · ครู'+SCHOOL_NAME,'👩‍🏫 Teacher · Bodindecha (Sing Singhaseni) Samutprakan School')
     : k==='pb' ? L('🌏 บุคคลทั่วไป · ยินดีต้อนรับ','🌏 General public · welcome')
     : k==='st-out' ? L('🎒 โหมดนักเรียน · บุคคลภายนอก','🎒 Student · guest') : L('👩‍🏫 โหมดครู · บุคคลภายนอก','👩‍🏫 Teacher · guest'); }
+const REG_V=2;   // รุ่นแบบลงชื่อ: เปลี่ยนเลขนี้เมื่อต้องการให้ทุกคนลงชื่อใหม่
 let user=normUser(store.get('user',null));
+if(user && user.regV!==REG_V) user=null;   // แบบลงชื่อใหม่: ทุกคนลงชื่อใหม่ 1 ครั้ง
 let isNewUser=false, sessionLogged=false;
 const todayKey=()=>{ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); };
 function showReg(){ regStep.hidden=false; modeStep.hidden=true; regForm.hidden=true; whoBtns.hidden=false; orgStep.hidden=true; regQ.hidden=false; }
 function showModes(){
   regStep.hidden=true; modeStep.hidden=false;
   normUser(user); const tc=user.role==='teacher', pb=user.role==='public';
-  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(user.name)+escH(pb?` · ${user.prov}`:user.org==='in'
-    ? (tc?` · ${L('ครู','Teacher')}${user.dept?' · '+user.dept:''}`:` · ${user.cls} ${L('เลขที่','No.')} ${user.no}`)
+  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(user.disp||user.name)+escH(pb?` · ${user.prov}`:user.org==='in'
+    ? (tc?` · ${user.pos||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+user.dept:''}`:` · ${user.cls} ${L('เลขที่','No.')} ${user.no}`)
     : ` · ${tc?(user.pos||''):L('นักเรียน','Student')+' '+(user.cls||'')} · ${user.school} · ${user.prov}`);
   modeStep.className=tc?'role-tc':pb?'role-pb':'role-st';
   { const jw=document.getElementById('joinNowW'), pr=(()=>{ try{ return new URLSearchParams(location.search).get('room'); }catch(e){ return null; } })();
@@ -2120,9 +2146,10 @@ function showModes(){
     if(l) b.href=l; else b.removeAttribute('href');
   });
 }
+function regClear(){ regForm.querySelectorAll('input').forEach(x=>x.value=''); regForm.querySelectorAll('select').forEach(x=>x.selectedIndex=0); ['posOtherL','provOtherL','preOtherL','pbOtherL'].forEach(id=>{ const e=document.getElementById(id); if(e) e.hidden=true; }); regErr.textContent=''; }
 whoBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
-  regRole=b.dataset.role; whoBtns.hidden=true; regQ.hidden=true;
-  if(regRole==='public'){ regOrg='out'; regForm.hidden=false; regForm.className='regForm pb'; setRegHead(); regErr.textContent=''; fName.focus(); return; }
+  regClear(); regRole=b.dataset.role; whoBtns.hidden=true; regQ.hidden=true;
+  if(regRole==='public'){ regOrg='out'; regForm.hidden=false; regForm.className='regForm pb'; setRegHead(); regErr.textContent=''; fPre.focus(); return; }
   orgStep.hidden=false;
   orgQ.innerHTML=regRole==='teacher'?L('👩‍🏫 โหมดครู · ท่านเป็นครูของ','👩‍🏫 Teacher mode · you teach at'):L('🎒 โหมดนักเรียน · คุณเป็นนักเรียนของ','🎒 Student mode · you study at');
 });
@@ -2130,45 +2157,43 @@ orgBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
   regOrg=b.dataset.org; orgStep.hidden=true; regForm.hidden=false;
   regForm.className='regForm '+regKey();
   setRegHead();
-  regErr.textContent=''; fName.focus();
+  regErr.textContent=''; fPre.focus();
 });
 orgBack.onclick=showReg;
 regBack.onclick=()=>{ if(regRole==='public'){ showReg(); return; } regForm.hidden=true; orgStep.hidden=false; };
 function readReg(){
-  const name=fName.value.trim(), k=regKey();
-  if(k==='pb'){
-    const pv = fProvSel.value==='other' ? fProvOther.value.trim() : fProvSel.value;
-    if(!name) return {err:'กรุณากรอกชื่อหรือชื่อเล่น · Please enter your name'};
-    if(!fProvSel.value) return {err:'กรุณาเลือกจังหวัด · Please select a province'};
-    if(!pv) return {err:'กรุณาระบุจังหวัดหรือประเทศ · Please specify your city / country'};
-    return {type:'guest',role:'public',org:'out',name,pos:'บุคคลทั่วไป',school:'-',prov:pv};
-  }
+  const k=regKey(), pre=fPre.value==='other'?fPreOther.value.trim():fPre.value, first=fFirst.value.trim(), last=fLast.value.trim();
+  if(!fPre.value) return {err:'กรุณาเลือกคำนำหน้า · Please choose a title'};
+  if(!pre) return {err:'กรุณาระบุคำนำหน้า · Please specify your title'};
+  if(!first) return {err:'กรุณากรอกชื่อจริง · Please enter your first name'};
+  if(!last) return {err:'กรุณากรอกนามสกุล · Please enter your last name'};
+  const name=pre+first+' '+last, disp=fDisp.value.trim()||first;
+  const base={regV:REG_V,pre,first,last,disp,name};
+  const pv = fProvSel.value==='other' ? fProvOther.value.trim() : fProvSel.value;
   if(k==='tc-in'){
-    if(!name) return {err:'กรุณากรอกชื่อ–นามสกุล · Please enter your full name'};
+    if(!fTPos.value) return {err:'กรุณาเลือกตำแหน่ง · Please select your position'};
     if(!fDept.value) return {err:'กรุณาเลือกกลุ่มสาระการเรียนรู้หรืองาน · Please select your department'};
-    return {type:'teacher',role:'teacher',org:'in',name,dept:fDept.value,cls:fDept.value,school:SCHOOL_NAME,prov:'สมุทรปราการ',pos:'ครู'};
+    return {...base,type:'teacher',role:'teacher',org:'in',dept:fDept.value,cls:fDept.value,school:SCHOOL_NAME,prov:'สมุทรปราการ',pos:fTPos.value};
   }
   if(k==='st-in'){
     const lv=fLevel.value, rm=fRoom.value.trim(), no=fNo.value.trim();
-    if(!name) return {err:'กรุณากรอกชื่อ–นามสกุล · Please enter your full name'};
     if(!lv||!rm) return {err:'กรุณาเลือกชั้นและกรอกห้อง · Please select grade and room'};
     if(!no) return {err:'กรุณากรอกเลขที่ · Please enter your number'};
-    return {type:'student',role:'student',org:'in',name,cls:`${lv}/${rm}`,no,school:SCHOOL_NAME,prov:'สมุทรปราการ',pos:'นักเรียน'};
+    return {...base,type:'student',role:'student',org:'in',cls:`${lv}/${rm}`,no,school:SCHOOL_NAME,prov:'สมุทรปราการ',pos:'นักเรียน'};
   }
   const sc=fSchool.value.trim();
-  const pv = fProvSel.value==='other' ? fProvOther.value.trim() : fProvSel.value;
-  const pos = k==='st-out' ? 'นักเรียน' : (fPos.value==='other' ? fPosOther.value.trim() : fPos.value);
-  if(!name) return {err:'กรุณากรอกชื่อ–นามสกุล · Please enter your full name'};
-  if(k==='st-out' && !fGrade.value) return {err:'กรุณาเลือกระดับชั้น · Please select your grade'};
-  if(k==='tc-out' && !fPos.value) return {err:'กรุณาเลือกตำแหน่ง · Please select a position'};
-  if(!pos) return {err:'กรุณาระบุตำแหน่ง · Please specify your position'};
-  if(!sc) return {err:'กรุณากรอกโรงเรียนหรือสังกัด · Please enter your school / organization'};
+  let pos;
+  if(k==='pb'){ if(!fPbPos.value) return {err:'กรุณาเลือกสถานะหรืออาชีพ · Please select your status / occupation'}; pos=fPbPos.value==='other'?fPbOther.value.trim():fPbPos.value; if(!pos) return {err:'กรุณาระบุสถานะหรืออาชีพ · Please specify your status / occupation'}; }
+  else if(k==='st-out'){ if(!fGrade.value) return {err:'กรุณาเลือกระดับชั้น · Please select your grade'}; pos='นักเรียน'; }
+  else { if(!fPos.value) return {err:'กรุณาเลือกตำแหน่ง · Please select a position'}; pos=fPos.value==='other'?fPosOther.value.trim():fPos.value; if(!pos) return {err:'กรุณาระบุตำแหน่ง · Please specify your position'}; }
+  if(!sc) return {err:'กรุณากรอกโรงเรียน หน่วยงาน หรือสังกัด (ถ้าไม่มีพิมพ์ ไม่มี) · Please enter your school / organisation (type “none” if none)'};
   if(!fProvSel.value) return {err:'กรุณาเลือกจังหวัด · Please select a province'};
   if(!pv) return {err:'กรุณาระบุจังหวัดหรือประเทศ · Please specify your city / country'};
-  return k==='st-out' ? {type:'guest',role:'student',org:'out',name,pos,cls:fGrade.value,school:sc,prov:pv} : {type:'guest',role:'teacher',org:'out',name,pos,school:sc,prov:pv};
+  if(k==='pb') return {...base,type:'guest',role:'public',org:'out',pos,cls:pos,school:sc,prov:pv};
+  return k==='st-out' ? {...base,type:'guest',role:'student',org:'out',pos,cls:fGrade.value,school:sc,prov:pv} : {...base,type:'guest',role:'teacher',org:'out',pos,school:sc,prov:pv};
 }
 regForm.addEventListener('input',()=>{ regErr.textContent=''; });
-regForm.addEventListener('change',()=>{ posOtherL.hidden = fPos.value!=='other'; provOtherL.hidden = fProvSel.value!=='other'; });
+regForm.addEventListener('change',()=>{ posOtherL.hidden = fPos.value!=='other'; provOtherL.hidden = fProvSel.value!=='other'; preOtherL.hidden = fPre.value!=='other'; pbOtherL.hidden = fPbPos.value!=='other'; });
 regGo.onclick=()=>{
   const u=readReg();
   if(u.err){ regErr.textContent='⚠️ '+pair(u.err); return; }
@@ -3927,8 +3952,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23f';
+const APP_VER='2026.11.23g';
 const CHANGELOG=[
+  {v:'2026.11.23g',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบลงชื่อใหม่: เลือกคำนำหน้า กรอกชื่อจริง นามสกุล และชื่อที่ต้องการให้แสดงในแอป (ไม่กรอกจะใช้ชื่อจริง)','ลงชื่อครั้งแรกต้องกรอกตำแหน่ง โรงเรียน/หน่วยงาน และจังหวัดให้ครบ · <b>ทุกคนลงชื่อใหม่ 1 ครั้ง</b>'],
+   en:['New sign-in form: title, first name, last name and the name shown in the app (first name if left blank)','Position, school/organisation and province are required on first sign-in · <b>everyone signs in again once</b>']},
   {v:'2026.11.23f',d:['23 พ.ย. 2569','23 Nov 2026'],th:['เข้าห้องวง: กด <b>สแกน QR</b> ในแอป หรือกรอกรหัสห้อง หรือสแกน QR ด้วยกล้องโทรศัพท์/LINE แล้วแตะ “เข้าห้องวงเลย” ครั้งเดียว','ครูแจกเสียงเป็นคู่เสียงติดกัน ดฺรฺ รฺมฺ … ลท ทดํ เมื่อแจกแล้วนักเรียนเปลี่ยนหรือแลกเสียงเองไม่ได้','ห้องวง: กำหนดจำนวนรอบ นำเข้าโน้ตเพลง นับสัญญาณ 4–3–2–1 ที่ทุกเครื่องก่อนบรรเลง','เสียงที่นักเรียนกดดังที่เครื่องนักเรียน และดังรวมทุกเสียงที่เครื่องครูด้วย'],
    en:['Join a band room: tap <b>Scan QR</b> in the app, type the code, or scan with the phone camera/LINE and tap “Join now” once','Teacher deals adjacent note pairs ดฺรฺ รฺมฺ … ลท ทดํ; dealt notes cannot be changed or swapped','Band room: set rounds, import notation, and a 4–3–2–1 count-in on every device','Students’ taps sound on their own device and all together on the teacher’s device']},
   {v:'2026.11.23e',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ฝึกบรรเลงเพลง: เลือก <b>จำนวนรอบ</b> 1–10 รอบ หรือ <b>วนซ้ำจนกว่าจะกดหยุด</b> ได้ทั้งหน้าเลือกเพลงและบนแถบตัวโน้ต แต่ละรอบนับ 4–3–2–1 ก่อนเริ่ม และแสดงว่ากำลังเล่นรอบที่เท่าไร'],
@@ -4091,7 +4118,7 @@ function roomRender(){
   const link=WEBAPP_URL+'?room='+ROOM.code;
   roomBody.innerHTML=`<div class="rCode"><div class="qr" id="rQR"></div><div><div class="hint" style="margin:0">${L('รหัสห้อง','Room code')}</div><div class="num">${ROOM.code}</div><div class="lnk">${esc(link)}</div></div></div>
     <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${ROOM.mode==='beat'?'':missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ ('+W.leadDev+'เล่นแทน)','Uncovered notes ('+W.leadDev+' plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ '+AK.length+' เสียง','all '+AK.length+' notes covered')}</div>
-    <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.name)}<small style="font-weight:400;color:#4f6a85"> ${esc(x.info||'')}</small></b>
+    <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.disp&&!x.name.includes(x.disp)?x.disp+' · ':'')}${esc(x.name)}<small style="font-weight:400;color:#4f6a85"> ${esc(x.info||'')}</small></b>
       ${x.notes?`<select data-k="0">${opts(x.notes[0])}</select><select data-k="1">${opts(x.notes[1])}</select>
       <select class="gSel" data-g="1" title="${L('กลุ่มล้อ-รับ','Lo/rap group')}"><option value="a"${x.grp!=='b'?' selected':''}>${L('กลุ่ม ก','Grp A')}</option><option value="b"${x.grp==='b'?' selected':''}>${L('กลุ่ม ข','Grp B')}</option></select>`:`<span class="wait">⏳ ${L('กำลังเลือกเสียง…','choosing notes…')}</span> <button type="button" class="rBtn x rGive" style="padding:4px 10px;font-size:.85rem">${L('แจกให้','Assign')}</button>`}
       <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มี'+W.mem+'เข้าห้อง','No '+W.mem+' yet')}</p>`}</div>
@@ -4180,7 +4207,7 @@ function hostData(conn,d){
   if(d.t==='ping'){ conn.send({t:'pong',c:d.c,h:performance.now()}); return; }
   if(d.t==='hit'){ if(ROOM.echo===false) return; const a=AK[+d.i]; if(!a) return; initAudio(); if(ctx.state!=='running') ctx.resume(); hitVoice(a,ctx.currentTime+0.005,0.75);
     const el=soloEls[a.idx]; if(el){ el.classList.add('play'); setTimeout(()=>el.classList.remove('play'),140); } return; }
-  if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),notes:null,grp:'a',score:null};
+  if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),disp:String(d.disp||'').slice(0,40),notes:null,grp:'a',score:null};
     ROOM.members.set(conn.peer,x);
     if(ROOM.selfPick!==false) roomSend(x,{t:'pickOpen',taken:roomTaken()}); else autoAssignOne(x);
     roomRender(); return; }
@@ -4275,7 +4302,7 @@ async function roomJoin(code){
   peer.on('open',()=>{
     const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn;
     conn.on('open',()=>{ clearTimeout(to); ROOM.connected=true; ROOM.err=null;
-      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
+      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),disp:u.disp||'',info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
       clockSync(); roomRender(); });
     conn.on('data',memberData);
     conn.on('close',()=>{ if(ROOM.role==='member'){ ROOM.connected=false; ROOM.err=L('หลุดจากห้อง','Disconnected from the room'); pracStop(true); memberWait(); roomRender(); } });
