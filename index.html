@@ -1086,6 +1086,10 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
 #whoBtns .wbtn{min-height:120px}
 .regForm.pb.pb-in .f-school,.regForm.pb.pb-in .f-prov,.regForm.pb.pb-in #provOtherL{display:none !important}
 .regForm.pb.pb-in .f-inNote{display:block}
+
+.regForm .nmEn{background:#f4f8fc;border-radius:12px;padding:6px 10px 2px;margin-bottom:8px}
+.regForm .nmEnH{margin:0 0 4px;font-weight:700;font-size:.9rem;color:#0d3b66}
+.regForm .nmEnH small{font-weight:500;color:#4f6a85}
 </style>
 </head>
 <body>
@@ -1138,8 +1142,13 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
           <label id="preOtherL" hidden><span class="th">ระบุคำนำหน้า <i class="req">*</i></span><span class="en i">Specify title *</span><input id="fPreOther" placeholder="เช่น ผศ. / e.g. Asst. Prof."></label>
         </div>
         <div class="nmTwo">
-          <label><span class="th">ชื่อจริง <i class="req">*</i></span><span class="en i">First name *</span><input id="fFirst" autocomplete="given-name" placeholder="เช่น สมชาย / e.g. John"></label>
-          <label><span class="th">นามสกุล <i class="req">*</i></span><span class="en i">Last name *</span><input id="fLast" autocomplete="family-name" placeholder="เช่น ใจดี / e.g. Smith"></label>
+          <label><span class="th">ชื่อจริง <i class="req">*</i></span><span class="en i">First name in Thai (optional)</span><input id="fFirst" autocomplete="given-name" placeholder="เช่น สมชาย / e.g. John"></label>
+          <label><span class="th">นามสกุล <i class="req">*</i></span><span class="en i">Last name in Thai (optional)</span><input id="fLast" autocomplete="family-name" placeholder="เช่น ใจดี / e.g. Smith"></label>
+        </div>
+        <div class="nmEn">
+          <p class="nmEnH"><span class="th">ชื่อภาษาอังกฤษ <small>(แสดงในเวอร์ชันภาษาอังกฤษ · ไม่บังคับ)</small></span><span class="en">Name in English <i class="req">*</i></span></p>
+          <div class="nmTwo"><label><span class="th">ชื่อ (อังกฤษ)</span><span class="en i">First name</span><input id="fEnFirst" autocomplete="given-name" placeholder="e.g. Somchai" lang="en"></label>
+          <label><span class="th">นามสกุล (อังกฤษ)</span><span class="en i">Last name</span><input id="fEnLast" autocomplete="family-name" placeholder="e.g. Jaidee" lang="en"></label></div>
         </div>
         <label><span class="th">ชื่อที่แสดงในแอป</span><span class="en i">Display name in the app</span><input id="fDisp" autocomplete="nickname" placeholder="ไม่กรอกจะใช้ชื่อจริง / blank = first name"><small class="th fNote">ไม่บังคับ ถ้าไม่กรอกจะใช้ชื่อจริง</small><small class="en fNote">Optional — your first name is used if left blank</small></label>
         <p class="f-inNote">🏫 <span class="th">โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ · จังหวัดสมุทรปราการ</span><span class="en">Bodindecha (Sing Singhaseni) Samutprakan School · Samut Prakan</span></p>
@@ -1271,7 +1280,7 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
             <button data-v="hall"><span class="th">หอประชุม</span><span class="en">Hall</span></button>
           </div>
           <label class="sl keyPick">🎹 <span class="th">คีย์</span><span class="en i">Key</span> <select id="keySel"></select></label>
-          <label class="sl">🔊 <input type="range" id="vol" min="0" max="1" step="0.01" value="0.75"></label>
+          <label class="sl">🔊 <input type="range" id="vol" min="0" max="1.5" step="0.01" value="1"></label>
         </div>
         <div class="bgmBox">
           <label class="sl"><input type="checkbox" id="uiSnd"><span class="th">เสียงกดปุ่ม</span><span class="en i">Button sounds</span></label>
@@ -1307,7 +1316,7 @@ body.roomLock #rePick,body.roomLock .pickStep{display:none !important}
           <label class="sl"><input type="checkbox" id="useChabY" checked><span class="th">ฉาบใหญ่</span><span class="en i">Chap Yai</span></label>
           <label class="sl"><input type="checkbox" id="useMong" checked><span class="th">โหม่ง</span><span class="en i">Mong</span></label>
           <label class="sl"><input type="checkbox" id="useKrap" checked><span class="th">กรับ</span><span class="en i">Krap</span></label>
-          <label class="sl">🔊 <input type="range" id="drumVol" min="0" max="1" step="0.01" value="0.7"></label>
+          <label class="sl">🔊 <input type="range" id="drumVol" min="0" max="1.5" step="0.01" value="0.9"></label>
           <label class="sl"><input type="checkbox" id="drumWithSong" checked><span class="th">ตีประกอบเมื่อเล่นเพลง</span><span class="en i">Accompany songs</span></label>
         </div>
         <div class="planBox">
@@ -1688,7 +1697,7 @@ function initAudio(){
   if(ctx) return;
   ctx = new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
   const comp = ctx.createDynamicsCompressor();
-  comp.threshold.value=-10; comp.knee.value=18; comp.ratio.value=2.5; comp.attack.value=0.012; comp.release.value=0.3;
+  comp.threshold.value=-16; comp.knee.value=14; comp.ratio.value=3; comp.attack.value=0.012; comp.release.value=0.3;
   master = ctx.createGain(); master.gain.value = +vol.value;
   // แต่งเสียง: ตัดเสียงอื้อต่ำ · ลดเสียงแหลมบาดหู · เพิ่มความใสเล็กน้อย · เติมเสียงก้องห้อง
   const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=90; hp.Q.value=0.7;
@@ -1704,8 +1713,8 @@ function initAudio(){
   const wLp=ctx.createBiquadFilter(); wLp.type='lowpass'; wLp.frequency.value=6500;
   lp.connect(pre); pre.connect(wHp); wHp.connect(wLp); wLp.connect(fxConv); fxConv.connect(fxWet); fxWet.connect(comp);
   // ลิมิตเตอร์ท้ายสาย: กันเสียงรวมเกิน 0 dB (เสียงแตก) ตอนโน้ตถี่ + กลอง
-  const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-4; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.002; lim.release.value=0.12;
-  const trim=ctx.createGain(); trim.gain.value=0.85;
+  const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-1.5; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=0.001; lim.release.value=0.1;
+  const trim=ctx.createGain(); trim.gain.value=1.9;   // ดังขึ้นราว 7 dB · ลิมิตเตอร์กันเสียงแตก
   comp.connect(trim); trim.connect(lim); lim.connect(ctx.destination);
   applyFx(fx);
   setTimeout(()=>{ loadAngklung(); loadSamples(); },0);
@@ -2059,7 +2068,8 @@ KEYS.forEach((k,i)=>{ const o=document.createElement('option'); o.value=i; o.tex
 keySel.value=keyIdx; keySel.onchange=()=>{ keyIdx=+keySel.value; store.set('keyIdx',keyIdx); };
 seg('modeSeg',mode,v=>{mode=v;store.set('mode',v);});
 seg('fxSeg',fx,v=>{store.set('fx',v);applyFx(v);});
-vol.value=store.get('vol',0.75);
+if(!store.get('volUp',false)){ store.set('volUp',true); if(+store.get('vol',0.75)<1) store.set('vol',1); if(+store.get('drumVol',0.7)<0.9) store.set('drumVol',0.9); }
+vol.value=store.get('vol',1);
 vol.addEventListener('input',()=>{ if(master) master.gain.value=+vol.value; store.set('vol',+vol.value); });
 wImg.src=AK_IMG; { const hi=document.getElementById('hsImg'); if(hi) hi.src=AK_IMG; const hb=document.getElementById('wHelpBtn'); if(hb) hb.onclick=()=>openPop('help'); } { const hp=document.getElementById('hpImg'); if(hp) hp.src=AKREAL_IMG; const hc=document.getElementById('histCard');
   if(hc){ const sel=n=>{ hc.querySelectorAll('.hpM,.hpList li').forEach(e=>e.classList.toggle('on',e.dataset.n===n)); };
@@ -2119,7 +2129,7 @@ function logScore(r){
   try{ fetch(url,{mode:'no-cors',keepalive:true}).catch(()=>{}); }catch(_){}
 }
 // แยก คำนำหน้า · ชื่อจริง · นามสกุล · ชื่อที่แสดง ส่งต่อท้าย (Apps Script แยกเป็นคอลัมน์)
-function nameParts(u){ u=u||{}; return [u.pre||'',u.first||'',u.last||'',u.disp||'']; }
+function nameParts(u){ u=u||{}; return [u.pre||'',u.first||'',u.last||'',u.disp||dispName(u),u.enFirst||'',u.enLast||'']; }
 function userVals(u){ return [userKind(u), u.name, u.cls||'-', u.no||'-', u.school, u.prov, u.pos]; }
 let regRole='student', regOrg='in';
 const regKey=()=>regRole==='public'?'pb':(regRole==='teacher'?'tc':'st')+'-'+regOrg;
@@ -2137,8 +2147,8 @@ function showReg(){ regStep.hidden=false; modeStep.hidden=true; regForm.hidden=t
 function showModes(){
   regStep.hidden=true; modeStep.hidden=false;
   normUser(user); const tc=user.role==='teacher', pb=user.role==='public';
-  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(user.disp||user.name)+escH(pb?(user.org==='in'?` · ${user.pos||''}`:` · ${user.prov}`):user.org==='in'
-    ? (tc?` · ${user.pos||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+user.dept:''}`:` · ${user.cls} ${L('เลขที่','No.')} ${user.no}`)
+  whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(dispName(user))+escH(pb?(user.org==='in'?` · ${user.pos||''}`:` · ${user.prov}`):user.org==='in'
+    ? (tc?` · ${user.pos||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+user.dept:''}`:` · ${L(user.cls,String(user.cls||'').replace(/^ม\./,'M.').replace(/^ป\./,'P.'))} ${L('เลขที่','No.')} ${user.no}`)
     : ` · ${tc?(user.pos||''):L('นักเรียน','Student')+' '+(user.cls||'')} · ${user.school} · ${user.prov}`);
   modeStep.className=tc?'role-tc':pb?'role-pb':'role-st';
   { const jw=document.getElementById('joinNowW'), pr=(()=>{ try{ return new URLSearchParams(location.search).get('room'); }catch(e){ return null; } })();
@@ -2167,14 +2177,28 @@ roleBtns.querySelectorAll('.wbtn').forEach(b=>b.onclick=()=>{
 });
 orgBack.onclick=showReg;
 regBack.onclick=()=>{ regForm.hidden=true; orgStep.hidden=false; };
+const PRE_EN={'เด็กชาย':'Master','เด็กหญิง':'Miss','นาย':'Mr.','นาง':'Mrs.','นางสาว':'Ms.','ว่าที่ร้อยตรี':'Acting Sub Lt.','ว่าที่ร้อยตรีหญิง':'Acting Sub Lt.','ดร.':'Dr.'};
+// ชื่อตามภาษาที่เลือก: ไทย = ชื่อไทย · อังกฤษ = ชื่ออังกฤษ (ถ้าไม่มีใช้ชื่อไทย)
+function dispName(u){ u=u||{}; return u.disp || (lang==='en'?(u.enFirst||u.first):(u.first||u.enFirst)) || u.name || ''; }
+function fullName(u){ u=u||{}; return lang==='en'?(u.enName||u.name||''):(u.name||u.enName||''); }
 function readReg(){
-  const k=regKey(), pre=fPre.value==='other'?fPreOther.value.trim():fPre.value, first=fFirst.value.trim(), last=fLast.value.trim();
+  const k=regKey(), pre=fPre.value==='other'?fPreOther.value.trim():fPre.value;
+  let first=fFirst.value.trim(), last=fLast.value.trim();
+  const enFirst=fEnFirst.value.trim(), enLast=fEnLast.value.trim();
   if(!fPre.value) return {err:'กรุณาเลือกคำนำหน้า · Please choose a title'};
   if(!pre) return {err:'กรุณาระบุคำนำหน้า · Please specify your title'};
-  if(!first) return {err:'กรุณากรอกชื่อจริง · Please enter your first name'};
-  if(!last) return {err:'กรุณากรอกนามสกุล · Please enter your last name'};
-  const name=pre+first+' '+last, disp=fDisp.value.trim()||first;
-  const base={regV:REG_V,pre,first,last,disp,name};
+  if(lang==='en'){   // เวอร์ชันภาษาอังกฤษ: บังคับชื่อภาษาอังกฤษ ชื่อไทยไม่บังคับ
+    if(!enFirst) return {err:'กรุณากรอกชื่อภาษาอังกฤษ · Please enter your first name'};
+    if(!enLast) return {err:'กรุณากรอกนามสกุลภาษาอังกฤษ · Please enter your last name'};
+  } else {
+    if(!first) return {err:'กรุณากรอกชื่อจริง · Please enter your first name'};
+    if(!last) return {err:'กรุณากรอกนามสกุล · Please enter your last name'};
+  }
+  const enPre=PRE_EN[pre]||pre;
+  const enName=enFirst?(enPre+' '+enFirst+' '+enLast).trim():'';
+  if(!first){ first=enFirst; last=enLast; }
+  const name=/[ก-๙]/.test(first)?pre+first+' '+last:(enName||(pre+' '+first+' '+last)), disp=fDisp.value.trim();
+  const base={regV:REG_V,pre,first,last,enPre,enFirst,enLast,enName,disp,name};
   const pv = fProvSel.value==='other' ? fProvOther.value.trim() : fProvSel.value;
   if(k==='tc-in'){
     if(!fTPos.value) return {err:'กรุณาเลือกตำแหน่ง · Please select your position'};
@@ -2208,6 +2232,7 @@ regGo.onclick=()=>{
   user=u; store.set('user',u); isNewUser=true; showModes();
 };
 changeUser.onclick=()=>{ showReg(); };
+document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{ if(user&&user.name&&!modeStep.hidden) showModes(); },0)));
 if(user && user.name) showModes(); else showReg();
 
 // เลือกโหมด = เข้าเล่น + ส่งบันทึกการเข้าใช้ 1 ครั้ง (แท็บใหม่ของ Google Form)
@@ -3960,8 +3985,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23i';
+const APP_VER='2026.11.23j';
 const CHANGELOG=[
+  {v:'2026.11.23j',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ลงชื่อครั้งเดียว ใช้ได้ทั้ง 2 ภาษา: เพิ่มช่อง <b>ชื่อภาษาอังกฤษ</b> แอปแสดงชื่อไทยในเวอร์ชันภาษาไทย และชื่ออังกฤษในเวอร์ชันภาษาอังกฤษ','<b>เสียงดนตรีดังขึ้น</b> (อังกะลุง กลองแขก ฉิ่ง) และเร่งระดับเสียงได้มากกว่าเดิมในตั้งค่าเสียง'],
+   en:['Sign in once for both languages: new <b>English name</b> fields — Thai name in the Thai version, English name in the English version','<b>Louder music</b> (angklung, Klong Khaek, ching), with a higher maximum in Sound settings']},
   {v:'2026.11.23i',d:['23 พ.ย. 2569','23 Nov 2026'],th:['หน้าแรกใหม่: เลือก <b>บุคลากรภายใน</b> (โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ) หรือ <b>บุคลากรภายนอก</b> ก่อน แล้วจึงเลือก นักเรียน · ครู/บุคลากรทางการศึกษา · บุคคลทั่วไป'],
    en:['New home screen: choose <b>Our school</b> or <b>Outside our school</b> first, then Student · Teacher/educator · General public']},
   {v:'2026.11.23h',d:['23 พ.ย. 2569','23 Nov 2026'],th:['บันทึกการเข้าใช้และคะแนนส่ง คำนำหน้า ชื่อจริง นามสกุล และชื่อที่แสดง แยกเป็นคนละคอลัมน์ใน Google Sheet'],en:['Sign-in and score records now send title, first name, last name and display name as separate columns in Google Sheets']},
@@ -4129,10 +4156,10 @@ function roomRender(){
   const link=WEBAPP_URL+'?room='+ROOM.code;
   roomBody.innerHTML=`<div class="rCode"><div class="qr" id="rQR"></div><div><div class="hint" style="margin:0">${L('รหัสห้อง','Room code')}</div><div class="num">${ROOM.code}</div><div class="lnk">${esc(link)}</div></div></div>
     <div class="rStat">👥 ${L('สมาชิก','Members')} ${mem.length} ${L('คน','')}${ROOM.mode==='beat'?'':missing?` · <span class="rMiss">${L('เสียงที่ไม่มีคนถือ ('+W.leadDev+'เล่นแทน)','Uncovered notes ('+W.leadDev+' plays)')}: ${missing}</span>`:' · ✅ '+L('ครบ '+AK.length+' เสียง','all '+AK.length+' notes covered')}</div>
-    <div class="rList">${mem.map(x=>`<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.disp&&!x.name.includes(x.disp)?x.disp+' · ':'')}${esc(x.name)}<small style="font-weight:400;color:#4f6a85"> ${esc(x.info||'')}</small></b>
+    <div class="rList">${mem.map(x=>{ const fn=lang==='en'&&x.enName?x.enName:x.name; return `<div class="rM" data-id="${esc(x.id)}"><b>${esc(x.disp&&!fn.includes(x.disp)?x.disp+' · ':'')}${esc(fn)}<small style="font-weight:400;color:#4f6a85"> ${esc(x.info||'')}</small></b>
       ${x.notes?`<select data-k="0">${opts(x.notes[0])}</select><select data-k="1">${opts(x.notes[1])}</select>
       <select class="gSel" data-g="1" title="${L('กลุ่มล้อ-รับ','Lo/rap group')}"><option value="a"${x.grp!=='b'?' selected':''}>${L('กลุ่ม ก','Grp A')}</option><option value="b"${x.grp==='b'?' selected':''}>${L('กลุ่ม ข','Grp B')}</option></select>`:`<span class="wait">⏳ ${L('กำลังเลือกเสียง…','choosing notes…')}</span> <button type="button" class="rBtn x rGive" style="padding:4px 10px;font-size:.85rem">${L('แจกให้','Assign')}</button>`}
-      <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`).join('')||`<p class="hint">${L('ยังไม่มี'+W.mem+'เข้าห้อง','No '+W.mem+' yet')}</p>`}</div>
+      <span class="sc">${x.score?x.score.pct+'%':(ROOM.playing?'🎶':'')}</span></div>`; }).join('')||`<p class="hint">${L('ยังไม่มี'+W.mem+'เข้าห้อง','No '+W.mem+' yet')}</p>`}</div>
     ${(ROOM.hist||[]).length?`<div class="rDl"><button type="button" class="btn alt" id="rCsv">⬇️ ${L('ดาวน์โหลดคะแนน (Excel)','Download scores (Excel)')} · ${ROOM.hist.length} ${L('รายการ','rows')}</button></div>`:''}
     <label class="sl" style="margin:2px 0 6px"><input type="checkbox" id="rSelf"${ROOM.selfPick!==false?' checked':''}> 🙋 ${L('ให้'+W.mem+'เลือกเสียงเองเมื่อเข้าห้อง','Let '+W.mem+' choose their own notes when they join')}</label>
     <div class="seg rModeSeg" id="rModeSeg" style="margin:4px 0 8px">
@@ -4218,7 +4245,7 @@ function hostData(conn,d){
   if(d.t==='ping'){ conn.send({t:'pong',c:d.c,h:performance.now()}); return; }
   if(d.t==='hit'){ if(ROOM.echo===false) return; const a=AK[+d.i]; if(!a) return; initAudio(); if(ctx.state!=='running') ctx.resume(); hitVoice(a,ctx.currentTime+0.005,0.75);
     const el=soloEls[a.idx]; if(el){ el.classList.add('play'); setTimeout(()=>el.classList.remove('play'),140); } return; }
-  if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),disp:String(d.disp||'').slice(0,40),notes:null,grp:'a',score:null};
+  if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),disp:String(d.disp||'').slice(0,40),enName:String(d.enName||'').slice(0,80),notes:null,grp:'a',score:null};
     ROOM.members.set(conn.peer,x);
     if(ROOM.selfPick!==false) roomSend(x,{t:'pickOpen',taken:roomTaken()}); else autoAssignOne(x);
     roomRender(); return; }
@@ -4313,7 +4340,7 @@ async function roomJoin(code){
   peer.on('open',()=>{
     const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn;
     conn.on('open',()=>{ clearTimeout(to); ROOM.connected=true; ROOM.err=null;
-      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),disp:u.disp||'',info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
+      const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),enName:u.enName||'',disp:dispName(u),info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
       clockSync(); roomRender(); });
     conn.on('data',memberData);
     conn.on('close',()=>{ if(ROOM.role==='member'){ ROOM.connected=false; ROOM.err=L('หลุดจากห้อง','Disconnected from the room'); pracStop(true); memberWait(); roomRender(); } });
