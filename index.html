@@ -3483,8 +3483,8 @@ playScore.onclick=()=>{ SR.round=1; songGo(); };
 function songGo(){
   if(!curSong) return;
   initAudio(); ctx.resume(); stopSong(); loadAngklung(); loadSamples();
-  const slotMs=60000/ +tempo.value, COUNT=4;
-  const T0=ctx.currentTime+0.35+COUNT*slotMs/1000, T0ms=performance.now()+(T0-ctx.currentTime)*1000;
+  const slotMs=60000/ +tempo.value, COUNT=SR.round>1?0:4;   // นับให้สัญญาณเฉพาะรอบแรก รอบต่อไปบรรเลงต่อเนื่อง
+  const T0=ctx.currentTime+(COUNT?0.35:0.12)+COUNT*slotMs/1000, T0ms=performance.now()+(T0-ctx.currentTime)*1000;
   // นับให้สัญญาณก่อนเริ่ม 4 จังหวะ (เสียงฉิ่ง–ฉับ + ตัวเลขบนแถบโน้ต)
   for(let c=0;c<COUNT;c++){ const t=T0-(COUNT-c)*slotMs/1000; chingHit(c===0,t); }
   const boxes=curSong.boxes, sh=curSong.shift||0;
@@ -3517,7 +3517,7 @@ function songGo(){
     }
     if(!ended && k>=ev.length && kb>=bxT.length){ ended=true;
       timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); if(drumRun && drumRun.rate) drumStop(); clearInterval(iv);
-        if(songRepV===0 || SR.round<songRepV){ SR.round++; timers.push(setTimeout(songGo,900)); return; }   // รอบถัดไป: นับ 4–3–2–1 แล้วเริ่มใหม่
+        if(songRepV===0 || SR.round<songRepV){ SR.round++; songGo(); return; }   // รอบถัดไป: ไม่นับสัญญาณ บรรเลงต่อทันที
         setTimeout(()=>{ if(timers.includes(iv)) timers=[]; },1000); }, off(total*slotMs+50))); }
     // ล้างรายการเสียง/ตัวตั้งเวลาที่จบแล้ว
     if(songVoices.length>64) songVoices.splice(0,songVoices.length-64);
@@ -3802,11 +3802,11 @@ function pracStart(again){
   initAudio(); ctx.resume(); closePop(); if(!again) pracRound=0; pracRound++; if(window.PH) PH.on=false;
   const range=pracRange(), song=pracSong(), loop=pLoop.checked;
   const secName=pSec.value==='all'?'':(range?L(`ห้อง ${range[0]+1}–${range[1]+1}`,`bars ${range[0]+1}–${range[1]+1}`):'');
-  pracRun({song, tempo:+pTempo.value, wide:playMode==='band', light:pLight.checked, drum:pDrum.checked, countSound:true, rit:loop?0:ritBoxes, range,
+  pracRun({song, tempo:+pTempo.value, wide:playMode==='band', light:pLight.checked, drum:pDrum.checked, countSound:true, noCount:pracRound>1, rit:loop?0:ritBoxes, range,
     title:'🎯 '+pair(song.name)+(secName?' · '+secName:'')+' · '+pTempo.value+(loop?' · 🔁 '+L('รอบ','round')+' '+pracRound:''),
     autoFn:a=>playMode==='band' && pBand.checked,
     onFinish:(hit,total)=>{ logScore({song:pair(song.name),sec:secName||L('ทั้งเพลง','Whole song'),tempo:+pTempo.value,hit,total,mode:L('ฝึกซ้อม','Practice')+(loop?' '+L('รอบ','round')+' '+pracRound:'')});
-      if(loop && !ROOM.role) P.loopT=setTimeout(()=>{ if(!prac.hidden && !P.run) pracStart(true); },2600); }});
+      if(loop && !ROOM.role) P.loopT=setTimeout(()=>{ if(!prac.hidden && !P.run) pracStart(true); },60); }});
 }
 // ตัวเล่นกลาง: ใช้ทั้งฝึกเดี่ยวและห้องวง
 // opt: song, tempo, light, drum, countSound, T0 (เวลาเสียงของจังหวะแรก), mineFn(a), autoFn(a), title, onFinish(hit,total)
@@ -3830,7 +3830,7 @@ function pracRun(opt){
   prac.hidden=false; document.body.classList.add('practicing'); fitKeys();
   const laneW=pLane.clientWidth, cw=Math.max(34,Math.min(72,laneW/9)); pLane.style.setProperty('--cw',cw+'px');
   const headX=Math.round(laneW*0.28); pLane.style.setProperty('--headx',headX+'px');
-  const COUNT=4, T0=opt.T0 || ctx.currentTime+0.3+COUNT*slotSec;
+  const COUNT=opt.noCount?0:4, T0=opt.T0 || ctx.currentTime+(COUNT?0.3:0.12)+COUNT*slotSec;   // noCount = รอบที่ 2 ขึ้นไป ไม่นับสัญญาณ
   const sRit=song.rit&&!r&&opt.rit?song.rit:null;   // เพลงที่กำหนดการทอดไว้ (เช่น ซุ้มลาวแพน ทอด 4 ห้อง ไม่ช้ามาก)
   const times=slotTimes(cells.length,T0,slotSec,sRit?sRit.boxes:(opt.rit||0),sRit?sRit.max:0);
   Object.assign(P,{run:true,ev,cells,slotSec,T0,times,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],
@@ -3863,7 +3863,7 @@ function pracRun(opt){
     if(t<P.T0) pos=(t-P.T0)/P.slotSec;
     else { const T=P.times; let lo=0,hi=T.length-1; while(hi-lo>1){ const m=(lo+hi)>>1; if(T[m]<=t) lo=m; else hi=m; } pos=lo+Math.min(1,(t-T[lo])/((T[lo+1]-T[lo])||1)); }
     pStrip.style.transform=`translateX(${P.headX-pos*P.cw}px)`;
-    if(pos<0){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); }
+    if(pos<0){ if(COUNT){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); } else pCnt.classList.remove('on'); }
     else if(t<P.end) pCnt.classList.remove('on');
     P.ev.forEach(e=>{ if(e.mine && e.state===null && t>e.t+P.win){ e.state='miss'; e.el.classList.add('miss'); } });
     if(t>P.end+0.4){ pracFinish(); return; }
@@ -4017,7 +4017,7 @@ function phRun(idx,round){
   closePop(); clearTimeout(P.loopT);
   const title='🧩 '+pair(sg.name)+' · '+L('วรรค','phrase')+' '+(idx+1)+'/'+PH.list.length+' · '+L('ห้อง','boxes')+' '+(x.from+1)+'–'+(x.to+1)+' · '+L('รอบ','round')+' '+round+'/'+N;
   const done=()=>{ if(!PH.on) return;
-    if(round<N){ phMsg(`🔁<small>${L('จบรอบที่','Round')} ${round}/${N} · ${L('เตรียมรอบถัดไป…','next round coming…')}</small>`); P.loopT=setTimeout(()=>{ if(PH.on) phRun(idx,round+1); },1800); return; }
+    if(round<N){ phMsg(`🔁<small>${L('จบรอบที่','Round')} ${round}/${N} · ${L('เตรียมรอบถัดไป…','next round coming…')}</small>`); P.loopT=setTimeout(()=>{ if(PH.on) phRun(idx,round+1); },60); return; }
     if(phNext.checked && idx+1<PH.list.length){ phMsg(`⏭<small>${L('ครบ','Completed')} ${N} ${L('รอบ · ไปวรรคถัดไป','rounds · next phrase')}</small>`); P.loopT=setTimeout(()=>{ if(PH.on) phRun(idx+1,1); },2400); return; }
     PH.on=false; phMsg(`✅<small>${L('ฝึกครบ','Finished')} ${N} ${L('รอบแล้ว','rounds')} · ${L('วรรค','phrase')} ${idx+1}<br>${L('กด ↻ เพื่อฝึกวรรคนี้อีกครั้ง','Tap ↻ to drill this phrase again')}</small>`); };
   const useRoom=ROOM.role==='host' && phRoom.checked;
@@ -4025,9 +4025,9 @@ function phRun(idx,round){
     if(pSong.value!==phSong.value){ pSong.value=phSong.value; fillPSec(); }
     pSec.value='custom'; pFrom.value=x.from+1; pTo.value=x.to+1; pRange.hidden=false;
     pTempo.value=phTempo.value; pTempoV.textContent=phTempo.value; pShow.checked=phLane.checked; syncEye(); pDrum.checked=phDrum.checked;
-    const sv=ritBoxes; ritBoxes=0; roomStart({fill:phMel.checked,lightAll:phLight.checked,noLane:!phLane.checked,title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+title.slice(3),onDone:done}); ritBoxes=sv; return;
+    const sv=ritBoxes; ritBoxes=0; roomStart({noCount:round>1,fill:phMel.checked,lightAll:phLight.checked,noLane:!phLane.checked,title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+title.slice(3),onDone:done}); ritBoxes=sv; return;
   }
-  pracRun({song:sg,tempo:+phTempo.value,range:[x.from,x.to],light:false,lightAll:phLight.checked,noLane:!phLane.checked,drum:phDrum.checked,countSound:true,rit:0,
+  pracRun({song:sg,tempo:+phTempo.value,range:[x.from,x.to],light:false,lightAll:phLight.checked,noLane:!phLane.checked,drum:phDrum.checked,countSound:true,noCount:round>1,rit:0,
     mineFn:()=>false,autoFn:()=>phMel.checked,title,onFinish:done});
 }
 phGo.onclick=()=>{ initAudio(); ctx.resume(); loadAngklung(); loadSamples(); phRun(+phWhich.value||0,1); };
@@ -4037,8 +4037,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23n';
+const APP_VER='2026.11.23o';
 const CHANGELOG=[
+  {v:'2026.11.23o',d:['23 พ.ย. 2569','23 Nov 2026'],th:['เล่นซ้ำหลายรอบ: นับให้สัญญาณ 4–3–2–1 <b>เฉพาะรอบแรก</b> รอบที่ 2 เป็นต้นไปบรรเลงต่อทันทีโดยไม่นับใหม่ (ฝึกบรรเลง ฝึกซ้อม ฝึกทีละวรรค และห้องวง)'],
+   en:['Repeats: the 4–3–2–1 count-in plays <b>only before the first round</b>; later rounds continue straight on (song practice, practice, phrase drill and band room)']},
   {v:'2026.11.23n',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ห้องวงแบบใหม่: หน้าห้อง (รหัส · QR · การเลือกเสียง) → กด <b>พร้อมบรรเลง</b> ไปหน้าบรรเลงที่มีอังกะลุงครบทุกเสียง พร้อมแถบเลือกเพลง หน้าทับ เครื่องจังหวะ ความเร็ว และจำนวนรอบ เปลี่ยนเพลงต่อได้เลยโดยไม่ต้องออกจากห้อง','ปุ่ม <b>🔒 ล็อกการกด</b> ให้ครูหยุดเสียงนักเรียนชั่วคราวเพื่อควบคุมชั้นเรียน','ปุ่ม <b>ปิดห้อง</b> เมื่อเรียนจบ (กด 2 ครั้งเพื่อยืนยัน)'],
    en:['New band room flow: room page (code · QR · notes) → <b>Ready</b> opens the playing page with every angklung, plus a bar to choose the song, na thap, rhythm instruments, tempo and rounds — switch songs without leaving the room','<b>🔒 Lock keys</b> lets the teacher silence students for class control','<b>Close room</b> when the lesson ends (tap twice to confirm)']},
   {v:'2026.11.23m',d:['23 พ.ย. 2569','23 Nov 2026'],th:['เพิ่มเครดิต: ขอขอบคุณเสียงเครื่องดนตรีจาก <b>นายกฤติเดช อารมย์อุ่น</b>'],
@@ -4372,20 +4374,21 @@ function autoAssign(){ [...ROOM.members.values()].forEach((x,k)=>{ x.notes=PAIRS
 function roomStart(o={}){
   ROOM.halt=false; clearTimeout(ROOM.nextT);
   const song=pracSong(), tempo=+pTempo.value, slotSec=60/tempo;
-  const lead=1.6, COUNT=4;
+  const rd0=ROOM.round||1, nc=!!o.noCount||rd0>1;   // รอบที่ 2 ขึ้นไป ไม่นับสัญญาณ (เผื่อเวลาส่งข้อมูลถึงทุกเครื่องเล็กน้อย)
+  const lead=nc?0.9:1.6, COUNT=nc?0:4;
   const T0=ctx.currentTime+lead+COUNT*slotSec, startPerf=performance.now()+(T0-ctx.currentTime)*1000;
   const covered=new Set(), covG={a:new Set(),b:new Set()}; [...ROOM.members.values()].forEach(x=>{ x.score=null; (x.notes||[]).forEach(i=>{ covered.add(i); covG[x.grp==='b'?'b':'a'].add(i); }); });
   const range=pracRange();
   const rd=ROOM.round||1, rN=o.onDone?1:(ROOM.rep==null?1:ROOM.rep), last=rN!==0&&rd>=rN;
-  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf,rit:last?ritBoxes:0,range,round:rd,rounds:rN};
+  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf,noCount:nc,rit:last?ritBoxes:0,range,round:rd,rounds:rN};
   ROOM.members.forEach(x=>roomSend(x,msg));
   ROOM.lastSong=pair(song.name); ROOM.lastSec=range?`${range[0]+1}–${range[1]+1}`:L('ทั้งเพลง','Whole song'); ROOM.lastTempo=tempo;
   ROOM.playing=true; roomRender();
   const doFill=o.fill!=null?o.fill:ROOM.fill!==false;
-  pracRun({song,tempo,T0,rit:last?ritBoxes:0,range,wide:true,light:false,drum:pDrum.checked,pat:o.pat!=null?o.pat:ROOM.pat,countSound:true,mineFn:()=>false,autoFn:(a,e)=>doFill&&!(e&&e.grp?covG[e.grp]:covered).has(a.idx),
+  pracRun({song,tempo,T0,noCount:nc,rit:last?ritBoxes:0,range,wide:true,light:false,drum:pDrum.checked,pat:o.pat!=null?o.pat:ROOM.pat,countSound:true,mineFn:()=>false,autoFn:(a,e)=>doFill&&!(e&&e.grp?covG[e.grp]:covered).has(a.idx),
     lightAll:!!o.lightAll,noLane:!!o.noLane,
     title:o.title||('👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(song.name)+(rN!==1?' · '+L('รอบ','round')+' '+rd+'/'+(rN||'∞'):'')),onFinish:(h,t)=>{ ROOM.playing=false; roomRender(); if(o.onDone){ o.onDone(h,t); return; }
-      if(!last && ROOM.role==='host' && !ROOM.halt){ ROOM.round=rd+1; ROOM.nextT=setTimeout(()=>{ if(ROOM.role==='host'&&!ROOM.halt) roomStart(o); },1500); } }});
+      if(!last && ROOM.role==='host' && !ROOM.halt){ ROOM.round=rd+1; ROOM.nextT=setTimeout(()=>{ if(ROOM.role==='host'&&!ROOM.halt) roomStart(o); },30); } }});
 }
 function roomStopAll(){ if(ROOM.role!=='host') return; ROOM.halt=true; clearTimeout(ROOM.nextT); ROOM.members.forEach(x=>roomSend(x,{t:'stop'})); ROOM.playing=false; pracStop(); drumStop(); roomRender(); rbUpd(); setTimeout(fitKeys,60); }
 // เฉพาะจังหวะ: ครูตีกลอง–ฉิ่ง ส่งจังหวะฉิ่งให้จอนักเรียนกะพริบตาม
@@ -4451,7 +4454,7 @@ function memberData(d){
     pShow.checked=!!d.show; syncEye(); if(!ROOM.notes) return;
     const localPerf=d.at-ROOM.offset, T0=ctx.currentTime+(localPerf-performance.now())/1000;
     const held=new Set(ROOM.notes||[]);
-    pracRun({song:d.song,tempo:+d.tempo,T0,rit:+d.rit||0,range:Array.isArray(d.range)?d.range:null,wide:true,light:true,drum:false,countSound:true,mineFn:(a,e)=>held.has(a.idx)&&(!e||!e.grp||e.grp===(ROOM.grp||'a')),autoFn:()=>false,
+    pracRun({song:d.song,tempo:+d.tempo,T0,noCount:!!d.noCount,rit:+d.rit||0,range:Array.isArray(d.range)?d.range:null,wide:true,light:true,drum:false,countSound:true,mineFn:(a,e)=>held.has(a.idx)&&(!e||!e.grp||e.grp===(ROOM.grp||'a')),autoFn:()=>false,
       title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(d.song.name)+(d.rounds&&d.rounds!==1?' · '+L('รอบ','round')+' '+d.round+'/'+(d.rounds||'∞'):(d.rounds===0?' · '+L('รอบ','round')+' '+d.round+'/∞':'')),
       onFinish:(hit,total)=>{ try{ ROOM.conn.send({t:'score',hit,total}); }catch(e){} logScore({song:pair(d.song.name),sec:Array.isArray(d.range)?`${d.range[0]+1}–${d.range[1]+1}`:L('ทั้งเพลง','Whole song'),tempo:+d.tempo,hit,total,mode:L('ห้องวง','Band room')+' '+ROOM.code}); }});
     return; }
