@@ -1613,6 +1613,22 @@ const store = {
 let lang = store.get('lang', (navigator.language||'th').toLowerCase().startsWith('th') ? 'th' : 'en');
 const L = (th,en) => lang==='en' ? en : th;
 const pair = str => { const k=str.indexOf(' · '); return k<0 ? str : (lang==='en' ? str.slice(k+3) : str.slice(0,k)); };
+// แสดงภาษาเดียวตามเวอร์ชัน: แยกข้อความ "ไทย / English" และแปลตัวเลือกที่มีแต่ภาษาไทย
+const TR_EN=Object.fromEntries(("กรุงเทพมหานคร:Bangkok|กระบี่:Krabi|กาญจนบุรี:Kanchanaburi|กาฬสินธุ์:Kalasin|กำแพงเพชร:Kamphaeng Phet|ขอนแก่น:Khon Kaen|จันทบุรี:Chanthaburi|ฉะเชิงเทรา:Chachoengsao|ชลบุรี:Chon Buri|ชัยนาท:Chai Nat|ชัยภูมิ:Chaiyaphum|ชุมพร:Chumphon|เชียงราย:Chiang Rai|เชียงใหม่:Chiang Mai|ตรัง:Trang|ตราด:Trat|ตาก:Tak|นครนายก:Nakhon Nayok|นครปฐม:Nakhon Pathom|นครพนม:Nakhon Phanom|นครราชสีมา:Nakhon Ratchasima|นครศรีธรรมราช:Nakhon Si Thammarat|นครสวรรค์:Nakhon Sawan|นนทบุรี:Nonthaburi|นราธิวาส:Narathiwat|น่าน:Nan|บึงกาฬ:Bueng Kan|บุรีรัมย์:Buri Ram|ปทุมธานี:Pathum Thani|ประจวบคีรีขันธ์:Prachuap Khiri Khan|ปราจีนบุรี:Prachin Buri|ปัตตานี:Pattani|พระนครศรีอยุธยา:Phra Nakhon Si Ayutthaya|พะเยา:Phayao|พังงา:Phangnga|พัทลุง:Phatthalung|พิจิตร:Phichit|พิษณุโลก:Phitsanulok|เพชรบุรี:Phetchaburi|เพชรบูรณ์:Phetchabun|แพร่:Phrae|ภูเก็ต:Phuket|มหาสารคาม:Maha Sarakham|มุกดาหาร:Mukdahan|แม่ฮ่องสอน:Mae Hong Son|ยโสธร:Yasothon|ยะลา:Yala|ร้อยเอ็ด:Roi Et|ระนอง:Ranong|ระยอง:Rayong|ราชบุรี:Ratchaburi|ลพบุรี:Lop Buri|ลำปาง:Lampang|ลำพูน:Lamphun|เลย:Loei|ศรีสะเกษ:Si Sa Ket|สกลนคร:Sakon Nakhon|สงขลา:Songkhla|สตูล:Satun|สมุทรปราการ:Samut Prakan|สมุทรสงคราม:Samut Songkhram|สมุทรสาคร:Samut Sakhon|สระแก้ว:Sa Kaeo|สระบุรี:Saraburi|สิงห์บุรี:Sing Buri|สุโขทัย:Sukhothai|สุพรรณบุรี:Suphan Buri|สุราษฎร์ธานี:Surat Thani|สุรินทร์:Surin|หนองคาย:Nong Khai|หนองบัวลำภู:Nong Bua Lam Phu|อ่างทอง:Ang Thong|อำนาจเจริญ:Amnat Charoen|อุดรธานี:Udon Thani|อุตรดิตถ์:Uttaradit|อุทัยธานี:Uthai Thani|อุบลราชธานี:Ubon Ratchathani|ผู้อำนวยการ:Director|รองผู้อำนวยการ:Deputy director|ครู:Teacher|ครูผู้ช่วย:Assistant teacher|พนักงานราชการ:Government employee|ครูอัตราจ้าง:Contract teacher|บุคลากรทางการศึกษา:Educational personnel|อื่น ๆ:Other|ศิลปะ:Arts|ภาษาไทย:Thai language|คณิตศาสตร์:Mathematics|วิทยาศาสตร์และเทคโนโลยี:Science and technology|สังคมศึกษา ศาสนา และวัฒนธรรม:Social studies, religion and culture|สุขศึกษาและพลศึกษา:Health and physical education|การงานอาชีพ:Occupations|ภาษาต่างประเทศ:Foreign languages|กิจกรรมพัฒนาผู้เรียน:Learner development activities|ผู้บริหาร:Administration|ประชาชนทั่วไป:General public|ผู้ปกครอง:Parent|เจ้าหน้าที่ / ลูกจ้างของโรงเรียน:School staff|นักเรียน / นักศึกษา:Student|ข้าราชการ / พนักงานรัฐ:Civil servant / state employee|พนักงานเอกชน / ธุรกิจส่วนตัว:Private employee / business owner|นักดนตรี / ผู้สนใจดนตรีไทย:Musician / Thai music enthusiast|ปวช.:Vocational Certificate|ปวส.:High Vocational Certificate|อุดมศึกษา:Higher education|นักเรียน:Student|ประชาชน:General public").split('|').map(x=>x.split(':')));
+const trEN=t=>{ t=String(t||''); if(lang!=='en') return t; if(TR_EN[t]) return TR_EN[t]; return t.replace(/^ม\.(?=\d)/,'M.').replace(/^ป\.(?=\d)/,'P.'); };
+const BI_RE=/^(.*?[\u0E00-\u0E7F][^\/—]*?)\s+(?:\/|—)\s+([A-Za-z(].*)$/;
+function biPick(orig){ const m=String(orig).match(BI_RE); if(m) return lang==='en'?m[2]:m[1]; return lang==='en'?trEN(orig):orig; }
+function biApply(){
+  document.querySelectorAll('option').forEach(o=>{
+    if(o.dataset.bi===undefined){ const t=o.textContent; if(!BI_RE.test(t) && !TR_EN[t] && !/^[มป]\.\d/.test(t)) return; if(!o.hasAttribute('value')) o.setAttribute('value',t); o.dataset.bi=t; }
+    o.textContent=biPick(o.dataset.bi);
+  });
+  ['placeholder','title','aria-label'].forEach(a=>document.querySelectorAll('['+a+']').forEach(el=>{
+    const k='bi'+a.replace('-',''); if(el.dataset[k]===undefined){ const t=el.getAttribute(a); if(!BI_RE.test(t)) return; el.dataset[k]=t; }
+    el.setAttribute(a,biPick(el.dataset[k]));
+  }));
+  const cu=document.getElementById('changeUser'); if(cu) cu.textContent=L('เปลี่ยนผู้ใช้','Switch user');
+}
 document.body.classList.add('lang-'+lang);
 
 
@@ -2148,7 +2164,7 @@ function showModes(){
   regStep.hidden=true; modeStep.hidden=false;
   normUser(user); const tc=user.role==='teacher', pb=user.role==='public';
   whoTxt.innerHTML=`<span class="roleTag${tc?' tc':pb?' pb':''}">${tc?L('โหมดครู','Teacher'):pb?L('บุคคลทั่วไป','General public'):L('โหมดนักเรียน','Student')}</span> 👤 `+escH(dispName(user))+escH(pb?(user.org==='in'?` · ${user.pos||''}`:` · ${user.prov}`):user.org==='in'
-    ? (tc?` · ${user.pos||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+user.dept:''}`:` · ${L(user.cls,String(user.cls||'').replace(/^ม\./,'M.').replace(/^ป\./,'P.'))} ${L('เลขที่','No.')} ${user.no}`)
+    ? (tc?` · ${trEN(user.pos)||L('ครู','Teacher')}${user.dept&&user.dept!==user.pos?' · '+trEN(user.dept):''}`:` · ${L(user.cls,String(user.cls||'').replace(/^ม\./,'M.').replace(/^ป\./,'P.'))} ${L('เลขที่','No.')} ${user.no}`)
     : ` · ${tc?(user.pos||''):L('นักเรียน','Student')+' '+(user.cls||'')} · ${user.school} · ${user.prov}`);
   modeStep.className=tc?'role-tc':pb?'role-pb':'role-st';
   { const jw=document.getElementById('joinNowW'), pr=(()=>{ try{ return new URLSearchParams(location.search).get('room'); }catch(e){ return null; } })();
@@ -3508,20 +3524,22 @@ function detect(){
 }
 addEventListener('resize',detect); addEventListener('orientationchange',()=>setTimeout(detect,150));
 detect(); syncPickers(); renderSlot(0); renderSlot(1); updateSummary();
+
 function applyLang(l){
   lang=l; store.set('lang',l);
   document.documentElement.lang=l;
   document.body.classList.remove('lang-th','lang-en'); document.body.classList.add('lang-'+l);
   document.querySelectorAll('.langSw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
+  biApply();
   const PH={fName:['เช่น เด็กชายสมชาย ใจดี','e.g. John Smith'],fRoom:['เช่น 5','e.g. 5'],fNo:['เช่น 12','e.g. 12'],
-    fPosOther:['เช่น นักศึกษา ศึกษานิเทศก์','e.g. University student'],fSchool:['เช่น โรงเรียน… / สพม.…','e.g. ABC School'],
+    fPosOther:['เช่น นักศึกษา ศึกษานิเทศก์','e.g. University student'],fSchool:['เช่น โรงเรียน… สพม.… (ถ้าไม่มีพิมพ์ ไม่มี)','e.g. ABC School (type “none” if none)'],
     fProvOther:['เช่น โตเกียว ญี่ปุ่น','e.g. Tokyo, Japan'],sComment:['(ไม่บังคับ)','(optional)']};
   Object.entries(PH).forEach(([id,[t,e]])=>{ const el=document.getElementById(id); if(el) el.placeholder=L(t,e); });
   fLevel.options[0].textContent=L('เลือก','Select');
   fPos.options[0].textContent=L('เลือกตำแหน่ง','Select');
   const POS={'นักเรียน':'Student','ครู':'Teacher','ผู้บริหาร':'Administrator','ประชาชน':'General public','other':'Other (please specify)'};
   [...fPos.options].slice(1).forEach(o=>o.textContent= o.value==='other' ? L('อื่น ๆ (ระบุ)',POS.other) : L(o.value,POS[o.value]||o.value));
-  fProvSel.options[0].textContent=L('เลือกจังหวัด','Select province');
+  fProvSel.options[0].textContent=L('เลือกจังหวัด','Select province / country');
   fProvSel.options[fProvSel.options.length-1].textContent=L('อื่น ๆ / ต่างประเทศ (ระบุ)','Other / Abroad (please specify)');
   [...keySel.options].forEach((o,i)=>{ const k=KEYS[i]; o.textContent=L('คีย์ '+k.n+' (ด = '+k.n.split(' ')[0]+')','Key of '+k.n+' (Do = '+k.n.split(' ')[0]+')'); });
   document.querySelectorAll('#sel0 option,#sel1 option').forEach(o=>{ if(o.dataset.th) o.textContent=L(o.dataset.th,o.dataset.en); });
@@ -3985,8 +4003,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23j';
+const APP_VER='2026.11.23k';
 const CHANGELOG=[
+  {v:'2026.11.23k',d:['23 พ.ย. 2569','23 Nov 2026'],th:['แบบฟอร์มลงชื่อแสดงภาษาเดียวตามเวอร์ชัน: เวอร์ชันไทยแสดงเฉพาะภาษาไทย เวอร์ชันอังกฤษแสดงเฉพาะภาษาอังกฤษ (รวมถึงตัวเลือกตำแหน่ง กลุ่มสาระ ระดับชั้น และจังหวัด)'],
+   en:['The sign-in form now shows one language only: Thai in the Thai version, English in the English version (including positions, departments, grades and provinces)']},
   {v:'2026.11.23j',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ลงชื่อครั้งเดียว ใช้ได้ทั้ง 2 ภาษา: เพิ่มช่อง <b>ชื่อภาษาอังกฤษ</b> แอปแสดงชื่อไทยในเวอร์ชันภาษาไทย และชื่ออังกฤษในเวอร์ชันภาษาอังกฤษ','<b>เสียงดนตรีดังขึ้น</b> (อังกะลุง กลองแขก ฉิ่ง) และเร่งระดับเสียงได้มากกว่าเดิมในตั้งค่าเสียง'],
    en:['Sign in once for both languages: new <b>English name</b> fields — Thai name in the Thai version, English name in the English version','<b>Louder music</b> (angklung, Klong Khaek, ching), with a higher maximum in Sound settings']},
   {v:'2026.11.23i',d:['23 พ.ย. 2569','23 Nov 2026'],th:['หน้าแรกใหม่: เลือก <b>บุคลากรภายใน</b> (โรงเรียนบดินทรเดชา (สิงห์ สิงหเสนี) สมุทรปราการ) หรือ <b>บุคลากรภายนอก</b> ก่อน แล้วจึงเลือก นักเรียน · ครู/บุคลากรทางการศึกษา · บุคคลทั่วไป'],
