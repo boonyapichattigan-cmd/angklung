@@ -776,6 +776,7 @@ body.phone:not(.land) .qDrum{margin-top:10px}
 .wLeft{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 .wHead{text-align:center}
 .wtext{width:100%;display:flex;flex-direction:column;align-items:center}
+.wStats{margin:6px auto 2px;padding:6px 14px;border-radius:999px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.08);font-size:.86em;color:var(--wood-d);width:max-content;max-width:100%;text-align:center}.wStats b{color:#0d3b66;font-size:1.12em}
 .wChips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:440px;margin:10px auto 4px}
 .wChips > span{display:flex !important;align-items:center;gap:8px;justify-content:flex-start;border-radius:14px !important;padding:8px 12px !important;font-size:.92rem !important;
   background:rgba(255,255,255,.9) !important;box-shadow:0 2px 10px rgba(13,59,102,.07) !important;text-align:left}
@@ -1145,6 +1146,7 @@ body.lang-th .regForm .nmEn,body.lang-en .regForm .nmTh{display:none}
       <span><i class="ci" data-i="drum"></i><span class="th"><span class="nw">กลองแขก</span> · <span class="nw">ฉิ่ง</span></span><span class="en">Klong Khaek · Ching</span></span>
       <span><i class="ci" data-i="song"></i><span class="th">ฝึกเพลงไทย</span><span class="en">Thai songs</span></span>
     </div>
+    <p class="wStats" id="wStats" hidden></p>
     <div class="wActs">
       <button type="button" class="wGuide" id="wHelpBtn"><i class="ci" data-i="help"></i><span class="th">คู่มือการใช้งาน</span><span class="en">User guide</span></button>
       <button type="button" class="instBtn" id="instBtn" hidden>📲 <span class="th nw">ติดตั้งแอป<span class="longT">ลงเครื่อง</span></span><span class="en">Install app</span></button>
@@ -2198,6 +2200,28 @@ function logScore(r){
 // แยก คำนำหน้า · ชื่อจริง · นามสกุล · ชื่อที่แสดง ส่งต่อท้าย (Apps Script แยกเป็นคอลัมน์)
 function nameParts(u){ u=u||{}; return [u.pre||'',u.first||'',u.last||'',u.disp||dispName(u),u.enFirst||'',u.enLast||'']; }
 function userVals(u){ return [userKind(u), u.name, u.cls||'-', u.no||'-', u.school, u.prov, u.pos]; }
+
+// ยอดผู้ใช้งานสะสม: อ่านจาก Apps Script (?k=stats) แบบ JSONP · เก็บค่าล่าสุดไว้แสดงทันทีครั้งต่อไป
+let STATS=store.get('stats',null);
+function showStats(){ const el=document.getElementById('wStats'); if(!el) return;
+  const j=STATS; if(!j||!(j.users>0)){ el.hidden=true; return; }
+  const f=n=>Number(n||0).toLocaleString(lang==='en'?'en-US':'th-TH');
+  el.innerHTML = lang==='en'
+    ? '👥 Total users <b>'+f(j.users)+'</b> · visits <b>'+f(j.visits)+'</b>'
+    : '👥 ผู้ใช้งานสะสม <b>'+f(j.users)+'</b> คน · เข้าใช้ <b>'+f(j.visits)+'</b> ครั้ง';
+  el.title = lang==='en'
+    ? 'Students '+f(j.student)+' · Teachers '+f(j.teacher)+' · General public '+f(j.public)
+    : 'นักเรียน '+f(j.student)+' · ครู '+f(j.teacher)+' · บุคคลทั่วไป '+f(j.public)+' คน';
+  el.hidden=false; }
+function loadStats(){
+  showStats();
+  if(!SCRIPT_URL || !navigator.onLine) return;
+  window.__aklStats=j=>{ if(j && j.users!=null){ STATS=j; store.set('stats',j); showStats(); } };
+  const sc=document.createElement('script');
+  sc.src=SCRIPT_URL+'?k=stats&callback=__aklStats&t='+Date.now();
+  sc.onload=sc.onerror=()=>sc.remove();
+  document.head.appendChild(sc);
+}
 let regRole='student', regOrg='in';
 const regKey=()=>regRole==='public'?'pb':(regRole==='teacher'?'tc':'st')+'-'+regOrg;
 function setRegHead(){ const k=regKey();
@@ -3581,7 +3605,7 @@ function applyLang(l){
   document.documentElement.lang=l;
   document.body.classList.remove('lang-th','lang-en'); document.body.classList.add('lang-'+l);
   document.querySelectorAll('.langSw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===l));
-  biApply();
+  biApply(); try{ showStats(); }catch(_){}
   const PH={fName:['เช่น เด็กชายสมชาย ใจดี','e.g. John Smith'],fRoom:['เช่น 5','e.g. 5'],fNo:['เช่น 12','e.g. 12'],
     fPosOther:['เช่น นักศึกษา ศึกษานิเทศก์','e.g. University student'],fSchool:['เช่น โรงเรียน… สพม.… (ถ้าไม่มีพิมพ์ ไม่มี)','e.g. ABC School (type “none” if none)'],
     fProvOther:['เช่น โตเกียว ญี่ปุ่น','e.g. Tokyo, Japan'],sComment:['(ไม่บังคับ)','(optional)']};
@@ -3602,7 +3626,7 @@ function applyLang(l){
   detect.last=null; detect(); regErr.textContent=''; sErr.textContent='';
 }
 document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click',()=>applyLang(b.dataset.lang)));
-applyLang(lang);
+applyLang(lang); setTimeout(()=>{ try{ loadStats(); }catch(_){} },400);
 setPlayMode(playMode,'pick');
 if(document.body.classList.contains('desktop')){ scoreBox.open=true; }
 
@@ -4063,8 +4087,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.23s';
+const APP_VER='2026.11.24a';
 const CHANGELOG=[
+  {v:'2026.11.24a',d:['24 พ.ย. 2569','24 Nov 2026'],th:['หน้าแรกแสดง <b>👥 ยอดผู้ใช้งานสะสม</b> (จำนวนคน และจำนวนครั้งที่เข้าใช้) นับจากบันทึกการลงชื่อเข้าใช้ แตะค้างหรือชี้ที่ตัวเลขเพื่อดูแยกนักเรียน ครู และบุคคลทั่วไป'],
+   en:['The home screen shows <b>👥 total users</b> (people and visits), counted from sign-in records; hover or long-press to see students, teachers and general public']},
   {v:'2026.11.23s',d:['23 พ.ย. 2569','23 Nov 2026'],th:['โหมด <b>📢 เสียงดัง (ลำโพงมือถือ)</b> ในแผงตั้งค่าเสียง: ความดังเฉลี่ยสูงขึ้น เน้นย่านเสียงที่ลำโพงมือถือเล่นได้ดี และหางเสียงยาวขึ้น (เปิดให้อัตโนมัติบนมือถือและแท็บเล็ต ปิดได้)'],
    en:['<b>📢 Loud (phone speaker)</b> mode in the sound settings: higher average level, tuned for small speakers, with a longer ring (on by default on phones and tablets; can be turned off)']},
   {v:'2026.11.23r',d:['23 พ.ย. 2569','23 Nov 2026'],th:['ห้องวงใช้คำว่า <b>ผู้นำวง</b> (ผู้เปิดห้อง) และ <b>สมาชิก</b> ทุกโหมด เพราะผู้เปิดห้องอาจเป็นครู นักเรียนที่ซ้อมรวมกันเอง หรือบุคคลทั่วไป','ทุกโหมดเปิดห้องวงได้ ผู้นำวงเท่านั้นที่ควบคุมวงได้ (เลือกเพลง เริ่ม–หยุด ล็อกการกด ปิดเสียงสมาชิก ปิดห้อง) สมาชิกเห็นชื่อผู้นำวงในห้อง'],
