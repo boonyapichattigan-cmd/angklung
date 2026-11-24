@@ -1890,7 +1890,7 @@ function stopShake(id){
 }
 function flick(a,els){
   initAudio(); if(ctx.state!=='running') ctx.resume();
-  if(window.pracPress) pracPress(a);
+  if(window.pracPress) pracPress(a); rTap({t:'fl',i:a.idx});
   const t=ctx.currentTime; loadAngklung();
   const v=akVoice(a,t,true);
   if(v){ v.g.gain.setValueAtTime(AK_GAIN,t+0.1); v.g.gain.setTargetAtTime(0.0001,t+0.1,0.07); v.src.stop(t+0.7); }
@@ -1919,6 +1919,56 @@ function sabatVoice(a,t,first,amp=1){
   const hold=first?0.15:0.1;
   v.g.gain.setValueAtTime(AK_GAIN*amp,t+hold); v.g.gain.setTargetAtTime(0.0001,t+hold,0.06); v.src.stop(t+hold+0.5);
 }
+// ---------- ห้องวง: ส่งการกดของสมาชิกไปดังที่เครื่องผู้นำวง ----------
+// ส่งทั้ง กด (dn) · สะบัด (sb) · ปล่อย (up) พร้อมเวลาที่กดตามนาฬิกาผู้นำวง (at)
+// ผู้นำวงจึงเล่นได้ทั้งเสียงกระทบและเสียงเขย่าต่อเนื่องตลอดที่กดค้าง และจัดจังหวะให้สม่ำเสมอแม้ Wi-Fi สะดุด
+function rTap(o){
+  if(ROOM.role!=='member' || !(ROOM.hostV>=2) || !ROOM.conn || !ROOM.conn.open) return;
+  if(ROOM.offset!=null && isFinite(ROOM.offset)) o.at=performance.now()+ROOM.offset;
+  try{ ROOM.conn.send(o); }catch(e){}
+}
+const RPRESS=new Map();   // คีย์ peer:id -> การกดค้างของสมาชิก
+function rFlash(a,on,ms){ const el=soloEls&&soloEls[a.idx]; if(!el) return; if(on) el.classList.add('play'); else el.classList.remove('play'); if(ms) setTimeout(()=>el.classList.remove('play'),ms); }
+function remoteUp(key){
+  const st=RPRESS.get(key); if(!st) return; RPRESS.delete(key);
+  clearTimeout(st.timer); clearTimeout(st.max);
+  if(st.shake){ stopShake(key); rFlash(st.a,false); } else setTimeout(()=>rFlash(st.a,false),90);
+}
+function remoteDown(key,a,sabat,amp){
+  remoteUp(key);
+  initAudio(); if(ctx.state!=='running') ctx.resume(); loadAngklung();
+  const t=ctx.currentTime+0.004;
+  if(sabat){ sabatVoice(a,t,true,amp); rFlash(a,true,240); return; }
+  hitVoice(a,t,amp); rFlash(a,true);
+  const st={a};
+  st.timer=setTimeout(()=>{ if(RPRESS.get(key)===st){ st.shake=true; startShake(key,a,[],true,amp); rFlash(a,true); } },HOLD_MS);
+  st.max=setTimeout(()=>remoteUp(key),12000);   // กันเสียงค้างถ้าข้อความ "ปล่อย" หาย
+  RPRESS.set(key,st);
+}
+// หน่วงเล็กน้อยแบบปรับตัวเอง (jitter buffer) ต่อสมาชิกแต่ละคน: ข้อความที่มาถึงไม่สม่ำเสมอจะถูกเล่นตามจังหวะที่กดจริง
+function rWait(x,at){
+  if(!x || at==null || !isFinite(at)) return 0;
+  const now=performance.now(), late=now-at;
+  if(x.jl==null){ x.jl=late; x.jd=8; }
+  else { x.jd=x.jd*0.92+Math.abs(late-x.jl)*0.08; x.jl=x.jl*0.92+late*0.08; }
+  const buf=Math.min(160,Math.max(0,x.jl+2.5*x.jd+6));
+  return Math.max(0,Math.min(250,at+buf-now));
+}
+function remoteTap(conn,d){
+  const x=ROOM.members.get(conn.peer), key=conn.peer+':'+d.k;
+  const off=ROOM.echo===false||ROOM.mute;
+  const w=rWait(x,d.at);
+  const run=f=>{ if(w>1) setTimeout(f,w); else f(); };
+  const amp=Math.max(0.35,Math.min(1,+d.v||1))*0.9;
+  if(d.t==='up'){ run(()=>remoteUp(key)); return; }
+  if(off) return;
+  const a=AK[+d.i];
+  if(d.t==='dn'){ if(a) run(()=>remoteDown(key,a,!!d.s,amp)); return; }
+  if(d.t==='sb'){ run(()=>{ const st=RPRESS.get(key); if(!st) return; clearTimeout(st.timer); if(st.shake){ st.shake=false; stopShake(key); } initAudio(); sabatVoice(st.a,ctx.currentTime,false,amp); rFlash(st.a,true,240); }); return; }
+  if(d.t==='s1'){ if(a) run(()=>{ initAudio(); if(ctx.state!=='running') ctx.resume(); loadAngklung(); sabatVoice(a,ctx.currentTime+0.004,true,amp); rFlash(a,true,240); }); return; }
+  if(d.t==='fl'){ if(a) run(()=>{ initAudio(); if(ctx.state!=='running') ctx.resume(); loadAngklung(); const t=ctx.currentTime+0.004, v=akVoice(a,t,true,amp);
+    if(v){ v.g.gain.setValueAtTime(AK_GAIN*amp,t+0.1); v.g.gain.setTargetAtTime(0.0001,t+0.1,0.07); v.src.stop(t+0.7); } else hitVoice(a,t,amp); rFlash(a,true,220); }); return; }
+}
 const HOLD_MS=130;            // กดค้างเกินนี้ = เขย่า
 const press=new Map();        // id -> {timer, sabat, t0, a, els}
 function techStart(id,a,els,opt={}){
@@ -1926,6 +1976,7 @@ function techStart(id,a,els,opt={}){
   if(window.pracPress) pracPress(a);
   const t=ctx.currentTime;
   const amp=opt.amp||1;
+  rTap({t:'dn',k:id,i:a.idx,s:opt.sabat?1:0,v:amp});
   if(opt.sabat){ sabatVoice(a,t,true,amp); els.forEach(e=>{e.classList.add('play'); setTimeout(()=>e.classList.remove('play'),240);}); press.set(id,{sabat:true}); return; }
   hitVoice(a,t,amp);                               // ทุกการกดเริ่มด้วยเสียงกระทบทันที
   els.forEach(e=>e.classList.add('play'));
@@ -1936,14 +1987,14 @@ function techStart(id,a,els,opt={}){
 function techSabat(id){            // ปัดนิ้วบนปุ่มเดิมขณะเพิ่งกด
   const st=press.get(id); if(!st || st.sabat) return false;
   if(performance.now()-st.t0>400) return false;            // ปัดช้าเกิน = ยังถือว่าเขย่า
-  st.sabat=true; clearTimeout(st.timer);
+  st.sabat=true; clearTimeout(st.timer); rTap({t:'sb',k:id});
   if(st.shaking){ st.shaking=false; stopShake(id); }      // เพิ่งเริ่มเขย่า → เปลี่ยนเป็นสะบัด
   sabatVoice(st.a,ctx.currentTime,false,st.amp||1);
   st.els.forEach(e=>{ e.classList.add('play'); setTimeout(()=>e.classList.remove('play'),240); });
   return true;
 }
 function techEnd(id){
-  const st=press.get(id); press.delete(id);
+  const st=press.get(id); press.delete(id); if(st) rTap({t:'up',k:id});
   if(st){ clearTimeout(st.timer); if(!st.shaking && st.els) setTimeout(()=>st.els.forEach(e=>e.classList.remove('play')),90); }
   stopShake(id);
 }
@@ -1996,7 +2047,7 @@ function enterCard(card,pid,y){
   if(amp<0.9){ card.classList.add('soft'); setTimeout(()=>card.classList.remove('soft'),300); }
   mode==='hold' ? techStart(inf.id,inf.getA(),[card],{amp}) : sabatPress(inf.getA(),[card],amp);
 }
-function sabatPress(a,els,amp=1){ initAudio(); if(ctx.state!=='running') ctx.resume(); loadAngklung(); if(window.pracPress) pracPress(a); sabatVoice(a,ctx.currentTime,true,amp); els.forEach(e=>{e.classList.add('play'); setTimeout(()=>e.classList.remove('play'),240);}); }
+function sabatPress(a,els,amp=1){ initAudio(); if(ctx.state!=='running') ctx.resume(); loadAngklung(); if(window.pracPress) pracPress(a); rTap({t:'s1',i:a.idx,v:amp}); sabatVoice(a,ctx.currentTime,true,amp); els.forEach(e=>{e.classList.add('play'); setTimeout(()=>e.classList.remove('play'),240);}); }
 function leaveCard(card,pid){
   const inf=cardInfo.get(card); if(!inf) return;
   inf.ptrs.delete(pid);
@@ -3913,7 +3964,7 @@ function pracRun(opt){
   P.raf=requestAnimationFrame(loop);
 }
 function pracPress(a){
-  if(ROOM.role==='member' && ROOM.conn && ROOM.conn.open){ try{ ROOM.conn.send({t:'hit',i:a.idx}); }catch(e){} }   // เสียงที่นักเรียนกด ส่งไปดังที่เครื่องครูด้วย
+  if(ROOM.role==='member' && ROOM.conn && ROOM.conn.open && !(ROOM.hostV>=2)){ try{ ROOM.conn.send({t:'hit',i:a.idx}); }catch(e){} }   // ผู้นำวงที่ใช้แอปรุ่นเก่า: ส่งแค่เสียงกระทบ
   if(!P.run) return; const t=ctx.currentTime;
   let best=null, bd=1e9;
   P.ev.forEach(e=>{ if(e.mine && e.state===null && e.a.idx===a.idx){ const d=Math.abs(e.t-t); if(d<=P.win && d<bd){ bd=d; best=e; } } });
@@ -4087,8 +4138,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.24a';
+const APP_VER='2026.11.24b';
 const CHANGELOG=[
+  {v:'2026.11.24b',d:['24 พ.ย. 2569','24 Nov 2026'],th:['ห้องวง: เสียงที่สมาชิกกดแล้วไปดังที่เครื่องผู้นำวง <b>ไม่ขาดหายแล้ว</b> — เครื่องผู้นำวงเล่นทั้งเสียงกระทบ เสียงเขย่าต่อเนื่องตลอดที่กดค้าง และเสียงสะบัด เหมือนที่สมาชิกเล่นจริง','จัดจังหวะเสียงของสมาชิกแต่ละคนให้สม่ำเสมอ แม้ Wi-Fi สะดุดเป็นช่วง ๆ (ทั้งผู้นำวงและสมาชิกต้องอัปเดตแอปเป็นรุ่นนี้)'],
+   en:['Band room: members’ taps that sound on the leader’s device <b>no longer cut out</b> — the leader’s device now plays the strike, the continuous shake for as long as the key is held, and flicks, just as the member plays','Each member’s timing is smoothed so the rhythm stays even when Wi-Fi stutters (leader and members both need this version)']},
   {v:'2026.11.24a',d:['24 พ.ย. 2569','24 Nov 2026'],th:['หน้าแรกแสดง <b>👥 ยอดผู้ใช้งานสะสม</b> (จำนวนคน และจำนวนครั้งที่เข้าใช้) นับจากบันทึกการลงชื่อเข้าใช้ แตะค้างหรือชี้ที่ตัวเลขเพื่อดูแยกนักเรียน ครู และบุคคลทั่วไป'],
    en:['The home screen shows <b>👥 total users</b> (people and visits), counted from sign-in records; hover or long-press to see students, teachers and general public']},
   {v:'2026.11.23s',d:['23 พ.ย. 2569','23 Nov 2026'],th:['โหมด <b>📢 เสียงดัง (ลำโพงมือถือ)</b> ในแผงตั้งค่าเสียง: ความดังเฉลี่ยสูงขึ้น เน้นย่านเสียงที่ลำโพงมือถือเล่นได้ดี และหางเสียงยาวขึ้น (เปิดให้อัตโนมัติบนมือถือและแท็บเล็ต ปิดได้)'],
@@ -4316,7 +4369,7 @@ function roomCloseBtn(btn){ if(!btn) return; btn.onclick=()=>{ if(btn.classList.
   setTimeout(()=>{ if(btn.isConnected){ btn.classList.remove('sure'); btn.innerHTML=t0; } },4000); }; }
 // ล็อกการกดของนักเรียน
 function roomSilentSet(on){ ROOM.silentAll=!!on; if(on) ROOM.echo=true; ROOM.members.forEach(x=>roomSend(x,{t:'silent',on:ROOM.silentAll})); rbUpd(); const c=document.getElementById('rSilent'); if(c) c.checked=ROOM.silentAll; const e=document.getElementById('rEcho'); if(e) e.checked=ROOM.echo!==false; }
-function roomMuteSet(on){ ROOM.mute=!!on; ROOM.members.forEach(x=>roomSend(x,{t:'mute',on:ROOM.mute})); rbUpd(); const c=document.getElementById('rMute'); if(c) c.checked=ROOM.mute; }
+function roomMuteSet(on){ ROOM.mute=!!on; if(ROOM.mute) [...RPRESS.keys()].forEach(remoteUp); ROOM.members.forEach(x=>roomSend(x,{t:'mute',on:ROOM.mute})); rbUpd(); const c=document.getElementById('rMute'); if(c) c.checked=ROOM.mute; }
 // ไปหน้าบรรเลง: อังกะลุงครบทุกเสียง + แถบควบคุมห้อง (เลือกเพลง หน้าทับ เครื่องจังหวะ)
 function roomGoPlay(){ if(ROOM.role!=='host') return; ROOM.stage='play'; closePop(); setPlayMode('solo','pick'); roomBarRender(); setTimeout(fitKeys,60); }
 const RB_INST=[['useKlong','🥁','กลองแขก','Klong Khaek'],['useChing','🔔','ฉิ่ง','Ching'],['useChab','','ฉาบเล็ก','Small chap'],['useChabY','','ฉาบใหญ่','Large chap'],['useMong','','โหม่ง','Mong'],['useKrap','','กรับ','Krap']];
@@ -4394,7 +4447,7 @@ async function roomCreate(){
   Object.assign(ROOM,{role:'host',code,peer,members:new Map(),playing:false});
   peer.on('connection',conn=>{
     conn.on('data',d=>hostData(conn,d));
-    conn.on('close',()=>{ ROOM.members.delete(conn.peer); if(ROOM.role==='host') roomRender(); });
+    conn.on('close',()=>{ [...RPRESS.keys()].filter(k=>k.startsWith(conn.peer+':')).forEach(remoteUp); ROOM.members.delete(conn.peer); if(ROOM.role==='host') roomRender(); });
   });
   peer.on('disconnected',()=>{ try{ peer.reconnect(); }catch(e){} });
   roomRender();
@@ -4402,12 +4455,13 @@ async function roomCreate(){
 function hostData(conn,d){
   if(!d||ROOM.role!=='host') return;
   if(d.t==='ping'){ conn.send({t:'pong',c:d.c,h:performance.now()}); return; }
+  if(d.t==='dn'||d.t==='up'||d.t==='sb'||d.t==='s1'||d.t==='fl'){ remoteTap(conn,d); return; }
   if(d.t==='hit'){ if(ROOM.echo===false||ROOM.mute) return; const a=AK[+d.i]; if(!a) return; initAudio(); if(ctx.state!=='running') ctx.resume(); hitVoice(a,ctx.currentTime+0.005,0.75);
     const el=soloEls[a.idx]; if(el){ el.classList.add('play'); setTimeout(()=>el.classList.remove('play'),140); } return; }
   if(d.t==='hello'){ const x={id:conn.peer,conn,name:String(d.name||'?').slice(0,60),info:String(d.info||'').slice(0,60),disp:String(d.disp||'').slice(0,40),enName:String(d.enName||'').slice(0,80),notes:null,grp:'a',score:null};
     ROOM.members.set(conn.peer,x);
     if(ROOM.selfPick!==false) roomSend(x,{t:'pickOpen',taken:roomTaken()}); else autoAssignOne(x);
-    roomSend(x,{t:'hi',lead:dispName(user)||L('ผู้นำวง','Leader'),leadEn:(user&&(user.enFirst||user.disp))||''});
+    roomSend(x,{t:'hi',v:2,lead:dispName(user)||L('ผู้นำวง','Leader'),leadEn:(user&&(user.enFirst||user.disp))||''});
     if(ROOM.mute) roomSend(x,{t:'mute',on:true});
     if(ROOM.silentAll) roomSend(x,{t:'silent',on:true});
     roomRender(); return; }
@@ -4478,7 +4532,7 @@ function roomBeatStart(){
   setTimeout(fitKeys,50);
 }
 function roomCloseHelper(){}
-function roomClose(){ pAgain.hidden=false; if(ROOM.role==='host'){ ROOM.members.forEach(x=>roomSend(x,{t:'closed'})); pracStop(); try{ ROOM.peer.destroy(); }catch(e){} }
+function roomClose(){ pAgain.hidden=false; [...RPRESS.keys()].forEach(remoteUp); if(ROOM.role==='host'){ ROOM.members.forEach(x=>roomSend(x,{t:'closed'})); pracStop(); try{ ROOM.peer.destroy(); }catch(e){} }
   for(const k in ROOM) delete ROOM[k]; ROOM.role=null; roomRender(); roomBarRender(); closePop(); prac.hidden=true; document.body.classList.remove('practicing'); setTimeout(fitKeys,60); }
 function roomCsv(){
   const head=['วันเวลา','ชื่อ','ข้อมูล (ชั้น/เลขที่)','เพลง','ช่วง','ความเร็ว','เสียงที่ถือ','กลุ่ม','ถูกจังหวะ','ทั้งหมด','ร้อยละ'];
@@ -4501,7 +4555,7 @@ async function roomJoin(code){
   const to=setTimeout(()=>{ if(!ROOM.connected) fail(L('ไม่พบห้อง '+code+' หรือเชื่อมต่อไม่ได้ (ลองใช้ Wi-Fi เดียวกับผู้นำวง)','Room '+code+' not found or unreachable (try the same Wi-Fi as the band leader)')); },15000);
   peer.on('error',e=>{ if(e&&e.type==='peer-unavailable') fail(L('ไม่พบห้อง '+code+' ตรวจสอบรหัสอีกครั้ง','Room '+code+' not found — check the code')); else if(!ROOM.connected) fail(L('เชื่อมต่อไม่ได้','Connection failed')+' ('+(e&&e.type||'')+')'); });
   peer.on('open',()=>{
-    const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn;
+    const conn=peer.connect(PEER_PREFIX+code,{reliable:true}); ROOM.conn=conn; ROOM.hostV=0;
     conn.on('open',()=>{ clearTimeout(to); ROOM.connected=true; ROOM.err=null;
       const u=user||{}; conn.send({t:'hello',name:u.name||L('ไม่ระบุชื่อ','Guest'),enName:u.enName||'',disp:dispName(u),info:u.role==='public'?(u.prov||''):u.type==='student'?`${u.cls||''} ${L('เลขที่','No.')} ${u.no||''}`:((u.cls?u.cls+' · ':'')+(u.school||''))});
       clockSync(); roomRender(); });
@@ -4531,7 +4585,7 @@ function memberData(d){
   if(d.t==='rit'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('🐢 '+rw().lead+'กำลังทอดจังหวะ เตรียมจบเพลง','🐢 Slowing down — get ready to end'); return; }
   if(d.t==='end'){ const s=document.getElementById('bSub'); if(s) s.textContent=L('จบเพลง 👏','The end 👏'); const i=document.getElementById('bInd'); if(i) i.textContent='🎶'; return; }
   if(d.t==='stop'){ pracStop(true); memberWait(); return; }
-  if(d.t==='hi'){ ROOM.leadName=String(d.lead||'').slice(0,40); ROOM.leadEn=String(d.leadEn||'').slice(0,40); roomRender(); return; }
+  if(d.t==='hi'){ ROOM.hostV=+d.v||1; ROOM.leadName=String(d.lead||'').slice(0,40); ROOM.leadEn=String(d.leadEn||'').slice(0,40); roomRender(); return; }
   if(d.t==='mute'){ memberMute(!!d.on); return; }
   if(d.t==='silent'){ memberSilent(!!d.on); return; }
   if(d.t==='closed'){ memberMute(false); memberSilent(false); document.body.classList.remove('roomLock'); pracStop(); ROOM.err=L(rw().lead+'ปิดห้องแล้ว','The room was closed'); ROOM.connected=false; memberWait(); roomRender(); }
