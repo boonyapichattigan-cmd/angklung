@@ -3527,7 +3527,7 @@ function songNote(a,ts,te,els,amp=1){
   timers.push(setTimeout(()=>els.forEach(e=>e.classList.remove('play')),Math.max(0,(te-now)*1000)));
 }
 const FLOW={el:null,raf:0};
-function flowShow(ev,T0,slotMs,song){
+function flowShow(ev,T0,slotMs,song,total,multi){   // multi: เล่นหลายรอบ แถบโน้ตไหลต่อเนื่องข้ามรอบ
   if(!FLOW.el){ const d=document.createElement('div'); d.id='flow'; d.innerHTML='<div class="flTrack"></div><div class="flHead"></div><div class="flCnt"></div><button type="button" class="flX" aria-label="หยุด / Stop">✕</button><div class="flMode"></div><div class="flRepW">🔁 <select class="flRep repSel" aria-label="จำนวนรอบ / Rounds"></select> <b class="flRound"></b></div><div class="flHint"></div>'; document.body.appendChild(d); FLOW.el=d;
     d.querySelector('.flX').onclick=()=>stopSong();
     d.querySelector('.flMode').onclick=e=>{ const b=e.target.closest('button'); if(b) setSongMine(b.dataset.v==='me'); }; }
@@ -3535,19 +3535,24 @@ function flowShow(ev,T0,slotMs,song){
   const PX=Math.max(34,Math.min(56,innerWidth/18)), tr=FLOW.el.querySelector('.flTrack');
   FLOW.el.style.setProperty('--px',PX+'px');
   const sh=song.shift||0;
-  tr.innerHTML=ev.filter(e=>!e.follow).map(e=>{ const a=akAt(e.st+sh,playMode==='band'); return `<span class="fn${e.grp?' g-'+e.grp:''}" style="left:${e.t*PX}px;--c:${a.c};color:${a.c}">${a.html}</span>`; }).join('');
+  const RL=multi&&total?total:0, nf=ev.filter(e=>!e.follow);
+  const fnH=(e,o)=>{ const a=akAt(e.st+sh,playMode==='band'); return `<span class="fn${e.grp?' g-'+e.grp:''}" style="left:${(e.t+o)*PX}px;--c:${a.c};color:${a.c}">${a.html}</span>`; };
+  tr.innerHTML=nf.map(e=>fnH(e,0)).join('')+(RL?nf.map(e=>fnH(e,RL)).join('')+nf.filter(e=>e.t<24).map(e=>fnH(e,2*RL)).join(''):'');
   FLOW.el.querySelector('.flHint').textContent=L('โน้ตไหลเข้าหาเส้น · กดตอนโน้ตถึงเส้น','Notes flow to the line · play when they reach it');
   FLOW.el.classList.add('on'); document.body.classList.add('flowOn'); if(window.fitSoon) fitSoon();
   const head=Math.min(140,innerWidth*0.22), notes=[...tr.children];
   cancelAnimationFrame(FLOW.raf); let hi=0;
-  const tick=()=>{ const ms=(ctx.currentTime-T0)*1000, x=head-ms/slotMs*PX; tr.style.transform=`translateX(${x}px)`;
-    const cur=ms/slotMs; while(hi<notes.length && parseFloat(notes[hi].style.left)/PX<cur-0.6){ notes[hi].classList.remove('now'); hi++; }
+  let lastC=-1e9;
+  const tick=()=>{ const ms=(ctx.currentTime-T0)*1000; let cur=ms/slotMs; if(RL && cur>=0) cur=cur%(2*RL);
+    if(cur<lastC){ notes.forEach(n=>n.classList.remove('now')); hi=0; } lastC=cur;
+    const x=head-cur*PX; tr.style.transform=`translateX(${x}px)`; while(hi<notes.length && parseFloat(notes[hi].style.left)/PX<cur-0.6){ notes[hi].classList.remove('now'); hi++; }
     for(let j=hi;j<Math.min(notes.length,hi+3);j++){ const nt=parseFloat(notes[j].style.left)/PX; notes[j].classList.toggle('now',Math.abs(nt-cur)<0.6); }
     FLOW.raf=requestAnimationFrame(tick); };
   tick();
 }
 function flowHide(){ if(!FLOW.el) return; cancelAnimationFrame(FLOW.raf); FLOW.el.classList.remove('on'); document.body.classList.remove('flowOn'); if(window.fitSoon) fitSoon(); }
 function stopSong(){
+  try{ clearInterval(SR.iv); }catch(e){}
   timers.forEach(x=>{ clearTimeout(x); clearInterval(x); }); timers=[];
   songVoices.forEach(v=>{ try{ const t=ctx.currentTime; v.g.gain.cancelScheduledValues(t); v.g.gain.setTargetAtTime(0,t,0.03); v.src.stop(t+0.2);}catch(e){} }); songVoices=[];
   [...active.keys()].filter(k=>k.startsWith('song')).forEach(stopShake);
@@ -3575,47 +3580,61 @@ playScore.onclick=()=>{ SR.round=1; songGo(); };
 function songGo(){
   if(!curSong) return;
   initAudio(); ctx.resume(); stopSong(); loadAngklung(); loadSamples();
-  const slotMs=60000/ +tempo.value, COUNT=SR.round>1?0:4;   // นับให้สัญญาณเฉพาะรอบแรก รอบต่อไปบรรเลงต่อเนื่อง
-  const T0=ctx.currentTime+(COUNT?0.35:0.12)+COUNT*slotMs/1000, T0ms=performance.now()+(T0-ctx.currentTime)*1000;
-  // นับให้สัญญาณก่อนเริ่ม 4 จังหวะ (เสียงฉิ่ง–ฉับ + ตัวเลขบนแถบโน้ต)
+  // หลายรอบ / วนซ้ำ: ทุกรอบต่อกันตามจังหวะพอดี ไม่หยุด ไม่นับสัญญาณใหม่ (นับเฉพาะก่อนรอบแรก)
+  const slotMs=60000/ +tempo.value, COUNT=4;
+  const T0=ctx.currentTime+0.35+COUNT*slotMs/1000;
   for(let c=0;c<COUNT;c++){ const t=T0-(COUNT-c)*slotMs/1000; chingHit(c===0,t); }
   const boxes=curSong.boxes, sh=curSong.shift||0;
-  const {ev,bxT,total}=songEvents(boxes,-7-sh,6-sh);
-  flowShow(ev,T0,slotMs,curSong); updRound();
+  const {ev,bxT,total}=songEvents(boxes,-7-sh,6-sh), RD=total*slotMs;
+  SR.round=1; flowShow(ev,T0,slotMs,curSong,total,songRepV!==1); updRound();
   { const cnt=FLOW.el.querySelector('.flCnt'), now=ctx.currentTime;
     for(let c=0;c<COUNT;c++){ const t=T0-(COUNT-c)*slotMs/1000; timers.push(setTimeout(()=>{ cnt.textContent=String(COUNT-c); cnt.classList.add('on'); },Math.max(0,(t-now)*1000))); }
     timers.push(setTimeout(()=>cnt.classList.remove('on'),Math.max(0,(T0-now)*1000))); cnt.classList.remove('on'); }
-  if(drumWithSong.checked){ loadDrum(drumSel.value); const ep=entryPlan(boxes,bxT.map(x=>x.bi),drumSel.value,curSong); drumStart(+tempo.value,T0,{noPlan:true,endSi:total,secs:ep.secs,startSi:ep.startSi}); }
-  const song=curSong; let k=0, kb=0, ended=false;
+  let dRun=null, dplan=null;
+  if(drumWithSong.checked){ loadDrum(drumSel.value); const order=bxT.map(x=>x.bi), ep=entryPlan(boxes,order,drumSel.value,curSong);
+    dplan=secPlan(boxes,order,drumSel.value,curSong)||[{si:0,k:drumSel.value}];
+    drumStart(+tempo.value,T0,{noPlan:true,endSi:songRepV===1?total:0,secs:ep.secs||[{si:0,k:drumSel.value}],startSi:ep.startSi}); dRun=drumRun; }
+  const song=curSong; let it=0, k=0, kb=0, ended=false;
   const sched=()=>{
-    const horizon=(ctx.currentTime-T0)*1000+1500;     // ตั้งล่วงหน้า 1.5 วินาที
-    const base=(ctx.currentTime-T0)*1000, off=ms=>Math.max(0,ms-base);
-    while(kb<bxT.length && bxT[kb].t*slotMs<horizon){ const {t:bt,bi}=bxT[kb++];
-      timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); boxEls[bi]&&boxEls[bi].classList.add('now'); boxEls[bi]&&boxEls[bi].scrollIntoView({block:'nearest'}); }, off(bt*slotMs))); }
-    while(k<ev.length && ev[k].t*slotMs<horizon){
-      const e=ev[k], a=akAt(e.st+song.shift,playMode==='band'); k++;
-      const t0=e.t*slotMs, t1=t0+e.d*slotMs*0.9;
-      if(e.follow){ songNote(a,T0+t0/1000,T0+t1/1000,(playMode==='solo'?[soloEls[a.idx]]:(rackEls[a.idx]||[])).filter(Boolean),e.vel); continue; }
-      const cueEls = (playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s])).filter(Boolean);
-      if(cueEls.length){
-        timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.add('cue')), off(t0-slotMs*0.3)));
-        timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.remove('cue')), off(t1)));
-        if(leaveMine.checked) continue;
+    const now=(ctx.currentTime-T0)*1000, horizon=now+1500;     // ตั้งล่วงหน้า 1.5 วินาที
+    const off=ms=>Math.max(0,ms-now);
+    for(;;){
+      const base=it*RD;
+      while(kb<bxT.length && base+bxT[kb].t*slotMs<horizon){ const {t:bt,bi}=bxT[kb++];
+        timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); boxEls[bi]&&boxEls[bi].classList.add('now'); boxEls[bi]&&boxEls[bi].scrollIntoView({block:'nearest'}); }, off(base+bt*slotMs))); }
+      while(k<ev.length && base+ev[k].t*slotMs<horizon){
+        const e=ev[k], a=akAt(e.st+song.shift,playMode==='band'); k++;
+        const t0=base+e.t*slotMs, t1=t0+e.d*slotMs*0.9;
+        if(e.follow){ songNote(a,T0+t0/1000,T0+t1/1000,(playMode==='solo'?[soloEls[a.idx]]:(rackEls[a.idx]||[])).filter(Boolean),e.vel); continue; }
+        const cueEls = (playMode==='solo' ? [soloEls[a.idx]] : [0,1].filter(s=>akOf(s).idx===a.idx).map(s=>slotCards[s])).filter(Boolean);
+        if(cueEls.length){
+          timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.add('cue')), off(t0-slotMs*0.3)));
+          timers.push(setTimeout(()=>cueEls.forEach(c=>c.classList.remove('cue')), off(t1)));
+          if(leaveMine.checked) continue;
+        }
+        const elsOf=x=>(playMode==='solo'?[soloEls[x.idx]]:(rackEls[x.idx]||[])).filter(Boolean);
+        const amp=(e.vel||1)*(cueEls.length?GUIDE_AMP:1);   // เสียงนำของตัวที่ผู้เล่นต้องกด เบากว่าเสียงที่กดเอง
+        if(e.orn) ornNotes(e.orn,song.shift,T0+t0/1000,slotMs/1000,amp,elsOf,e.tech);
+        songNote(a,T0+t0/1000,T0+t1/1000,elsOf(a),amp);
       }
-      const elsOf=x=>(playMode==='solo'?[soloEls[x.idx]]:(rackEls[x.idx]||[])).filter(Boolean);
-      const amp=(e.vel||1)*(cueEls.length?GUIDE_AMP:1);   // เสียงนำของตัวที่ผู้เล่นต้องกด เบากว่าเสียงที่กดเอง
-      if(e.orn) ornNotes(e.orn,song.shift,T0+t0/1000,slotMs/1000,amp,elsOf,e.tech);
-      songNote(a,T0+t0/1000,T0+t1/1000,elsOf(a),amp);
-    }
-    if(!ended && k>=ev.length && kb>=bxT.length){ ended=true;
+      if(k<ev.length || kb<bxT.length || ended) break;
+      // จบรอบนี้ (ตั้งเวลาครบแล้ว): ต่อรอบถัดไปทันทีตามจังหวะ หรือจบเพลง
+      if(songRepV===0 || it+1<songRepV){
+        it++; k=0; kb=0; const rd=it+1;
+        if(dRun && dRun===drumRun){ drumRun.endSi=0; drumRun.secs=(drumRun.secs||[]).concat(dplan.map(x=>({si:x.si+it*total,k:x.k}))); }
+        timers.push(setTimeout(()=>{ SR.round=rd; updRound(); }, off(it*RD)));
+        continue; }
+      ended=true;
+      if(dRun && dRun===drumRun) drumRun.endSi=(it+1)*total;
       timers.push(setTimeout(()=>{ boxEls.forEach(x=>x.classList.remove('now')); if(drumRun && drumRun.rate) drumStop(); clearInterval(iv);
-        if(songRepV===0 || SR.round<songRepV){ SR.round++; songGo(); return; }   // รอบถัดไป: ไม่นับสัญญาณ บรรเลงต่อทันที
-        setTimeout(()=>{ if(timers.includes(iv)) timers=[]; },1000); }, off(total*slotMs+50))); }
+        setTimeout(()=>{ if(timers.includes(iv)) timers=[]; },1000); }, off((it+1)*RD+50)));
+      break;
+    }
     // ล้างรายการเสียง/ตัวตั้งเวลาที่จบแล้ว
     if(songVoices.length>64) songVoices.splice(0,songVoices.length-64);
     if(timers.length>400) timers.splice(0,timers.length-400);
   };
-  const iv=setInterval(sched,200); timers.push(iv); sched();
+  clearInterval(SR.iv); const iv=setInterval(sched,200); SR.iv=iv; timers.push(iv); sched();
 }
 stopScore.onclick=stopSong;
 setTimeout(()=>{ try{ fillPSec(); }catch(e){} },0);
@@ -3819,9 +3838,12 @@ function lisStart(){
       if(e.orn) lisOrn(e.orn,ts,slotMs/1000,e.vel,e.tech);
       lisVoice(e.st,ts,te,(e.vel||1)*(e.follow?0.85:1)); }
     if(LIS.voices.length>120) LIS.voices.splice(0,LIS.voices.length-120);
+    if(LIS.timers.length>600) LIS.timers.splice(0,LIS.timers.length-600);
     if(k>=ev.length && kb>=bxT.length){
-      if(lisLoop.checked && drumRun){   // วนรอบใหม่ทันที ไม่ขึ้นหน้าทับใหม่
-        it++; k=0; kb=0; RR=null; drumRun.rit=null; drumRun.endSi=(it+1)*total; drumRun.secs=(drumRun.secs||[]).concat(plan.map(x=>({si:x.si+it*total,k:x.k}))); return; }
+      if(lisLoop.checked){   // วนรอบใหม่ทันทีตามจังหวะ ไม่ขึ้นหน้าทับใหม่ ไม่หยุด
+        it++; k=0; kb=0; RR=null;
+        if(drumRun){ drumRun.rit=null; drumRun.endSi=(it+1)*total; drumRun.secs=(drumRun.secs||[]).concat(plan.map(x=>({si:x.si+it*total,k:x.k}))); }
+        sched(); return; }
       if(ended) return; ended=true; clearInterval(LIS.iv);
       LIS.timers.push(setTimeout(()=>{ LIS.run=false; lisPlay.classList.remove('on'); LIS.els.forEach(x=>x&&x.classList.remove('now')); lisNow.textContent=L('จบเพลง','End'); },off(msOf(base+total)+1200))); } };
   sched(); LIS.iv=setInterval(sched,250);
@@ -3888,54 +3910,80 @@ function pracStop(keepBar){
   P.run=false;
   if(!keepBar){ prac.hidden=true; document.body.classList.remove('practicing'); setTimeout(fitKeys,50); }
 }
-// เริ่มฝึกซ้อมจากหน้าต่างตั้งค่า (เครื่องเดียว)
-let pracRound=0;
-function pracStart(again){
-  initAudio(); ctx.resume(); closePop(); if(!again) pracRound=0; pracRound++; if(window.PH) PH.on=false;
+// เริ่มฝึกซ้อมจากหน้าต่างตั้งค่า (เครื่องเดียว) · เล่นวน = วนต่อเนื่องตามจังหวะ ไม่หยุด ไม่นับสัญญาณใหม่
+function pracStart(){
+  initAudio(); ctx.resume(); closePop(); if(window.PH) PH.on=false;
   const range=pracRange(), song=pracSong(), loop=pLoop.checked;
   const secName=pSec.value==='all'?'':(range?L(`ห้อง ${range[0]+1}–${range[1]+1}`,`bars ${range[0]+1}–${range[1]+1}`):'');
-  pracRun({song, tempo:+pTempo.value, wide:playMode==='band', light:pLight.checked, drum:pDrum.checked, countSound:true, noCount:pracRound>1, rit:loop?0:ritBoxes, range,
-    title:'🎯 '+pair(song.name)+(secName?' · '+secName:'')+' · '+pTempo.value+(loop?' · 🔁 '+L('รอบ','round')+' '+pracRound:''),
+  const ttl='🎯 '+pair(song.name)+(secName?' · '+secName:'')+' · '+pTempo.value;
+  pracRun({song, tempo:+pTempo.value, wide:playMode==='band', light:pLight.checked, drum:pDrum.checked, countSound:true, rit:loop?0:ritBoxes, range,
+    rounds:loop?0:1, title:ttl, titleFn:loop?(k=>ttl+' · 🔁 '+L('รอบ','round')+' '+k):null,
     autoFn:a=>playMode==='band' && pBand.checked,
-    onFinish:(hit,total)=>{ logScore({song:pair(song.name),sec:secName||L('ทั้งเพลง','Whole song'),tempo:+pTempo.value,hit,total,mode:L('ฝึกซ้อม','Practice')+(loop?' '+L('รอบ','round')+' '+pracRound:'')});
-      if(loop && !ROOM.role) P.loopT=setTimeout(()=>{ if(!prac.hidden && !P.run) pracStart(true); },60); }});
+    onRound:(hit,total,k)=>logScore({song:pair(song.name),sec:secName||L('ทั้งเพลง','Whole song'),tempo:+pTempo.value,hit,total,mode:L('ฝึกซ้อม','Practice')+(loop?' '+L('รอบ','round')+' '+k:'')}) });
 }
-// ตัวเล่นกลาง: ใช้ทั้งฝึกเดี่ยวและห้องวง
-// opt: song, tempo, light, drum, countSound, T0 (เวลาเสียงของจังหวะแรก), mineFn(a), autoFn(a), title, onFinish(hit,total)
+// ตัวเล่นกลาง: ใช้ทั้งฝึกเดี่ยว ฝึกทีละวรรค และห้องวง
+// opt: song, tempo, light, drum, countSound, T0 (เวลาเสียงของจังหวะแรก), mineFn(a), autoFn(a), title, titleFn(round),
+//      rounds (จำนวนรอบ · 0 = วนจนกว่าจะหยุด) — ทุกรอบต่อกันตามจังหวะพอดี นับให้สัญญาณเฉพาะก่อนรอบแรก ทอดจบเฉพาะรอบสุดท้าย
+//      onRound(hit,total,round) เมื่อจบแต่ละรอบ · onFinish(hit,total) เมื่อจบรอบสุดท้าย
 function pracRun(opt){
   initAudio(); ctx.resume(); loadAngklung(); stopSong(); pracStop(true);
   const WIDE=!!opt.wide, song=opt.song, boxes=parseSheet(song.text), r=opt.range, order=playOrder(boxes).filter(bi=>!r||(bi>=r[0]&&bi<=r[1]));
   const tempoV=opt.tempo, slotSec=60/tempoV;
   const cells=[]; order.forEach(bi=>{ const b=boxes[bi]; let dynShown=false; for(let k=0;k<4;k++){ const st=k<b.slots.length?b.slots[k]:null;
     cells.push({st, bs:k===0, bn:k===0?bi+1:0, grp:b.grp, vel:b.vel||1, orn:b.orn&&b.orn[k], tech:b.tech&&b.tech[k], dyn:(!dynShown&&b.dyn&&st!==null)?(dynShown=true,b.dyn):null}); } });
-  const ev=[], evAt=new Map(); cells.forEach((c,i)=>{ if(c.st===null) return; const a=akAt(c.st+song.shift,WIDE); const e={i,a,grp:c.grp,vel:c.vel,orn:c.orn,tech:c.tech}; ev.push(e); evAt.set(i,e); });
-  ev.forEach((e,k)=>{ const nx=k+1<ev.length?ev[k+1].i:cells.length; e.len=Math.min(nx-e.i,2); });
+  const base=[], evAt=new Map(); cells.forEach((c,i)=>{ if(c.st===null) return; const a=akAt(c.st+song.shift,WIDE); const e={i,a,grp:c.grp,vel:c.vel,orn:c.orn,tech:c.tech}; base.push(e); evAt.set(i,e); });
+  base.forEach((e,k)=>{ const nx=k+1<base.length?base[k+1].i:cells.length; e.len=Math.min(nx-e.i,2); });
   const mineOf=opt.mineFn || ((a,e)=> playMode==='solo' || [0,1].some(s=>akOf(s).idx===a.idx));
+  base.forEach(e=>{ e.mine=mineOf(e.a,e); });
   document.body.classList.toggle('noLane',!!opt.noLane);
-  pTitle.textContent=opt.title || ('🎯 '+pair(song.name)+' · '+tempoV);
-  pStrip.innerHTML=cells.map((c,i)=>{
+  const R=opt.rounds==null?1:Math.max(0,Math.floor(+opt.rounds||0)), N=cells.length, CP=R===1?1:2;
+  const titleOf=k=>opt.titleFn?opt.titleFn(k):(opt.title || ('🎯 '+pair(song.name)+' · '+tempoV));
+  pTitle.textContent=titleOf(1);
+  const cellHtml=(c,i)=>{
     if(c.st===null) return `<div class="c rest${c.bs?' bs':''}">·</div>`;
-    const e=evAt.get(i), m=mineOf(e.a,e);
+    const e=evAt.get(i), m=e.mine;
     return `<div class="c n ${m?'mine':'other'}${c.bs?' bs':''}${c.grp?' g-'+c.grp:''}${c.vel<0.8?' soft':''}" style="--c:${e.a.c}">${c.orn?`<span class="orn">${c.orn.map(st=>{ const g=akAt(st+song.shift,WIDE); return `<span style="color:${g.c}">${NN(g)}</span>`; }).join('')}</span>`:''}${c.dyn?`<i class="dynM">${c.dyn}</i>`:''}${c.bn?`<i class="bn">${c.bn}</i>`:''}<span class="lab">${e.a.html}</span><span class="hid">●</span></div>`;
-  }).join('');
-  const cellEls=pStrip.children; ev.forEach(e=>{ e.el=cellEls[e.i]; e.mine=mineOf(e.a,e); e.state=null; });
+  };
+  // เล่นหลายรอบ: วาดแถบโน้ต 2 ชุดต่อกัน (+ ต้นเพลงอีกช่วงสั้น ๆ) แถบจึงเลื่อนต่อเนื่องข้ามรอบได้โดยไม่กระตุก
+  const one=cells.map(cellHtml).join('');
+  pStrip.innerHTML=CP===1?one:one+one+cells.slice(0,Math.min(N,24)).map(cellHtml).join('');
+  const cellEls=pStrip.children;
   prac.hidden=false; document.body.classList.add('practicing'); fitKeys();
   const laneW=pLane.clientWidth, cw=Math.max(34,Math.min(72,laneW/9)); pLane.style.setProperty('--cw',cw+'px');
   const headX=Math.round(laneW*0.28); pLane.style.setProperty('--headx',headX+'px');
-  const COUNT=opt.noCount?0:4, T0=opt.T0 || ctx.currentTime+(COUNT?0.3:0.12)+COUNT*slotSec;   // noCount = รอบที่ 2 ขึ้นไป ไม่นับสัญญาณ
+  const COUNT=opt.noCount?0:4, T0=opt.T0 || ctx.currentTime+(COUNT?0.3:0.12)+COUNT*slotSec;   // นับให้สัญญาณเฉพาะก่อนรอบแรก
   const sRit=song.rit&&!r&&opt.rit?song.rit:null;   // เพลงที่กำหนดการทอดไว้ (เช่น ซุ้มลาวแพน ทอด 4 ห้อง ไม่ช้ามาก)
-  const times=slotTimes(cells.length,T0,slotSec,sRit?sRit.boxes:(opt.rit||0),sRit?sRit.max:0);
-  Object.assign(P,{run:true,ev,cells,slotSec,T0,times,cw,headX,hit:0,total:ev.filter(e=>e.mine).length,timers:[],voices:[],
-    win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:times[cells.length],onFinish:opt.onFinish,drumOn:!!opt.drum});
-  pScore.textContent=P.total?`0/${P.total}`:''; pCnt.classList.remove('on');
+  const ritB=R===0?0:(sRit?sRit.boxes:(opt.rit||0)), ritM=sRit?sRit.max:0, RD=N*slotSec;
+  const TT=new Map();
+  const timesOf=k=>{ let T=TT.get(k); if(!T){ T=slotTimes(N,T0+k*RD,slotSec,(R&&k===R-1)?ritB:0,ritM); TT.set(k,T); if(TT.size>6) TT.delete(TT.keys().next().value); } return T; };
+  const total=base.filter(e=>e.mine).length;
+  Object.assign(P,{run:true,ev:[],cells,slotSec,T0,cw,headX,hit:0,total,rh:[0],cur:0,R,N,timers:[],voices:[],
+    win:Math.max(0.16,Math.min(0.32,slotSec*0.45)),end:R?timesOf(R-1)[N]:Infinity,onFinish:opt.onFinish,onRound:opt.onRound,drumOn:!!opt.drum});
+  pScore.textContent=total?`0/${total}`:''; pCnt.classList.remove('on');
   if(opt.countSound) for(let k=0;k<COUNT;k++){ const t=T0-(COUNT-k)*slotSec; if(t>ctx.currentTime) chingHit(k===0,t); }
-  if(opt.drum){ const pk=(opt.pat&&NATAB[opt.pat])?opt.pat:(song.pat&&NATAB[song.pat]?song.pat:drumSel.value); if(drumSel.value!==pk) drumSel.value=pk; loadDrum(pk); const ep=entryPlan(boxes,order,pk,song); drumStart(tempoV,T0,{times,secs:ep.secs,startSi:ep.startSi}); }
-  ev.forEach(e=>{ e.t=times[e.i]; e.te=e.t+(times[Math.min(e.i+e.len,cells.length)]-e.t)*0.9; });
-  let pk=0; P.voices=[];
+  let dplan=null;
+  if(opt.drum){ const pk=(opt.pat&&NATAB[opt.pat])?opt.pat:(song.pat&&NATAB[song.pat]?song.pat:drumSel.value); if(drumSel.value!==pk) drumSel.value=pk; loadDrum(pk); const ep=entryPlan(boxes,order,pk,song);
+    if(R===1) drumStart(tempoV,T0,{times:timesOf(0),secs:ep.secs,startSi:ep.startSi});
+    else {   // หลายรอบ: กลองตีต่อเนื่อง หน้าทับเริ่มใหม่พร้อมห้องแรกของทุกรอบ ทอดเฉพาะรอบสุดท้าย
+      dplan=secPlan(boxes,order,pk,song)||[{si:0,k:pk}];
+      drumStart(tempoV,T0,{noPlan:true,secs:ep.secs||[{si:0,k:pk}],startSi:ep.startSi,endSi:R?R*N:0});
+      if(drumRun){ P.drumR=drumRun; if(R && ritB){ const L4=Math.min(N,ritB*4); drumRun.rit={start:R*N-L4,end:R*N-1,max:ritM||undefined}; } } } }
+  const prep=k=>{   // เตรียมเหตุการณ์ของรอบที่ k (นับจาก 0)
+    const T=timesOf(k), off=CP===1?0:(k%2)*N;
+    if(k>=2) for(let i=0;i<N;i++){ const el=cellEls[off+i]; if(el) el.classList.remove('hit','miss'); }
+    P.rh[k]=P.rh[k]||0;
+    if(k>0 && dplan && P.drumR && P.drumR===drumRun) drumRun.secs=(drumRun.secs||[]).concat(dplan.map(x=>({si:x.si+k*N,k:x.k})));
+    return base.map(e=>({...e,r:k,t:T[e.i],te:T[e.i]+(T[Math.min(e.i+e.len,N)]-T[e.i])*0.9,el:cellEls[off+e.i],state:null}));
+  };
+  let pr=-1, cur=[], ci=0; P.voices=[];
   const psched=()=>{
-    if(!P.run && pk>0) return;
+    if(!P.run && pr>=0) return;
     const now=ctx.currentTime, ms=t=>Math.max(0,(t-now)*1000);
-    while(pk<ev.length && ev[pk].t<now+1.5){ const e=ev[pk++], ts=e.t, te=e.te;
+    for(;;){
+      if(ci>=cur.length){ const k=pr+1; if(R && k>=R) break; if(pr>=0 && timesOf(k)[0]>now+1.6) break;
+        pr=k; cur=prep(k); ci=0; P.ev=P.ev.filter(e=>e.t>now-4).concat(cur); continue; }
+      const e=cur[ci]; if(e.t>=now+1.5) break; ci++;
+      const ts=e.t, te=e.te;
       const elsOf=x=>(playMode==='solo'?[soloEls[x.idx]]:(rackEls[x.idx]||[])).filter(Boolean);
       if(!e.mine){ if(opt.autoFn && opt.autoFn(e.a,e) && ts>now){ if(e.orn) ornNotes(e.orn,song.shift,ts,slotSec,e.vel,elsOf,e.tech); songNote(e.a,ts,te,elsOf(e.a),e.vel); }
         if(opt.lightAll && ts>now){ const els=keyElsFor(e.a); P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.add('cue')),ms(ts-slotSec*0.35))); P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); }
@@ -3943,21 +3991,26 @@ function pracRun(opt){
       if(e.orn) ornNotes(e.orn,song.shift,ts,slotSec,e.vel,elsOf,e.tech);   // เสียงนำของลูกสะบัด แอปเล่นให้ ผู้เล่นกดตัวตกจังหวะ
       if(opt.light){ const els=keyElsFor(e.a);
         P.timers.push(setTimeout(()=>{ if(pLight.checked||ROOM.role==='member') els.forEach(c=>c.classList.add('cue')); },ms(ts-slotSec*0.35)));
-        P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); } }
+        P.timers.push(setTimeout(()=>els.forEach(c=>c.classList.remove('cue')),ms(te))); }
+    }
     P.voices.push(...songVoices.splice(0)); if(P.voices.length>64) P.voices.splice(0,P.voices.length-64);
     if(P.timers.length>400) P.timers.splice(0,P.timers.length-400);
-    if(pk>=ev.length) clearInterval(P.schedIv);
+    if(R && pr>=R-1 && ci>=cur.length) clearInterval(P.schedIv);
   };
   clearInterval(P.schedIv); P.schedIv=setInterval(psched,200); psched();
+  const roundEnd=k=>{ const h=P.rh[k]||0; if(P.onRound) try{ P.onRound(h,total,k+1); }catch(e){} };
+  P.roundEnd=roundEnd;
   const loop=()=>{
     if(!P.run) return;
-    const t=ctx.currentTime; let pos;
-    if(t<P.T0) pos=(t-P.T0)/P.slotSec;
-    else { const T=P.times; let lo=0,hi=T.length-1; while(hi-lo>1){ const m=(lo+hi)>>1; if(T[m]<=t) lo=m; else hi=m; } pos=lo+Math.min(1,(t-T[lo])/((T[lo+1]-T[lo])||1)); }
-    pStrip.style.transform=`translateX(${P.headX-pos*P.cw}px)`;
-    if(pos<0){ if(COUNT){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); } else pCnt.classList.remove('on'); }
+    const t=ctx.currentTime; let pos, k=0;
+    if(t<T0) pos=(t-T0)/slotSec;
+    else { k=Math.floor((t-T0)/RD); if(R) k=Math.min(k,R-1); const T=timesOf(k); let lo=0,hi=N; while(hi-lo>1){ const m=(lo+hi)>>1; if(T[m]<=t) lo=m; else hi=m; } pos=lo+Math.min(1,(t-T[lo])/((T[lo+1]-T[lo])||1)); }
+    if(k>P.cur){ for(let j=P.cur;j<k;j++) roundEnd(j); P.cur=k; P.hit=P.rh[k]||0; pScore.textContent=total?`${P.hit}/${total}`:''; if(opt.titleFn) pTitle.textContent=titleOf(k+1); }
+    const sp=(CP===1||t<T0)?pos:(k%2)*N+pos;
+    pStrip.style.transform=`translateX(${headX-sp*cw}px)`;
+    if(pos<0 && t<T0){ if(COUNT){ pCnt.classList.add('on'); pCnt.innerHTML=String(Math.max(1,Math.min(COUNT,Math.ceil(-pos)))); } else pCnt.classList.remove('on'); }
     else if(t<P.end) pCnt.classList.remove('on');
-    P.ev.forEach(e=>{ if(e.mine && e.state===null && t>e.t+P.win){ e.state='miss'; e.el.classList.add('miss'); } });
+    P.ev.forEach(e=>{ if(e.mine && e.state===null && t>e.t+P.win){ e.state='miss'; e.el&&e.el.classList.add('miss'); } });
     if(t>P.end+0.4){ pracFinish(); return; }
     P.raf=requestAnimationFrame(loop);
   };
@@ -3968,11 +4021,13 @@ function pracPress(a){
   if(!P.run) return; const t=ctx.currentTime;
   let best=null, bd=1e9;
   P.ev.forEach(e=>{ if(e.mine && e.state===null && e.a.idx===a.idx){ const d=Math.abs(e.t-t); if(d<=P.win && d<bd){ bd=d; best=e; } } });
-  if(best){ best.state='hit'; best.el.classList.add('hit'); P.hit++; pScore.textContent=`${P.hit}/${P.total}`; }
+  if(best){ best.state='hit'; best.el&&best.el.classList.add('hit'); P.rh[best.r]=(P.rh[best.r]||0)+1; if(best.r===P.cur){ P.hit=P.rh[best.r]; pScore.textContent=`${P.hit}/${P.total}`; } }
   else if(t>P.T0-0.1){ pLane.classList.remove('oops'); void pLane.offsetWidth; pLane.classList.add('oops'); }
 }
 function pracFinish(){
   P.run=false; if(P.drumOn && drumRun && drumRun.rate) drumStop();
+  P.hit=(P.rh&&P.rh[P.cur])||0;
+  if(P.roundEnd) try{ P.roundEnd(P.cur); }catch(e){}
   if(P.onFinish) try{ P.onFinish(P.hit,P.total); }catch(e){}
   if(!P.total){ pCnt.innerHTML=`<div>🎶<small>${L('จบเพลง','End of song')}</small></div>`; pCnt.classList.add('on'); return; }
   const pct=P.total?Math.round(P.hit*100/P.total):0, stars=pct>=90?5:pct>=75?4:pct>=60?3:pct>=40?2:1;
@@ -4114,22 +4169,23 @@ function phMsg(html){ setTimeout(()=>{ pCnt.innerHTML=`<div>${html}</div>`; pCnt
 function phRun(idx,round,span){
   span=span||PH.span||1;
   const sg=phSongObj(), x=phRangeOf(idx,span); if(!sg||!x) return;
-  const N=phR(); PH.on=true; PH.idx=idx; PH.round=round; PH.span=span; phWhich.value=String(idx); phTo.value=String(x.b);
+  const N=phR(); PH.on=true; PH.idx=idx; PH.round=1; PH.span=span; phWhich.value=String(idx); phTo.value=String(x.b);
   closePop(); clearTimeout(P.loopT);
-  const title='🧩 '+pair(sg.name)+' · '+L('วรรค','phrase')+' '+(idx+1)+(x.b>idx?'–'+(x.b+1):'')+'/'+PH.list.length+' · '+L('ห้อง','boxes')+' '+(x.from+1)+'–'+(x.to+1)+' · '+L('รอบ','round')+' '+round+'/'+N;
+  // ทุกรอบเล่นต่อกันตามจังหวะพอดี ไม่หยุด ไม่นับสัญญาณใหม่ (นับเฉพาะก่อนรอบแรก)
+  const ttl=k=>'🧩 '+pair(sg.name)+' · '+L('วรรค','phrase')+' '+(idx+1)+(x.b>idx?'–'+(x.b+1):'')+'/'+PH.list.length+' · '+L('ห้อง','boxes')+' '+(x.from+1)+'–'+(x.to+1)+' · '+L('รอบ','round')+' '+k+'/'+N;
   const done=()=>{ if(!PH.on) return;
-    if(round<N){ phMsg(`🔁<small>${L('จบรอบที่','Round')} ${round}/${N} · ${L('เตรียมรอบถัดไป…','next round coming…')}</small>`); P.loopT=setTimeout(()=>{ if(PH.on) phRun(idx,round+1); },60); return; }
     if(phNext.checked && idx+span<PH.list.length){ phMsg(`⏭<small>${L('ครบ','Completed')} ${N} ${L('รอบ · ไปวรรคถัดไป','rounds · next phrase')}</small>`); P.loopT=setTimeout(()=>{ if(PH.on) phRun(idx+span,1,span); },2400); return; }
     PH.on=false; phMsg(`✅<small>${L('ฝึกครบ','Finished')} ${N} ${L('รอบแล้ว','rounds')} · ${L('วรรค','phrase')} ${idx+1}${x.b>idx?'–'+(x.b+1):''}<br>${L('กด ↻ เพื่อฝึกช่วงนี้อีกครั้ง','Tap ↻ to drill this again')}</small>`); };
+  const onRound=(h,t,k)=>{ PH.round=Math.min(N,k+1); };
   const useRoom=ROOM.role==='host' && phRoom.checked;
   if(useRoom){
     if(pSong.value!==phSong.value){ pSong.value=phSong.value; fillPSec(); }
     pSec.value='custom'; pFrom.value=x.from+1; pTo.value=x.to+1; pRange.hidden=false;
     pTempo.value=phTempo.value; pTempoV.textContent=phTempo.value; pShow.checked=phLane.checked; syncEye(); pDrum.checked=phDrum.checked;
-    const sv=ritBoxes; ritBoxes=0; roomStart({noCount:round>1,fill:phMel.checked,lightAll:phLight.checked,noLane:!phLane.checked,title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+title.slice(3),onDone:done}); ritBoxes=sv; return;
+    const sv=ritBoxes; ritBoxes=0; roomStart({rounds:N,fill:phMel.checked,lightAll:phLight.checked,noLane:!phLane.checked,titleFn:k=>'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+ttl(k).slice(3),onDone:done}); ritBoxes=sv; return;
   }
-  pracRun({song:sg,tempo:+phTempo.value,range:[x.from,x.to],light:false,lightAll:phLight.checked,noLane:!phLane.checked,drum:phDrum.checked,countSound:true,noCount:round>1,rit:0,
-    mineFn:()=>false,autoFn:()=>phMel.checked,title,onFinish:done});
+  pracRun({song:sg,tempo:+phTempo.value,range:[x.from,x.to],light:false,lightAll:phLight.checked,noLane:!phLane.checked,drum:phDrum.checked,countSound:true,rit:0,rounds:N,
+    mineFn:()=>false,autoFn:()=>phMel.checked,title:ttl(1),titleFn:ttl,onRound,onFinish:done});
 }
 phGo.onclick=()=>{ initAudio(); ctx.resume(); loadAngklung(); loadSamples(); phRun(+phWhich.value||0,1,phSpan()); };
 document.querySelector('.fabMenu [data-pop="phr"]').addEventListener('click',()=>{ phRoomL.hidden=ROOM.role!=='host'; if(!PH.list.length) phBuild(); },true);
@@ -4138,8 +4194,10 @@ document.querySelectorAll('.langSw button').forEach(b=>b.addEventListener('click
 
 // ---------- มีอะไรใหม่ (แจ้งเตือนเมื่อแอปอัปเดต) ----------
 // เพิ่มรายการใหม่ไว้บนสุดทุกครั้งที่อัปเดตแอป และเปลี่ยน APP_VER ให้ตรงกับรายการบนสุด
-const APP_VER='2026.11.24b';
+const APP_VER='2026.11.25a';
 const CHANGELOG=[
+  {v:'2026.11.25a',d:['25 พ.ย. 2569','25 Nov 2026'],th:['<b>เล่นหลายรอบ / วนซ้ำ ต่อเนื่องตามจังหวะ ไม่สะดุด</b> ทุกโหมด: ฝึกบรรเลงเพลง ฝึกซ้อม (เล่นวน) ฝึกซ้อมทีละวรรค ห้องวง และฟังเพลง — รอบถัดไปเริ่มตรงจังหวะถัดไปพอดี ไม่มีช่วงเงียบ ไม่นับ 4–3–2–1 ใหม่ (นับเฉพาะก่อนรอบแรก)','แถบโน้ตไหลต่อเนื่องข้ามรอบ กลองและฉิ่งตีต่อเนื่อง หน้าทับเริ่มใหม่พร้อมห้องแรกของทุกรอบ และทอดจบเฉพาะรอบสุดท้าย','คะแนนกดถูกจังหวะยังบันทึกแยกทุกรอบเหมือนเดิม'],
+   en:['<b>Repeats and loops now run on without a break</b> in every mode: song practice, practice (loop), phrase drill, band room and listen — the next round starts exactly on the next beat, with no gap and no new 4–3–2–1 count (count-in only before the first round)','The note lane scrolls on across rounds, the drum and ching keep playing, the na thap restarts with the first bar of each round, and the slow-down ending happens only in the last round','On-time scores are still recorded for every round']},
   {v:'2026.11.24b',d:['24 พ.ย. 2569','24 Nov 2026'],th:['ห้องวง: เสียงที่สมาชิกกดแล้วไปดังที่เครื่องผู้นำวง <b>ไม่ขาดหายแล้ว</b> — เครื่องผู้นำวงเล่นทั้งเสียงกระทบ เสียงเขย่าต่อเนื่องตลอดที่กดค้าง และเสียงสะบัด เหมือนที่สมาชิกเล่นจริง','จัดจังหวะเสียงของสมาชิกแต่ละคนให้สม่ำเสมอ แม้ Wi-Fi สะดุดเป็นช่วง ๆ (ทั้งผู้นำวงและสมาชิกต้องอัปเดตแอปเป็นรุ่นนี้)'],
    en:['Band room: members’ taps that sound on the leader’s device <b>no longer cut out</b> — the leader’s device now plays the strike, the continuous shake for as long as the key is held, and flicks, just as the member plays','Each member’s timing is smoothed so the rhythm stays even when Wi-Fi stutters (leader and members both need this version)']},
   {v:'2026.11.24a',d:['24 พ.ย. 2569','24 Nov 2026'],th:['หน้าแรกแสดง <b>👥 ยอดผู้ใช้งานสะสม</b> (จำนวนคน และจำนวนครั้งที่เข้าใช้) นับจากบันทึกการลงชื่อเข้าใช้ แตะค้างหรือชี้ที่ตัวเลขเพื่อดูแยกนักเรียน ครู และบุคคลทั่วไป'],
@@ -4496,21 +4554,24 @@ function autoAssign(){ [...ROOM.members.values()].forEach((x,k)=>{ x.notes=PAIRS
 function roomStart(o={}){
   ROOM.halt=false; clearTimeout(ROOM.nextT);
   const song=pracSong(), tempo=+pTempo.value, slotSec=60/tempo;
-  const rd0=ROOM.round||1, nc=!!o.noCount||rd0>1;   // รอบที่ 2 ขึ้นไป ไม่นับสัญญาณ (เผื่อเวลาส่งข้อมูลถึงทุกเครื่องเล็กน้อย)
-  const lead=nc?0.9:1.6, COUNT=nc?0:4;
+  // ทุกรอบเล่นต่อกันตามจังหวะพอดีทั้งเครื่องผู้นำวงและสมาชิก · นับให้สัญญาณเฉพาะก่อนรอบแรก · ทอดจบเฉพาะรอบสุดท้าย
+  const rN=o.rounds!=null?o.rounds:(ROOM.rep==null?1:ROOM.rep);
+  const nc=!!o.noCount, lead=nc?0.9:1.6, COUNT=nc?0:4;
   const T0=ctx.currentTime+lead+COUNT*slotSec, startPerf=performance.now()+(T0-ctx.currentTime)*1000;
   const covered=new Set(), covG={a:new Set(),b:new Set()}; [...ROOM.members.values()].forEach(x=>{ x.score=null; (x.notes||[]).forEach(i=>{ covered.add(i); covG[x.grp==='b'?'b':'a'].add(i); }); });
-  const range=pracRange();
-  const rd=ROOM.round||1, rN=o.onDone?1:(ROOM.rep==null?1:ROOM.rep), last=rN!==0&&rd>=rN;
-  const msg={t:'start',song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf,noCount:nc,rit:last?ritBoxes:0,range,round:rd,rounds:rN};
+  const range=pracRange(), rit=rN!==0?ritBoxes:0;
+  ROOM.round=1;
+  const msg={t:'start',v:2,song:{name:song.name,shift:song.shift,text:song.text},tempo,show:pShow.checked,at:startPerf,noCount:nc,rit,range,round:1,rounds:rN};
   ROOM.members.forEach(x=>roomSend(x,msg));
   ROOM.lastSong=pair(song.name); ROOM.lastSec=range?`${range[0]+1}–${range[1]+1}`:L('ทั้งเพลง','Whole song'); ROOM.lastTempo=tempo;
   ROOM.playing=true; roomRender();
   const doFill=o.fill!=null?o.fill:ROOM.fill!==false;
-  pracRun({song,tempo,T0,noCount:nc,rit:last?ritBoxes:0,range,wide:true,light:false,drum:pDrum.checked,pat:o.pat!=null?o.pat:ROOM.pat,countSound:true,mineFn:()=>false,autoFn:(a,e)=>doFill&&!(e&&e.grp?covG[e.grp]:covered).has(a.idx),
+  const ttl=k=>'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(song.name)+(rN!==1?' · '+L('รอบ','round')+' '+k+'/'+(rN||'∞'):'');
+  pracRun({song,tempo,T0,noCount:nc,rit,range,rounds:rN,wide:true,light:false,drum:pDrum.checked,pat:o.pat!=null?o.pat:ROOM.pat,countSound:true,mineFn:()=>false,autoFn:(a,e)=>doFill&&!(e&&e.grp?covG[e.grp]:covered).has(a.idx),
     lightAll:!!o.lightAll,noLane:!!o.noLane,
-    title:o.title||('👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(song.name)+(rN!==1?' · '+L('รอบ','round')+' '+rd+'/'+(rN||'∞'):'')),onFinish:(h,t)=>{ ROOM.playing=false; roomRender(); if(o.onDone){ o.onDone(h,t); return; }
-      if(!last && ROOM.role==='host' && !ROOM.halt){ ROOM.round=rd+1; ROOM.nextT=setTimeout(()=>{ if(ROOM.role==='host'&&!ROOM.halt) roomStart(o); },30); } }});
+    title:o.title||ttl(1),titleFn:o.titleFn||ttl,
+    onRound:(h,t,k)=>{ ROOM.round=rN?Math.min(rN,k+1):k+1; },
+    onFinish:()=>{ ROOM.playing=false; roomRender(); if(o.onDone) o.onDone(); }});
 }
 function roomStopAll(){ if(ROOM.role!=='host') return; ROOM.halt=true; clearTimeout(ROOM.nextT); ROOM.members.forEach(x=>roomSend(x,{t:'stop'})); ROOM.playing=false; pracStop(); drumStop(); roomRender(); rbUpd(); setTimeout(fitKeys,60); }
 // เฉพาะจังหวะ: ครูตีกลอง–ฉิ่ง ส่งจังหวะฉิ่งให้จอนักเรียนกะพริบตาม
@@ -4576,9 +4637,12 @@ function memberData(d){
     pShow.checked=!!d.show; syncEye(); if(!ROOM.notes) return;
     const localPerf=d.at-ROOM.offset, T0=ctx.currentTime+(localPerf-performance.now())/1000;
     const held=new Set(ROOM.notes||[]);
-    pracRun({song:d.song,tempo:+d.tempo,T0,noCount:!!d.noCount,rit:+d.rit||0,range:Array.isArray(d.range)?d.range:null,wide:true,light:true,drum:false,countSound:true,mineFn:(a,e)=>held.has(a.idx)&&(!e||!e.grp||e.grp===(ROOM.grp||'a')),autoFn:()=>false,
-      title:'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(d.song.name)+(d.rounds&&d.rounds!==1?' · '+L('รอบ','round')+' '+d.round+'/'+(d.rounds||'∞'):(d.rounds===0?' · '+L('รอบ','round')+' '+d.round+'/∞':'')),
-      onFinish:(hit,total)=>{ try{ ROOM.conn.send({t:'score',hit,total}); }catch(e){} logScore({song:pair(d.song.name),sec:Array.isArray(d.range)?`${d.range[0]+1}–${d.range[1]+1}`:L('ทั้งเพลง','Whole song'),tempo:+d.tempo,hit,total,mode:L('ห้องวง','Band room')+' '+ROOM.code}); }});
+    const rN=d.v>=2?(d.rounds==null?1:+d.rounds):1;   // ผู้นำวงรุ่นเก่าส่งคำสั่งเริ่มทุกรอบเอง
+    const sec=Array.isArray(d.range)?`${d.range[0]+1}–${d.range[1]+1}`:L('ทั้งเพลง','Whole song');
+    const ttl=k=>'👥 '+L('ห้อง','Room')+' '+ROOM.code+' · '+pair(d.song.name)+(rN!==1?' · '+L('รอบ','round')+' '+(d.v>=2?k:d.round)+'/'+(rN||'∞'):(d.v>=2||!d.rounds||d.rounds===1?'':' · '+L('รอบ','round')+' '+d.round+'/'+d.rounds));
+    pracRun({song:d.song,tempo:+d.tempo,T0,noCount:!!d.noCount,rit:+d.rit||0,range:Array.isArray(d.range)?d.range:null,rounds:rN,wide:true,light:true,drum:false,countSound:true,mineFn:(a,e)=>held.has(a.idx)&&(!e||!e.grp||e.grp===(ROOM.grp||'a')),autoFn:()=>false,
+      title:ttl(1),titleFn:ttl,
+      onRound:(hit,total,k)=>{ try{ ROOM.conn.send({t:'score',hit,total}); }catch(e){} logScore({song:pair(d.song.name),sec,tempo:+d.tempo,hit,total,mode:L('ห้องวง','Band room')+' '+ROOM.code+(rN!==1?' '+L('รอบ','round')+' '+k:'')}); }});
     return; }
   if(d.t==='beat'){ memberBeat(d); return; }
   if(d.t==='tick'){ const ms=d.at-ROOM.offset-performance.now(); setTimeout(()=>memberTick(d.k),Math.max(0,ms)); return; }
